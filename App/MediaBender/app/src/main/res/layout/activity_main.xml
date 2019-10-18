@@ -1,19 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageViewerInMain"
+            android:layout_width="match_parent"
+            android:layout_height="300sp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"></ImageView>
+
+        <TextView
+            android:id="@+id/songTitleMainTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imageViewerInMain"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:textColor="#FFF"
+            android:layout_marginBottom="-40dp"
+            android:text="Song 1"
+            android:textAlignment="center"></TextView>
+
+        <TextView
+            android:id="@+id/artistNameMainTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/songTitleMainTextView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="-40dp"
+            android:textColor="#FFF"
+            android:text="Joe West"
+            android:textAlignment="center"></TextView>
+
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-75dp"
+            android:id="@+id/playPauseButtMain"
+            android:layout_alignBottom="@+id/artistNameMainTextView"
+            android:src="@drawable/play_arrow_white"
+            android:background="@drawable/roundbutton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true">
+
+        </ImageButton>
+
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fastForwardButtMain"
+            android:src="@drawable/fast_forward_white"
+            android:layout_alignBottom="@+id/playPauseButtMain"
+            android:background="@drawable/roundbutton"
+            android:layout_alignParentRight="true">
+
+        </ImageButton>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fastRewindButtMain"
+            android:layout_alignBottom="@+id/playPauseButtMain"
+            android:src="@drawable/fast_rewind_white"
+            android:background="@drawable/roundbutton"
+            android:layout_alignParentLeft="true">
+
+        </ImageButton>
+
+
+
+    </RelativeLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
