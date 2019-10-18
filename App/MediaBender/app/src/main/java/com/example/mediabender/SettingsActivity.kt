@@ -1,16 +1,12 @@
 package com.example.mediabender
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
-class MainActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        val intent = Intent(this, SettingsActivity::class.java)
-        startActivity(intent)
+        setContentView(R.layout.activity_settings)
     }
 }
