@@ -56,6 +56,8 @@ Distributed as-is; no warranty is given.
 // Global Variables
 extern SparkFun_APDS9960 apds = SparkFun_APDS9960();
 int isr_flag = 0;
+
+//xuebs: added additonal global variables to check prox and color registers
 uint8_t ProximityValue;
 uint16_t GreenValue = 0;
 uint16_t BlueValue = 0;
@@ -84,14 +86,14 @@ void setup() {
   }
 
   
-  // Start running the APDS-9960 light sensor engine
+  // xuebs: Start running the APDS-9960 light sensor engine
   if ( apds.enableLightSensor(true) ) {
     Serial.println(F("Light sensor is now running"));
   } else {
     Serial.println(F("Something went wrong during light sensor init!"));
   }
 
-  // Start running the APDS-9960 proximity sensor engine
+  // xuebs: Start running the APDS-9960 proximity sensor engine
   if ( apds.enableProximitySensor(true) ) {
     Serial.println(F("Proximity sensor is now running"));
   } else {
@@ -106,8 +108,10 @@ void setup() {
     Serial.println(F("Something went wrong during gesture sensor init!"));
   }
 
+  //xuebs: set LED to highest value
   apds.setLEDDrive(3);
 
+  //xuebs: clear prox interrupt, fetch prox gain
   apds.clearProximityInt();
   Serial.print("Proximity gain is: ");
   Serial.print(apds.getProximityGain());
@@ -125,11 +129,13 @@ void loop() {
     attachInterrupt(0, interruptRoutine, FALLING);
   }
 
+  //xuebs: clear prox interrupt, then read prox value and print on serial
   apds.clearProximityInt();
   apds.readProximity(ProximityValue);
   Serial.print("Prox: ");
   Serial.println(ProximityValue); 
 
+  //xuebs: check if color sensor is available, then read value
   if(!apds.readRedLight(RedValue))
   {
     Serial.println("failed to read red value!");
@@ -143,6 +149,7 @@ void loop() {
     Serial.println("failed to read green value!");
   }
   
+  //xuebs: print red blue and green values
   Serial.print("red: ");
   Serial.print(RedValue);
   Serial.print("\t green: ");
@@ -150,6 +157,7 @@ void loop() {
   Serial.print("\t blue: ");
   Serial.println(BlueValue);
 
+  //xuebs:delay so that serial monitor doesnt get flooded
   delay(500);
 }
 
