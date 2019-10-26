@@ -13,20 +13,20 @@
 
         <!--Image for the Album art of the current song playing-->
         <ImageView
-            android:id="@+id/imageViewerInMain"
+            android:id="@+id/albumArtViewer"
             android:layout_width="match_parent"
             android:layout_height="300sp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="15dp"
-            android:src="@drawable/album_art_default"></ImageView>
+            android:src="@drawable/album_art_default" />
 
         <!--TextView for the Title of the song playing-->
         <TextView
             android:id="@+id/songTitleMainTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/imageViewerInMain"
+            android:layout_alignBottom="@+id/albumArtViewer"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="-40dp"
@@ -34,7 +34,7 @@
             android:textAlignment="center"
             android:textColor="#FFF"
             android:textSize="19sp"
-            android:textStyle="bold"></TextView>
+            android:textStyle="bold" />
 
         <!--TextView for the artist Name of the song playing-->
         <TextView
@@ -48,7 +48,7 @@
             android:text="Anna Lunoe"
             android:textAlignment="center"
             android:textColor="#FFF"
-            android:textSize="17sp"></TextView>
+            android:textSize="17sp"/>
 
 
         <!--play button-->
@@ -59,14 +59,13 @@
             android:layout_alignBottom="@+id/artistNameMainTextView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="175dp"
             android:layout_marginLeft="175dp"
+            android:layout_marginRight="175dp"
             android:layout_marginBottom="-85dp"
             android:background="@drawable/play_pause_background"
-            android:src="@drawable/play_arrow_white">
-        </ImageButton>
+            />
 
-
+        <!--backward button-->
         <ImageButton
             android:id="@+id/fastRewindButtMain"
             android:layout_width="wrap_content"
@@ -80,15 +79,15 @@
 
         </ImageButton>
 
-
+        <!--Skip button-->
         <ImageButton
             android:id="@+id/fastForwardButtMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/playPauseButtMain"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="10dp"
             android:layout_marginRight="55dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/roundbutton"
             android:src="@drawable/fast_forward_white">
 
