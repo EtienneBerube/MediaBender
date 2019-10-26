@@ -6,9 +6,7 @@
     </shared>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="169b6d53-3af0-41c1-af7b-2a0c04e87897" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="169b6d53-3af0-41c1-af7b-2a0c04e87897" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -479,14 +477,14 @@
       <window_info id="Resources Explorer" order="6" />
       <window_info id="Capture Tool" order="7" />
       <window_info id="Favorites" order="8" side_tool="true" />
-      <window_info anchor="bottom" id="GitHub Pull Requests" sideWeight="0.49946752" visible="true" weight="0.3295562" />
+      <window_info active="true" anchor="bottom" id="GitHub Pull Requests" sideWeight="0.49946752" visible="true" weight="0.3295562" />
       <window_info anchor="bottom" id="Run" order="0" sideWeight="0.4985694" weight="0.3286119" />
       <window_info anchor="bottom" id="Logcat" order="1" />
       <window_info anchor="bottom" id="TODO" order="2" />
       <window_info anchor="bottom" id="Android Profiler" order="3" />
       <window_info anchor="bottom" id="Debug" order="4" sideWeight="0.49946752" weight="0.3295562" />
       <window_info anchor="bottom" id="Terminal" order="5" />
-      <window_info active="true" anchor="bottom" id="Event Log" order="6" sideWeight="0.5005325" side_tool="true" visible="true" weight="0.3295562" />
+      <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.5005325" side_tool="true" visible="true" weight="0.3295562" />
       <window_info anchor="bottom" id="Flutter Performance" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Build" order="9" sideWeight="0.4978701" weight="0.3286119" />
