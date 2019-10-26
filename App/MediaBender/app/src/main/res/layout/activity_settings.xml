@@ -74,7 +74,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Spinner
-                    android:id="@+id/theme_spinner"
+                    android:id="@+id/settings_theme_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
@@ -88,7 +88,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
-                    android:id="@+id/setting_gesture_button"
+                    android:id="@+id/settings_gesture_button"
 
                     android:layout_width="0dp"
                     android:layout_height="32dp"
@@ -103,7 +103,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/theme_spinner" />
+                    app:layout_constraintTop_toBottomOf="@+id/settings_theme_spinner" />
 
                 <Button
                     android:id="@+id/settings_test_connection_button"
@@ -120,7 +120,7 @@
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/setting_gesture_button" />
+                    app:layout_constraintTop_toBottomOf="@+id/settings_gesture_button" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -164,7 +164,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:text="Connected with: \nabc.xyz@hotmail.com"
+                    android:text="Not connected"
                     android:textColor="#FFFFFF"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/spotify_title" />
@@ -223,7 +223,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:text="Connected with: \nabc.xyz@hotmail.com"
+                    android:text="Not connected"
                     android:textColor="#FFFFFF"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/google_play_title" />
@@ -279,12 +279,12 @@
                     app:srcCompat="@drawable/active_circle_account" />
 
                 <TextView
-                    android:id="@+id/apple_music_connection"
+                    android:id="@+id/apple_music_connection_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:text="Connected with: \nabc.xyz@hotmail.com"
+                    android:text="Not connected"
                     android:textColor="#FFFFFF"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/apple_music_title" />

@@ -8,52 +8,58 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:paddingBottom="20dp"
+        android:layout_marginTop="15dp"
+        android:minWidth="350dp"
+        android:minHeight="250dp"
+        android:padding="15dp"
+        app:cardCornerRadius="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/settings_dialog_player_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="sans-serif-medium"
                 android:text="TextView"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.148"
+                app:layout_constraintHorizontal_bias="0.059"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/settings_dialog_email_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="276dp"
+                android:layout_height="45dp"
                 android:layout_marginTop="20dp"
                 android:ems="10"
                 android:hint="Email or Username"
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.505"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/settings_dialog_player_title" />
 
             <EditText
                 android:id="@+id/settings_dialog_password_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="276dp"
+                android:layout_height="42dp"
                 android:layout_marginTop="20dp"
                 android:ems="10"
                 android:hint="Password"
                 android:inputType="textPassword"
+                app:layout_constraintEnd_toEndOf="@+id/settings_dialog_email_textview"
                 app:layout_constraintStart_toStartOf="@+id/settings_dialog_email_textview"
                 app:layout_constraintTop_toBottomOf="@+id/settings_dialog_email_textview" />
 
@@ -63,12 +69,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
+                android:textColor="#FFFFFF"
                 android:text="Connect"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.844"
+                app:layout_constraintHorizontal_bias="0.947"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/settings_dialog_password_textview" />
+                app:layout_constraintTop_toBottomOf="@+id/settings_dialog_password_textview"
+                app:layout_constraintVertical_bias="0.487" />
 
             <Button
                 android:id="@+id/settings_dialog_cancel_button"
@@ -82,7 +90,8 @@
                 android:textColor="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/settings_dialog_player_title"
-                app:layout_constraintTop_toBottomOf="@+id/settings_dialog_password_textview" />
+                app:layout_constraintTop_toBottomOf="@+id/settings_dialog_password_textview"
+                app:layout_constraintVertical_bias="0.487" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

@@ -10,20 +10,19 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.mediabender.R
+import com.example.mediabender.models.MediaPlayer
+import com.example.mediabender.models.PlayerAccount
 import java.lang.ClassCastException
 
 
-//TODO add connection service
-class PlayerConnectionDialog(val player: MediaPlayerType) : DialogFragment() {
 
-    enum class MediaPlayerType(val playerName: String) {
-        SPOTIFY("Spotify"),
-        APPLE_MUSIC("Apple Music"),
-        GOOGLE_PLAY("Google Play Music");
-    }
+
+
+//TODO add connection service
+class PlayerConnectionDialog(val player: MediaPlayer) : DialogFragment() {
 
     interface ConnectionDialogListener{
-        fun acceptConnectionOnDismiss(name: MediaPlayerType)
+        fun acceptConnectionOnDismiss(name: MediaPlayer, playerAccount: PlayerAccount)
     }
 
     lateinit var title: TextView
@@ -45,6 +44,8 @@ class PlayerConnectionDialog(val player: MediaPlayerType) : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        this.dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+
         title = view.findViewById(R.id.settings_dialog_player_title)
         connectButton = view.findViewById(R.id.settings_dialog_connect_button)
         cancelButton = view.findViewById(R.id.settings_dialog_cancel_button)
@@ -54,24 +55,29 @@ class PlayerConnectionDialog(val player: MediaPlayerType) : DialogFragment() {
         setupTheme()
 
         cancelButton.setOnClickListener { dismiss() }
-        connectButton.setOnClickListener { listener.acceptConnectionOnDismiss(player) }
+        connectButton.setOnClickListener {
+            listener.acceptConnectionOnDismiss( player, PlayerAccount(email.text.toString(), password.text.toString()))
+            dismiss()
+        }
     }
 
+
+
     private fun setupTheme(){
-        title.text = player.playerName
+        title.text = player.prettyName
 
             when(player){
-            MediaPlayerType.SPOTIFY -> {
+            MediaPlayer.SPOTIFY -> {
                 title.setTextColor(context!!.getColor(R.color.spotify_primary))
                 connectButton.background = context!!.getDrawable(R.drawable.spotify_connection_button)
             }
 
-            MediaPlayerType.APPLE_MUSIC -> {
+            MediaPlayer.APPLE_MUSIC -> {
                 title.setTextColor(context!!.getColor(R.color.apple_music_primary))
                 connectButton.background = context!!.getDrawable(R.drawable.apple_music_connection_button)
             }
 
-            MediaPlayerType.GOOGLE_PLAY -> {
+            MediaPlayer.GOOGLE_PLAY -> {
                 title.setTextColor(context!!.getColor(R.color.google_play_primary))
                 connectButton.background = context!!.getDrawable(R.drawable.google_play_connection_button)
             }

@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">Media Bender</string>
+    <string name="spotify_email">SPOTIFY_EMAIL</string>
+    <string name="spotify_password">SPOTIFY_PASSWORD</string>
+    <string name="google_play_email">GOOGLE_PLAY_EMAIL</string>
+    <string name="google_play_passsword">GOOGLE_PLAY_PASSSWORD</string>
+    <string name="apple_music_email">APPLE_MUSIC_EMAIL</string>
+    <string name="apple_music_password">APPLE_MUSIC_PASSWORD</string>
 
     <string-array name="themes">
         <item>Dark</item>
