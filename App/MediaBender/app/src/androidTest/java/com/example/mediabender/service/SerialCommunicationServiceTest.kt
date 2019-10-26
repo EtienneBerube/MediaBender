@@ -1,9 +1,5 @@
 package com.example.mediabender.service
-import android.content.Context
-import android.hardware.usb.UsbManager
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.mediabender.MainActivity
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.Assert.*

@@ -17,6 +17,20 @@ import android.widget.Toast
 
 private const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
 
+/**
+ * In order to use the service in an activity, one must add:
+ *
+ * onCreate(){
+ * SerialCommunicationService.instance.setService(this)
+ * SerialCommunicationService.instance.setDataOnReceiveListener{ runOnUiThread{
+ * DEFINE LISTENER HERE. IT CAN BE LEFT BLANK. }}
+ * }
+ *
+ * onResume(){
+ * SerialCommunicationService.instance.requestUSBpermission(context)
+ * }
+ *
+ */
 class SerialCommunicationService {
     private var device: UsbDevice? = null
     private lateinit var serialPort: UsbSerialDevice

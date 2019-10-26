@@ -91,33 +91,27 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mediabender/MainActivity.kt">
+    <leaf>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mediabender/service/SerialCommunicationService.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="9" selection-start-line="9" selection-end-line="9" />
+            <state relative-caret-position="357">
+              <caret line="21" column="2" lean-forward="true" selection-start-line="21" selection-start-column="2" selection-end-line="21" selection-end-column="2" />
               <folding>
-                <element signature="e#33#233#0" expanded="true" />
+                <element signature="e#41#549#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mediabender/service/SerialCommunicationService.kt">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mediabender/MainActivity.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
-              <caret line="170" column="32" selection-start-line="170" selection-start-column="8" selection-end-line="170" selection-end-column="32" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/com/example/mediabender/service/SerialCommunicationServiceTest.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="505">
-              <caret line="45" column="50" lean-forward="true" selection-start-line="45" selection-start-column="50" selection-end-line="45" selection-end-column="50" />
+            <state relative-caret-position="510">
+              <caret line="30" column="22" lean-forward="true" selection-start-line="30" selection-start-column="8" selection-end-line="30" selection-end-column="22" />
+              <folding>
+                <element signature="e#33#233#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -158,12 +152,12 @@
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mediabender/service/DataReceptionListener.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/mediabender/MainActivity.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mediabender/service/SerialCommunicationService.kt" />
         <option value="$PROJECT_DIR$/app/src/androidTest/java/com/example/mediabender/service/SerialCommunicationServiceTest.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/mediabender/service/SerialCommunicationService.kt" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-479" />
     <option name="y" value="-21" />
     <option name="width" value="1936" />
@@ -175,40 +169,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="MediaBender" type="1abcf292:AndroidViewProjectNode" />
-              <item name="MediaBender-app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="MediaBender" type="1abcf292:AndroidViewProjectNode" />
-              <item name="MediaBender-app" type="feadf853:AndroidModuleNode" />
-              <item name="manifests" type="f94875db:AndroidManifestsGroupNode" />
-            </path>
-            <path>
-              <item name="MediaBender" type="1abcf292:AndroidViewProjectNode" />
-              <item name="MediaBender-app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="MediaBender" type="1abcf292:AndroidViewProjectNode" />
-              <item name="MediaBender-app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="mediabender" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MediaBender" type="1abcf292:AndroidViewProjectNode" />
-              <item name="MediaBender-app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="mediabender" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -230,7 +190,37 @@
           <select />
         </subPane>
       </pane>
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="MediaBender" type="1abcf292:AndroidViewProjectNode" />
+              <item name="MediaBender-app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="MediaBender" type="1abcf292:AndroidViewProjectNode" />
+              <item name="MediaBender-app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="MediaBender" type="1abcf292:AndroidViewProjectNode" />
+              <item name="MediaBender-app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="mediabender" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MediaBender" type="1abcf292:AndroidViewProjectNode" />
+              <item name="MediaBender-app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="mediabender" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -551,9 +541,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="ExampleInstrumentedT___ - 2019.10.26 at 16h 21m 56s.xml">
-      <configuration name="ExampleInstrumentedT..." configurationId="AndroidTestRunConfigurationType" />
-    </history-entry>
     <history-entry file="SerialCommunicationS___ - 2019.10.26 at 16h 22m 07s.xml">
       <configuration name="SerialCommunicationS..." configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
@@ -581,6 +568,9 @@
     <history-entry file="SerialCommunicationS___ - 2019.10.26 at 17h 02m 10s.xml">
       <configuration name="SerialCommunicationS..." configurationId="AndroidTestRunConfigurationType" />
     </history-entry>
+    <history-entry file="SerialCommunicationS___ - 2019.10.26 at 17h 04m 02s.xml">
+      <configuration name="SerialCommunicationS..." configurationId="AndroidTestRunConfigurationType" />
+    </history-entry>
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -596,7 +586,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.12846482" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.12846482" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Build Variants" order="3" side_tool="true" />
       <window_info id="Image Layers" order="4" />
@@ -605,16 +595,16 @@
       <window_info id="Capture Tool" order="7" />
       <window_info id="Favorites" order="8" side_tool="true" />
       <window_info id="DB Browser" order="9" weight="0.32995737" />
-      <window_info active="true" anchor="bottom" id="Run" order="0" visible="true" weight="0.23510292" />
+      <window_info anchor="bottom" id="Run" order="0" weight="0.23510292" />
       <window_info anchor="bottom" id="Logcat" order="1" weight="0.2524377" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.32936078" />
-      <window_info anchor="bottom" id="Android Profiler" order="3" />
+      <window_info anchor="bottom" id="Android Profiler" order="3" show_stripe_button="false" />
       <window_info anchor="bottom" id="Debug" order="4" />
       <window_info anchor="bottom" id="Terminal" order="5" weight="0.32936078" />
       <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.5042644" side_tool="true" weight="0.21885157" />
       <window_info anchor="bottom" id="Flutter Performance" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.49840087" weight="0.32936078" />
-      <window_info anchor="bottom" id="Build" order="9" sideWeight="0.49573562" weight="0.13217768" />
+      <window_info anchor="bottom" id="Build" order="9" sideWeight="0.49573562" visible="true" weight="0.13217768" />
       <window_info anchor="bottom" id="DB Execution Console" order="10" />
       <window_info anchor="bottom" id="Find" order="11" weight="0.32936078" />
       <window_info anchor="right" id="Capture Analysis" order="0" />
@@ -741,12 +731,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+      <provider editor-type-id="android-manifest" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
           <caret line="13" column="68" lean-forward="true" selection-start-line="13" selection-start-column="68" selection-end-line="13" selection-end-column="68" />
         </state>
       </provider>
-      <provider editor-type-id="android-manifest" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/com/example/mediabender/ExampleInstrumentedTest.kt">
       <provider selected="true" editor-type-id="text-editor">
@@ -758,10 +748,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/com/example/mediabender/service/SerialCommunicationServiceTest.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="30" column="40" lean-forward="true" selection-start-line="30" selection-start-column="40" selection-end-line="30" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mediabender/MainActivity.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        <state relative-caret-position="510">
+          <caret line="30" column="22" lean-forward="true" selection-start-line="30" selection-start-column="8" selection-end-line="30" selection-end-column="22" />
           <folding>
             <element signature="e#33#233#0" expanded="true" />
           </folding>
@@ -770,15 +767,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/mediabender/service/SerialCommunicationService.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="170" column="32" selection-start-line="170" selection-start-column="8" selection-end-line="170" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/com/example/mediabender/service/SerialCommunicationServiceTest.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="505">
-          <caret line="45" column="50" lean-forward="true" selection-start-line="45" selection-start-column="50" selection-end-line="45" selection-end-column="50" />
+        <state relative-caret-position="357">
+          <caret line="21" column="2" lean-forward="true" selection-start-line="21" selection-start-column="2" selection-end-line="21" selection-end-column="2" />
+          <folding>
+            <element signature="e#41#549#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
