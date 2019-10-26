@@ -20,6 +20,7 @@ void setup() {
    while (!Serial) {
     ; // wait for serial port to connect.
   }
+  delay(5000);
 }
 
 void loop() {
