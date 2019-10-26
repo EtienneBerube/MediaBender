@@ -14,10 +14,9 @@ import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
 import android.widget.TextView
 import java.io.UnsupportedEncodingException
-
+import android.content.IntentFilter
 
 private const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
-
 
 class MainActivity : AppCompatActivity() {
     var device: UsbDevice? = null
@@ -26,99 +25,156 @@ class MainActivity : AppCompatActivity() {
     var connection : UsbDeviceConnection? = null
     private lateinit var textView : TextView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        textView = findViewById(R.id.textView)
-        usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
-        startConnection()
-    }
-
-    fun startConnection() {
-
-        val usbDevices = usbManager.deviceList
-        if (usbDevices.isNotEmpty()) {
-            Log.d("SERIAL", "DEVICE LIST FOUND")
-            var keep = true
-            for (entry in usbDevices.entries) {
-                device = entry.value
-                val deviceVID = entry.value.vendorId
-                Log.d("SERIAL", "DEVICE ID $entry.value.vendorId")
-                if (deviceVID == 0x2341)
-                //Arduino Vendor ID
-                {
-                    Log.d("SERIAL", "ARDUINO DEVICE ID FOUND")
-                    val pi = PendingIntent.getBroadcast(this, 0, Intent(ACTION_USB_PERMISSION), 0)
-                    usbManager.requestPermission(device, pi)
-                    keep = false
-                } else {
-                    connection = null
-                    device = null
-                }
-
-                if (!keep)
-                    break
-            }
-        }
-        Log.d("SERIAL", "DEVICE LIST NOT FOUND")
-    }
-
+    /**
+     * Internal private object BroadcastReceiver with overriden function on received.
+     * A broadcast receiver is the OS dispatcher of intents.
+     * In our case, we need to listen to:
+     * ACTION_USB_PERMISSION -> Open the serial port
+     * ACTION_USB_DEVICE_ATTACHED -> Start the connection
+     * ACTION_USB_DEVICE_DETACHED -> Close the connection
+     */
     private val broadcastReceiver = object :
-        BroadcastReceiver() { //Broadcast Receiver to automatically start and stop the Serial connection.
+        BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action == ACTION_USB_PERMISSION) {
-                val granted = intent.extras!!.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED)
-                if (granted) {
-                    connection = usbManager.openDevice(device)
-                    serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection)
-                    if (serialPort != null) {
-                        if (serialPort.open()) { //Set Serial Connection Parameters.
-                            serialPort.setBaudRate(9600)
-                            serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8)
-                            serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1)
-                            serialPort.setParity(UsbSerialInterface.PARITY_NONE)
-                            serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
-                            serialPort.read(mCallback) //
-                            tvAppend(textView as TextView, "Serial Connection Opened!\n")
-
-                        } else {
-                            Log.d("SERIAL", "PORT NOT OPEN")
-                        }
+            when(intent.action){
+                ACTION_USB_PERMISSION -> {
+                    appendLog(textView,"USB PERMISSION ACTION\n")
+                    if (intent.extras!!.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED)) {
+                        appendLog(textView,"USB PERMISSION GRANTED\n")
+                        openPort()
                     } else {
-                        Log.d("SERIAL", "PORT IS NULL")
+                        appendLog(textView,"PERMISSION NOT GRANTED\n")
                     }
-                } else {
-                    Log.d("SERIAL", "PERM NOT GRANTED")
                 }
-            } else if (intent.action == UsbManager.ACTION_USB_DEVICE_ATTACHED) {
-                startConnection()
-            } else if (intent.action == UsbManager.ACTION_USB_DEVICE_DETACHED) {
-                startConnection()
+                UsbManager.ACTION_USB_DEVICE_ATTACHED ->{
+                    appendLog(textView,"USB ATTACHED\n")
+                    requestUSBpermission()
+                }
+                else -> {
+                    appendLog(textView,"USB DETACHED\n")
+                    closeConnection()
+                }
             }
         }
     }
 
-    private val mCallback = UsbSerialInterface.UsbReadCallback {
+    /**
+     * Function that opens the port.
+     * This function sets the parameters necessary to have a serial connection with Arduino
+     * serialPort.read(dataReceivedCallBack) -> When the serial port reads information,
+     * it call the function UsbReadCallback from our UsbSerialInterface named dataReceivedCallBack.
+     */
+    private fun openPort(){
+        connection = usbManager.openDevice(device)
+        serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection)
+        if (serialPort != null) {
+            if (serialPort.open()) { //Set Serial Connection Parameters.
+                serialPort.setBaudRate(9600)
+                serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8)
+                serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1)
+                serialPort.setParity(UsbSerialInterface.PARITY_NONE)
+                serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
+                serialPort.syncRead(ByteArray(1),0)
+                serialPort.read(dataReceivedCallBack)
+                appendLog(textView, "Serial Connection Opened!\n")
+
+            } else {
+                appendLog(textView,"PORT NOT OPEN\n")
+            }
+        } else {
+            appendLog(textView,"PORT IS NULL\n")
+        }
+    }
+
+    /**
+     * A UsbSerialInterface with defined UsbReadCallback function.
+     * This function is called whenever we receive information.
+     * This is where we interpret the data received.
+     */
+    private val dataReceivedCallBack = UsbSerialInterface.UsbReadCallback {
         //TODO: implement a received data algorithm/Protocol
-        var data: Int? = null
         try {
-            data = it[0].toInt()
-            "$data/n"
-            tvAppend(textView, data.toString())
+            if(it.isNotEmpty()) {
+                appendLog(textView,
+                    "Data received [${it.javaClass}] : ${it.asList().asReversed()}\n")
+            }
         } catch (e: UnsupportedEncodingException) {
             e.printStackTrace()
         }
 
     }
 
-    private fun tvAppend(tv: TextView, text: CharSequence) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        textView = findViewById(R.id.textView)
+        usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requestUSBpermission()
+    }
+
+    /**
+     * requestUSBpermission does just that, it requestion a USB permission.
+     * It first obtain the device list, for all devices, is our microcontroller here?
+     * If yes,
+     * filter the intents on our broadcast receiver and link it to the intent receiver.
+     * Request a permission from the ubsManager with our pending intent.
+     * Since we linked our broadcast receiver, if the permission is accepted,
+     * onReceived will be called
+     */
+    fun requestUSBpermission() {
+
+        val usbDevices = usbManager.deviceList
+        if (usbDevices.isNotEmpty()) {
+            appendLog(textView,"DEVICE LIST FOUND\n")
+            var found = false
+            for (entry in usbDevices.entries) {
+                device = entry.value
+                val deviceVID = entry.value.vendorId
+                appendLog(textView,"DEVICE ID ${entry.value.vendorId}\n")
+                if (deviceVID == 0x2341){//Arduino Vendor ID
+                    appendLog(textView,"ARDUINO DEVICE ID FOUND\n")
+                    val pi = PendingIntent.getBroadcast(this, 0, Intent(ACTION_USB_PERMISSION), 0)
+                    val filter = IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+                    filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+                    filter.addAction(ACTION_USB_PERMISSION)
+                    registerReceiver(broadcastReceiver, filter)
+                    usbManager.requestPermission(device, pi)
+                    found = true
+                } else {
+                    connection = null
+                    device = null
+                }
+
+                if (found)
+                    break
+            }
+        }else{
+            appendLog(textView,"DEVICE LIST NOT FOUND\n")
+        }
+    }
+
+    private fun appendLog(tv: TextView, text: CharSequence) {
+        Log.d("SERIAL", "$text")
         runOnUiThread { tv.append(text) }
     }
 
+    /**
+     * Function to write to the Arduino. Might have to be implemented later.
+     * Never used.
+     */
     private fun writeToSerial(string:String) {
         serialPort.write(string.toByteArray())
     }
 
+    /**
+     * Function to close the connection
+     * If the serial connection in not closed, there is a risk of memory leak and fatal exception.
+     * To be secure, if anything seems wrong, it is required to close the connection.
+     */
     private fun closeConnection(){
         serialPort.close()
     }

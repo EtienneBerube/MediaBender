@@ -17,15 +17,15 @@ static byte message = 0x00;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600); 
+   while (!Serial) {
+    ; // wait for serial port to connect.
+  }
 }
 
 void loop() {
   updateMessage();
-  if(Serial.available())  
-  {  
-   message = Serial.read();  
-   Serial.print(message);  
-  }  
+  Serial.write(message);  
+  delay(1000);
 }
 
 void updateMessage()
