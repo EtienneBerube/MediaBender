@@ -34,6 +34,50 @@ class SerialCommunicationService {
     }
 
     /**
+     * requestUSBpermission does just that, it requestion a USB permission.
+     * It first obtain the device list, for all devices, is our microcontroller here?
+     * If yes,
+     * filter the intents on our broadcast receiver and link it to the intent receiver.
+     * Request a permission from the ubsManager with our pending intent.
+     * Since we linked our broadcast receiver, if the permission is accepted,
+     * onReceived will be called
+     * This function has to be called in activity onResumed since a USBconnection intent is an
+     * activity intent and will automatically call a new activity otherwise stated in onResume.
+     */
+    fun requestUSBpermission(context: Context) {
+
+        val usbDevices = usbManager.deviceList
+        if (usbDevices.isNotEmpty()) {
+            appendLog(context,"DEVICE LIST FOUND\n")
+            var found = false
+            for (entry in usbDevices.entries) {
+                device = entry.value
+                val deviceVID = entry.value.vendorId
+                appendLog(context,"DEVICE ID ${entry.value.vendorId}\n")
+                if (deviceVID == 0x2341) {//Arduino Vendor ID
+                    appendLog(context,"ARDUINO DEVICE ID FOUND\n")
+                    val pi =
+                        PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
+                    val filter = IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+                    filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+                    filter.addAction(ACTION_USB_PERMISSION)
+                    context.registerReceiver(broadcastReceiver, filter)
+                    usbManager.requestPermission(device, pi)
+                    found = true
+                } else {
+                    connection = null
+                    device = null
+                }
+
+                if (found)
+                    break
+            }
+        } else {
+            appendLog(context,"DEVICE LIST NOT FOUND\n")
+        }
+    }
+
+    /**
      * Internal private object BroadcastReceiver with overriden function on received.
      * A broadcast receiver is the OS dispatcher of intents.
      * In our case, we need to listen to:
@@ -126,52 +170,6 @@ class SerialCommunicationService {
      */
     fun setDataOnReceiveListener(feedback : (ByteArray) -> Unit){
         dataReceiveListener = feedback
-    }
-
-
-
-    /**
-     * requestUSBpermission does just that, it requestion a USB permission.
-     * It first obtain the device list, for all devices, is our microcontroller here?
-     * If yes,
-     * filter the intents on our broadcast receiver and link it to the intent receiver.
-     * Request a permission from the ubsManager with our pending intent.
-     * Since we linked our broadcast receiver, if the permission is accepted,
-     * onReceived will be called
-     * This function has to be called in activity onResumed since a USBconnection intent is an
-     * activity intent and will automatically call a new activity otherwise stated in onResume.
-     */
-    fun requestUSBpermission(context: Context) {
-
-        val usbDevices = usbManager.deviceList
-        if (usbDevices.isNotEmpty()) {
-            appendLog(context,"DEVICE LIST FOUND\n")
-            var found = false
-            for (entry in usbDevices.entries) {
-                device = entry.value
-                val deviceVID = entry.value.vendorId
-                appendLog(context,"DEVICE ID ${entry.value.vendorId}\n")
-                if (deviceVID == 0x2341) {//Arduino Vendor ID
-                    appendLog(context,"ARDUINO DEVICE ID FOUND\n")
-                    val pi =
-                        PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
-                    val filter = IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
-                    filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
-                    filter.addAction(ACTION_USB_PERMISSION)
-                    context.registerReceiver(broadcastReceiver, filter)
-                    usbManager.requestPermission(device, pi)
-                    found = true
-                } else {
-                    connection = null
-                    device = null
-                }
-
-                if (found)
-                    break
-            }
-        } else {
-            appendLog(context,"DEVICE LIST NOT FOUND\n")
-        }
     }
 
     /**
