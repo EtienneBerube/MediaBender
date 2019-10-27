@@ -38,6 +38,7 @@ class SerialCommunicationService {
     private var connection: UsbDeviceConnection? = null
     var data: ArrayList<Byte> = ArrayList()
     var dataReceiveListener : (ByteArray) -> Unit = {}
+    private var isConnected = false
 
     fun setService(activity: Activity) {
         usbManager = activity.getSystemService(Context.USB_SERVICE) as UsbManager
@@ -59,35 +60,32 @@ class SerialCommunicationService {
      * activity intent and will automatically call a new activity otherwise stated in onResume.
      */
     fun requestUSBpermission(context: Context) {
+        if(!isConnected) {
+            val usbDevices = usbManager.deviceList
+            if (usbDevices.isNotEmpty()) {
+                var found = false
+                for (entry in usbDevices.entries) {
+                    device = entry.value
+                    val deviceVID = entry.value.vendorId
+                    if (deviceVID == 0x2341) {//Arduino Vendor ID
+                        appendLog(context, "ARDUINO DEVICE ID FOUND\n")
+                        val pi =
+                            PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
+                        val filter = IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+                        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+                        filter.addAction(ACTION_USB_PERMISSION)
+                        context.registerReceiver(broadcastReceiver, filter)
+                        usbManager.requestPermission(device, pi)
+                        found = true
+                    } else {
+                        connection = null
+                        device = null
+                    }
 
-        val usbDevices = usbManager.deviceList
-        if (usbDevices.isNotEmpty()) {
-            appendLog(context,"DEVICE LIST FOUND\n")
-            var found = false
-            for (entry in usbDevices.entries) {
-                device = entry.value
-                val deviceVID = entry.value.vendorId
-                appendLog(context,"DEVICE ID ${entry.value.vendorId}\n")
-                if (deviceVID == 0x2341) {//Arduino Vendor ID
-                    appendLog(context,"ARDUINO DEVICE ID FOUND\n")
-                    val pi =
-                        PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
-                    val filter = IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
-                    filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
-                    filter.addAction(ACTION_USB_PERMISSION)
-                    context.registerReceiver(broadcastReceiver, filter)
-                    usbManager.requestPermission(device, pi)
-                    found = true
-                } else {
-                    connection = null
-                    device = null
+                    if (found)
+                        break
                 }
-
-                if (found)
-                    break
             }
-        } else {
-            appendLog(context,"DEVICE LIST NOT FOUND\n")
         }
     }
 
@@ -134,6 +132,7 @@ class SerialCommunicationService {
         serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection)
         if (serialPort != null) {
             if (serialPort.open()) { //Set Serial Connection Parameters.
+                isConnected=true
                 serialPort.setBaudRate(9600)
                 serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8)
                 serialPort.setStopBits(UsbSerialInterface.STOP_BITS_1)
@@ -202,24 +201,29 @@ class SerialCommunicationService {
      */
     private fun closeConnection() {
         serialPort.close()
+        isConnected=false
     }
 
     /**
      * testUSBConnection returns true or false depending if the Arduino is found.
      */
     fun testUSBConnection():Boolean {
-        val usbDevices = usbManager.deviceList
-        if (usbDevices.isNotEmpty()) {
-            var found = false
-            for (entry in usbDevices.entries) {
-                val deviceVID = entry.value.vendorId
-                if (deviceVID == 0x2341) {
-                    return true
+        if(!isConnected){
+            val usbDevices = usbManager.deviceList
+            if (usbDevices.isNotEmpty()) {
+                var found = false
+                for (entry in usbDevices.entries) {
+                    val deviceVID = entry.value.vendorId
+                    if (deviceVID == 0x2341) {
+                        return true
+                    }
                 }
+                return false
+            } else {
+                return false
             }
-            return false
-        } else {
-            return false
+        }else{
+            return true
         }
     }
 

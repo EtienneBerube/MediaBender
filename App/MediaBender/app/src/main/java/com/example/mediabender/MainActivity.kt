@@ -35,11 +35,6 @@ class MainActivity : AppCompatActivity() {
         addListenersOnButtons()
     }
 
-    override fun onResume() {
-        super.onResume()
-        SerialCommunicationService.instance.requestUSBpermission(applicationContext)
-    }
-
     override fun onDestroy() {
         metadataHelper.unregisterBroadcastReceiver()
         super.onDestroy()
@@ -59,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initSerialCommunication() {
         SerialCommunicationService.instance.setService(this)
+        SerialCommunicationService.instance.requestUSBpermission(applicationContext)
     }
 
     // cannot initialize the MediaControls object before the onCreate because it calls
