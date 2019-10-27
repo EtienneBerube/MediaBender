@@ -1,14 +1,13 @@
 package com.example.mediabender.helpers
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.example.mediabender.R
 import com.example.mediabender.models.MediaPlayer
 import com.example.mediabender.models.PlayerAccount
 
 
-class PlayerAccountSharedPreferenceHelper(var context: Context) {
-
-    var sharedPreferences = context.getSharedPreferences("Player Accounts", Context.MODE_PRIVATE)
+class PlayerAccountSharedPreferenceHelper( var sharedPreferences: SharedPreferences) {
 
     fun getPlayerAccount(player: MediaPlayer): PlayerAccount?{
         val email = sharedPreferences.getString("${player.packageName}_email", null)

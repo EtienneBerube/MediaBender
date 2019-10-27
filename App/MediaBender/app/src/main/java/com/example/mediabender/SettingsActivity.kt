@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Button
@@ -20,7 +19,6 @@ import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
 import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.models.MediaPlayer
 import com.example.mediabender.models.PlayerAccount
-import com.jaredrummler.android.processes.AndroidProcesses
 
 
 class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {
@@ -33,7 +31,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(this.applicationContext)
+        playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(getSharedPreferences("Player Accounts", Context.MODE_PRIVATE))
 
         if(!checkIfPermissionGranted())
             startActivity( Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
@@ -42,23 +40,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         setupApplePlayMusic()
         setupSpotify()
         setupGooglePlayMusic()
-    }
-
-    fun needPermissionForBlocking(context: Context): Boolean {
-        try {
-            val packageManager = context.packageManager
-            val applicationInfo = packageManager.getApplicationInfo(context.packageName, 0)
-            val appOpsManager = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-            val mode = appOpsManager.checkOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                applicationInfo.uid,
-                applicationInfo.packageName
-            )
-            return mode != AppOpsManager.MODE_ALLOWED
-        } catch (e: PackageManager.NameNotFoundException) {
-            return true
-        }
-
     }
 
     override fun onResume() {
@@ -91,7 +72,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     }
 
     private fun checkIfPermissionGranted(): Boolean{
-        var granted = false
+        var granted = false;
         val appOps = applicationContext
             .getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
         val mode = appOps.checkOpNoThrow(

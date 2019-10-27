@@ -45,7 +45,7 @@
                 android:layout_marginTop="20dp"
                 android:ems="10"
                 android:hint="Email or Username"
-                android:inputType="textPersonName"
+                android:inputType="textEmailAddress"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.505"
                 app:layout_constraintStart_toStartOf="parent"
