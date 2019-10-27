@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.MediaPlayer
+import android.widget.Toast
 
 class MetadataHelper(context: Context) {
 
@@ -55,15 +56,22 @@ class MetadataHelper(context: Context) {
         // if any of the arguments are null, sets the string to blank
         private fun setTrack(track: String?) {
             live_track = track ?: ""
+            toast(live_track)
         }
         private fun setAlbum(album: String?) {
             live_album = album ?: ""
+            toast(live_album)
         }
         private fun setArtist(artist: String?) {
             live_artist = artist ?: ""
+            toast(live_artist)
         }
         private fun setURI(uri: String?) {
             live_uri = uri ?: ""
+            toast(live_uri)
+        }
+        private fun toast(str: String) {
+            Toast.makeText(context, str, Toast.LENGTH_SHORT).show()
         }
     }
 
