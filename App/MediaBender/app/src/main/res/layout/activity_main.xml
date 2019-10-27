@@ -48,22 +48,18 @@
             android:text="Anna Lunoe"
             android:textAlignment="center"
             android:textColor="#FFF"
-            android:textSize="17sp"/>
+            android:textSize="17sp" />
 
 
         <!--play button-->
         <ImageButton
             android:id="@+id/playPauseButtMain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_alignBottom="@+id/artistNameMainTextView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="175dp"
-            android:layout_marginRight="175dp"
-            android:layout_marginBottom="-85dp"
-            android:background="@drawable/play_pause_background"
-            />
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="-105dp"
+            android:background="@drawable/play_pause_background" />
 
         <!--backward button-->
         <ImageButton
@@ -73,7 +69,7 @@
             android:layout_alignBottom="@+id/playPauseButtMain"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="55dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/roundbutton"
             android:src="@drawable/fast_rewind_white">
 
@@ -84,10 +80,10 @@
             android:id="@+id/fastForwardButtMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/playPauseButtMain"
+            android:layout_alignBottom="@+id/fastRewindButtMain"
             android:layout_alignParentRight="true"
             android:layout_marginRight="55dp"
-            android:layout_marginBottom="10dp"
+
             android:background="@drawable/roundbutton"
             android:src="@drawable/fast_forward_white">
 
