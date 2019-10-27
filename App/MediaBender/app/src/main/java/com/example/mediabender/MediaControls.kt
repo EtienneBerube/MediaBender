@@ -50,4 +50,8 @@ class MediaControls(context: Context) {
         // flag 0 to do nothing
         audioManager.adjustVolume(AudioManager.ADJUST_LOWER,0)
     }
+
+    fun isMusicPlaying(): Boolean {
+        return audioManager.isMusicActive
+    }
 }
