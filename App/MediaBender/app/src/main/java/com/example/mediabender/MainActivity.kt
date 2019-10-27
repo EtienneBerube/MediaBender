@@ -8,6 +8,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.example.mediabender.activities.SettingsActivity
 import com.example.mediabender.service.SerialCommunicationService
 
 class MainActivity : AppCompatActivity() {
@@ -89,9 +90,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //TODO: implement this
+
     private fun goToSettingsPage() {
-//        private val = Intent(this,)
+        val intent = Intent(this,SettingsActivity::class.java)
+        startActivity(intent)
     }
 
     private fun playPauseButtPressed() {
