@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.example.mediabender.activities.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var albumArt: ImageView
@@ -64,9 +65,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //TODO: implement this
+
     private fun goToSettingsPage() {
-//        private val = Intent(this,)
+        val intent = Intent(this,SettingsActivity::class.java)
+        startActivity(intent)
     }
 
     private fun playPauseButtPressed() {

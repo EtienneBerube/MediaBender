@@ -1,8 +1,6 @@
-package com.example.mediabender
+package com.example.mediabender.activities
 
-import android.app.ActivityManager
 import android.app.AppOpsManager
-import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,6 +12,7 @@ import android.widget.Button
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.mediabender.R
 import com.example.mediabender.dialogs.PlayerConnectionDialog
 import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
 import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
