@@ -1,19 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--Image for the Album art of the current song playing-->
+        <ImageView
+            android:id="@+id/albumArtViewer"
+            android:layout_width="match_parent"
+            android:layout_height="300sp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/album_art_default" />
+
+        <!--TextView for the Title of the song playing-->
+        <TextView
+            android:id="@+id/songTitleMainTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/albumArtViewer"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="-40dp"
+            android:text="One Thirty"
+            android:textAlignment="center"
+            android:textColor="#FFF"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <!--TextView for the artist Name of the song playing-->
+        <TextView
+            android:id="@+id/artistNameMainTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/songTitleMainTextView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="-30dp"
+            android:text="Anna Lunoe"
+            android:textAlignment="center"
+            android:textColor="#FFF"
+            android:textSize="17sp" />
+
+
+        <!--play button-->
+        <ImageButton
+            android:id="@+id/playPauseButtMain"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignBottom="@+id/artistNameMainTextView"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="-105dp"
+            android:background="@drawable/play_pause_background" />
+
+        <!--backward button-->
+        <ImageButton
+            android:id="@+id/fastRewindButtMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/playPauseButtMain"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="55dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/roundbutton"
+            android:src="@drawable/fast_rewind_white">
+
+        </ImageButton>
+
+        <!--Skip button-->
+        <ImageButton
+            android:id="@+id/fastForwardButtMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/fastRewindButtMain"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="55dp"
+
+            android:background="@drawable/roundbutton"
+            android:src="@drawable/fast_forward_white">
+
+        </ImageButton>
+
+
+    </RelativeLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
