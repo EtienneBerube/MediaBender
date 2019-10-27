@@ -15,6 +15,8 @@ import com.example.mediabender.service.SerialCommunicationService
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mediaControls: MediaControls
+    private lateinit var metadataHelper: MetadataHelper
+
     private lateinit var albumArt: ImageView
     private lateinit var songTitleTV: TextView
     private lateinit var songArtistNameTV: TextView
@@ -38,6 +40,11 @@ class MainActivity : AppCompatActivity() {
         SerialCommunicationService.instance.requestUSBpermission(applicationContext)
     }
 
+    override fun onDestroy() {
+        metadataHelper.unregisterBroadcastReceiver()
+        super.onDestroy()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return super.onCreateOptionsMenu(menu)
@@ -58,6 +65,7 @@ class MainActivity : AppCompatActivity() {
     // getSystemService in its construction, which is not available before onCreate is called
     private fun initMediaControls() {
         mediaControls = MediaControls(this)
+        metadataHelper = MetadataHelper(this)
     }
 
     private fun initViews() {

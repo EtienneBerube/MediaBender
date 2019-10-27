@@ -22,35 +22,29 @@ class MediaControls(context: Context) {
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY)
         )
     }
-
     fun pause() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
         )
     }
-
     fun next() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
         )
     }
-
     fun previous() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
         )
     }
-
     fun volumeUp() {
         // flag 0 to do nothing
         audioManager.adjustVolume(AudioManager.ADJUST_RAISE,0)
     }
-
     fun volumeDown() {
         // flag 0 to do nothing
         audioManager.adjustVolume(AudioManager.ADJUST_LOWER,0)
     }
-
     fun isMusicPlaying(): Boolean {
         return audioManager.isMusicActive
     }
