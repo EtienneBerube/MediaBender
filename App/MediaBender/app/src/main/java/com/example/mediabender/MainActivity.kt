@@ -1,46 +1,91 @@
 package com.example.mediabender
 
-import android.content.pm.PackageManager
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
-
-    // object to allow media control
-    private var bs: MediaControls = MediaControls(this);
-
-    private var b_volUp: Button? = null
-    private var b_volDown: Button? = null
-    private var b_play: Button? = null
-    private var b_pause: Button? = null
-    private var b_next: Button? = null
-    private var b_previous: Button? = null
-
+    private lateinit var albumArt: ImageView
+    private lateinit var songTitleTV: TextView
+    private lateinit var songArtistNameTV: TextView
+    private lateinit var playButton: ImageButton
+    private lateinit var skipPlayingButton: ImageButton
+    private lateinit var backPlayingButton: ImageButton
+    private var musicPlaying = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initializeMediaControls()
+        initViews()
+        addListenersOnButtons()
     }
 
-    private fun initializeMediaControls() {
-
-        // getting buttons
-        b_volDown = findViewById<Button>(R.id.b_voldown)
-        b_volUp = findViewById<Button>(R.id.b_volup)
-        b_play = findViewById<Button>(R.id.b_play)
-        b_pause = findViewById<Button>(R.id.b_pause)
-        b_next = findViewById<Button>(R.id.b_next)
-        b_previous = findViewById<Button>(R.id.b_previous)
-
-        // setting OnClickListeners
-        b_volDown?.setOnClickListener {bs?.volumeDown()}
-        b_volUp?.setOnClickListener {bs?.volumeUp()}
-        b_play?.setOnClickListener {bs?.play()}
-        b_pause?.setOnClickListener {bs?.pause()}
-        b_next?.setOnClickListener {bs?.next()}
-        b_previous?.setOnClickListener {bs?.previous()}
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.moveToSettingsAction) {
+            goToSettingsPage()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun initViews() {
+        albumArt = findViewById(R.id.albumArtViewer)
+        songTitleTV = findViewById(R.id.songTitleMainTextView)
+        songArtistNameTV = findViewById(R.id.artistNameMainTextView)
+        playButton = findViewById(R.id.playPauseButtMain)
+        playButton.setImageResource(R.drawable.pause_white)
+
+        skipPlayingButton = findViewById(R.id.fastForwardButtMain)
+        backPlayingButton = findViewById(R.id.fastRewindButtMain)
+    }
+
+    private fun addListenersOnButtons() {
+
+        playButton.setOnClickListener {
+            playPauseButtPressed()
+        }
+
+        skipPlayingButton.setOnClickListener {
+            displayToast("Skip")
+        }
+
+        backPlayingButton.setOnClickListener {
+            displayToast("Back")
+        }
+    }
+
+    //TODO: implement this
+    private fun goToSettingsPage() {
+//        private val = Intent(this,)
+    }
+
+    private fun playPauseButtPressed() {
+        if (musicPlaying) {
+            playButton.setImageResource(R.drawable.pause_white)
+            displayToast("Play")
+            musicPlaying = false
+        } else {
+            playButton.setImageResource(R.drawable.play_arrow_white)
+            displayToast("Pause")
+            musicPlaying = true
+        }
+    }
+
+    private fun displayToast(buttonName: String) {
+        Toast.makeText(
+            this,
+            "$buttonName button pressed, but not implemented yet",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
 }

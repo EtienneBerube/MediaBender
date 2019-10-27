@@ -4,68 +4,93 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/b_previous"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="18dp"
-        android:text="previous"
-        app:layout_constraintBottom_toBottomOf="@+id/b_next"
-        app:layout_constraintEnd_toStartOf="@+id/b_next" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/b_volup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="97dp"
-        android:layout_marginTop="110dp"
-        android:text="volume up"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <!--Image for the Album art of the current song playing-->
+        <ImageView
+            android:id="@+id/albumArtViewer"
+            android:layout_width="match_parent"
+            android:layout_height="300sp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/album_art_default" />
 
-    <Button
-        android:id="@+id/b_voldown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="56dp"
-        android:text="volume down"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.161" />
+        <!--TextView for the Title of the song playing-->
+        <TextView
+            android:id="@+id/songTitleMainTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/albumArtViewer"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="-40dp"
+            android:text="One Thirty"
+            android:textAlignment="center"
+            android:textColor="#FFF"
+            android:textSize="19sp"
+            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/b_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="23dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="play"
-        app:layout_constraintBottom_toBottomOf="@+id/b_pause"
-        app:layout_constraintEnd_toStartOf="@+id/b_pause"
-        app:layout_constraintStart_toStartOf="parent" />
+        <!--TextView for the artist Name of the song playing-->
+        <TextView
+            android:id="@+id/artistNameMainTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/songTitleMainTextView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="-30dp"
+            android:text="Anna Lunoe"
+            android:textAlignment="center"
+            android:textColor="#FFF"
+            android:textSize="17sp" />
 
-    <Button
-        android:id="@+id/b_pause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="66dp"
-        android:text="pause"
-        app:layout_constraintBottom_toTopOf="@+id/b_previous"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/b_play" />
 
-    <Button
-        android:id="@+id/b_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="74dp"
-        android:layout_marginBottom="200dp"
-        android:text="next"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!--play button-->
+        <ImageButton
+            android:id="@+id/playPauseButtMain"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignBottom="@+id/artistNameMainTextView"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="-105dp"
+            android:background="@drawable/play_pause_background" />
+
+        <!--backward button-->
+        <ImageButton
+            android:id="@+id/fastRewindButtMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/playPauseButtMain"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="55dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/roundbutton"
+            android:src="@drawable/fast_rewind_white">
+
+        </ImageButton>
+
+        <!--Skip button-->
+        <ImageButton
+            android:id="@+id/fastForwardButtMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/fastRewindButtMain"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="55dp"
+
+            android:background="@drawable/roundbutton"
+            android:src="@drawable/fast_forward_white">
+
+        </ImageButton>
+
+
+    </RelativeLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

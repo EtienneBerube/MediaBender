@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Media Bender</string>
+    <string name="menu_move_to_settings">Go to Settings</string>
 </resources>
