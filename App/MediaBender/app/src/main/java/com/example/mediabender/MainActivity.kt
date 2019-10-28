@@ -101,6 +101,10 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    override fun onBackPressed() {
+        // stay in app when back button pressed, so we do nothing
+    }
+
     private fun playPauseButtPressed() {
         if (musicPlaying) {
             playButton.setImageResource(R.drawable.play_arrow_white)
