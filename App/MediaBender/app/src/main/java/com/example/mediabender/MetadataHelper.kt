@@ -7,7 +7,7 @@ import android.content.IntentFilter
 import android.media.MediaPlayer
 import android.widget.Toast
 
-class MetadataHelper(context: Context) {
+open class MetadataHelper(context: Context) {
 
     private val context = context
     private var live_track:String = ""
@@ -16,6 +16,7 @@ class MetadataHelper(context: Context) {
     private var live_uri:String = ""
 
     private var iF = IntentFilter()
+    private val myReceiver = MyReceiver()
 
     init {
         // google play android actions
@@ -42,7 +43,8 @@ class MetadataHelper(context: Context) {
         iF.addAction("com.spotify.music.metadatachanged")
         iF.addAction("com.spotify.music.queuechanged")
 
-        context.registerReceiver(MyReceiver(), iF)  // TODO need to unregister receiver when activity is closed. need to figure out a way to do this
+        // registering the broadcast receiver with the intent filter
+        registerBroadcastReceiver(iF)
     }
 
     // broadcast receiver to set variables to live data on song change
@@ -54,24 +56,21 @@ class MetadataHelper(context: Context) {
             setURI(intent.toUri(Intent.URI_INTENT_SCHEME))
         }
         // if any of the arguments are null, sets the string to blank
-        private fun setTrack(track: String?) {
+        fun setTrack(track: String?) {
             live_track = track ?: ""
             toast(live_track)
         }
-        private fun setAlbum(album: String?) {
+        fun setAlbum(album: String?) {
             live_album = album ?: ""
             toast(live_album)
         }
-        private fun setArtist(artist: String?) {
+        fun setArtist(artist: String?) {
             live_artist = artist ?: ""
             toast(live_artist)
         }
-        private fun setURI(uri: String?) {
+        fun setURI(uri: String?) {
             live_uri = uri ?: ""
             toast(live_uri)
-        }
-        private fun toast(str: String) {
-            Toast.makeText(context, str, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -88,9 +87,23 @@ class MetadataHelper(context: Context) {
         return live_uri
     }
 
+    fun registerBroadcastReceiver(intentFilter: IntentFilter) {
+        context.registerReceiver(myReceiver, intentFilter)
+    }
+
     // unregister the receiver from the context
     // must be called in the onDestroy of the activity MetadataHelper is a member of
     fun unregisterBroadcastReceiver() {
-        context.unregisterReceiver(MyReceiver())
+        context.unregisterReceiver(myReceiver)
+    }
+
+    // only for testing purposes
+    fun getBroadcastReceiverForTesting(): BroadcastReceiver {
+        return myReceiver
+    }
+
+    // protected open so that the test can override it, since there is no activity to toast to
+    protected open fun toast(str: String) {
+        Toast.makeText(context, str, Toast.LENGTH_SHORT).show()
     }
 }
