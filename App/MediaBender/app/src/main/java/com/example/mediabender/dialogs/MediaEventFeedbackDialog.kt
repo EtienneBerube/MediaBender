@@ -1,6 +1,7 @@
 package com.example.mediabender.dialogs
 
 import android.content.Context.AUDIO_SERVICE
+import android.content.DialogInterface
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
@@ -8,10 +9,12 @@ import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.mediabender.R
 import com.example.mediabender.models.MediaEventType
@@ -20,6 +23,8 @@ import com.example.mediabender.models.MediaEventType
 class MediaEventFeedbackDialog(private val event: MediaEventType) : DialogFragment() {
 
     private lateinit var imageView: ImageView
+    private lateinit var volumeIndicator: TextView
+    private lateinit var handler: Handler
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +40,7 @@ class MediaEventFeedbackDialog(private val event: MediaEventType) : DialogFragme
         this.dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 
         imageView = view.findViewById(R.id.media_feedback_image_viewer)
+        volumeIndicator = view.findViewById(R.id.dialog_media_feedback_volume_indicator)
 
         val image = getImageForEvent()
         image?.let{
@@ -42,9 +48,16 @@ class MediaEventFeedbackDialog(private val event: MediaEventType) : DialogFragme
             imageView.setImageDrawable(it)
         } ?: dismiss()
 
-        Handler().postDelayed( {
+        if(event == MediaEventType.LOWER_VOLUME || event == MediaEventType.RAISE_VOLUME){
+            volumeIndicator.text = "${(getVolumeLevel()*100).toInt()}%"
+        }else{
+            volumeIndicator.visibility = View.INVISIBLE
+        }
+
+        handler = Handler()
+        handler.postDelayed( {
             dismiss()
-        },1500L)
+        },1000L)
     }
 
     private fun getImageForEvent(): Drawable? {
@@ -81,6 +94,8 @@ class MediaEventFeedbackDialog(private val event: MediaEventType) : DialogFragme
             val maxVolume = am?.getStreamMaxVolume(AudioManager.STREAM_MUSIC)?.toDouble() ?: 0.0
             val volumeLevel = am?.getStreamVolume(AudioManager.STREAM_MUSIC)?.toDouble() ?: 0.0
 
+            Log.d("SOUND FEEDBACK", "CURRENT: $volumeLevel, MAX: $maxVolume")
+
             if (maxVolume == 0.0) {
                 //Not max volume, cannot get any sound
                 return 0.0
@@ -91,5 +106,11 @@ class MediaEventFeedbackDialog(private val event: MediaEventType) : DialogFragme
 
         //Cannot get activity
         return 0.0
+    }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        super.onDismiss(dialog)
+
+        handler.removeCallbacksAndMessages(null)
     }
 }

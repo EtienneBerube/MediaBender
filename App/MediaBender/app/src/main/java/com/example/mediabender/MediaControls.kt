@@ -17,7 +17,11 @@ import com.example.mediabender.models.MediaEventType
 
 class MediaControls(context: Context) {
 
+
     private val context: Context = context
+
+    //Whether or not the user is in a voice call
+    private var isInCall = false
 
     // audio manager to be able to interact with media players
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -78,13 +82,18 @@ class MediaControls(context: Context) {
     }
 
     fun volumeUp() {
+        val source = if (isInCall) AudioManager.STREAM_VOICE_CALL else AudioManager.STREAM_MUSIC
+
         // flag 0 to do nothing
-        audioManager.adjustVolume(AudioManager.ADJUST_RAISE, 0)
+        audioManager.adjustStreamVolume(source, AudioManager.ADJUST_RAISE, 0)
     }
 
     fun volumeDown() {
+
+        val source = if (isInCall) AudioManager.STREAM_VOICE_CALL else AudioManager.STREAM_MUSIC
+
         // flag 0 to do nothing
-        audioManager.adjustVolume(AudioManager.ADJUST_LOWER, 0)
+        audioManager.adjustStreamVolume(source, AudioManager.ADJUST_LOWER, 0)
     }
 
     fun isMusicPlaying(): Boolean {
