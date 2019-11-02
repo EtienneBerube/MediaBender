@@ -30,7 +30,9 @@
             android:name=".activities.SettingsActivity"
             android:launchMode="singleTask">
         </activity>
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

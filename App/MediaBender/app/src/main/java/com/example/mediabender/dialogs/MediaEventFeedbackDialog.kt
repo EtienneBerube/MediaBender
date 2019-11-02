@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.os.Bundle
@@ -44,7 +45,12 @@ class MediaEventFeedbackDialog(private val event: MediaEventType) : DialogFragme
 
         val image = getImageForEvent()
         image?.let{
-            it.setColorFilter(BlendModeColorFilter(Color.WHITE, BlendMode.SRC_ATOP))
+            if (android.os.Build.VERSION.SDK_INT >= 29){
+                it.setColorFilter(BlendModeColorFilter(Color.WHITE, BlendMode.SRC_ATOP))
+            } else{
+                //Used in version < 29
+                it.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+            }
             imageView.setImageDrawable(it)
         } ?: dismiss()
 
