@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.mediabender.activities.SettingsActivity
+import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.SerialCommunicationService
 
 class MainActivity : AppCompatActivity() {
@@ -94,12 +95,12 @@ class MainActivity : AppCompatActivity() {
 
         skipPlayingButton.setOnClickListener {
             //displayToast("Skip")
-            mediaControls.next()
+            mediaControls.executeEvent(MediaEventType.SKIP_SONG,this)
         }
 
         backPlayingButton.setOnClickListener {
             //displayToast("Back")
-            mediaControls.previous()
+            mediaControls.executeEvent(MediaEventType.PREVIOUS_SONG,this)
         }
     }
 
@@ -117,12 +118,12 @@ class MainActivity : AppCompatActivity() {
         if (musicPlaying) {
             playButton.setImageResource(R.drawable.play_arrow_white)
             //displayToast("Pause")
-            mediaControls.pause()
+            mediaControls.executeEvent(MediaEventType.PAUSE,this)
             musicPlaying = false
         } else {
             playButton.setImageResource(R.drawable.pause_white)
             //displayToast("Play")
-            mediaControls.play()
+            mediaControls.executeEvent(MediaEventType.PLAY,this)
             musicPlaying = true
         }
     }
