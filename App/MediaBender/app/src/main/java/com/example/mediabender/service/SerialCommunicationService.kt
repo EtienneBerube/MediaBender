@@ -38,10 +38,14 @@ class SerialCommunicationService {
     private var connection: UsbDeviceConnection? = null
     var data: ArrayList<Byte> = ArrayList()
     var dataReceiveListener : (ByteArray) -> Unit = {}
-    private var isConnected = false
+    var isConnected = false
 
     fun setService(activity: Activity) {
         usbManager = activity.getSystemService(Context.USB_SERVICE) as UsbManager
+        val filter = IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+        filter.addAction(ACTION_USB_PERMISSION)
+        activity.applicationContext.registerReceiver(broadcastReceiver, filter)
     }
 
     companion object {
@@ -68,13 +72,9 @@ class SerialCommunicationService {
                     device = entry.value
                     val deviceVID = entry.value.vendorId
                     if (deviceVID == 0x2341) {//Arduino Vendor ID
-                        appendLog(context, "ARDUINO DEVICE ID FOUND\n")
+                        //appendLog(context, "ARDUINO DEVICE ID FOUND\n")
                         val pi =
                             PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
-                        val filter = IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED)
-                        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
-                        filter.addAction(ACTION_USB_PERMISSION)
-                        context.registerReceiver(broadcastReceiver, filter)
                         usbManager.requestPermission(device, pi)
                         found = true
                     } else {
@@ -103,7 +103,7 @@ class SerialCommunicationService {
             when (intent.action) {
                 ACTION_USB_PERMISSION -> {
                     if (intent.extras!!.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED)) {
-                        appendLog(context, "USB PERMISSION GRANTED\n")
+                        //appendLog(context, "USB PERMISSION GRANTED\n")
                         openPort(context)
                     } else {
                         appendLog(context, "PERMISSION NOT GRANTED\n")
@@ -115,7 +115,9 @@ class SerialCommunicationService {
                 }
                 else -> {
                     appendLog(context, "USB DETACHED\n")
-                    closeConnection()
+                    if(isConnected){
+                        closeConnection()
+                    }
                 }
             }
         }

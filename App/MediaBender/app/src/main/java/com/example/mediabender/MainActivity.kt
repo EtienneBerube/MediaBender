@@ -54,7 +54,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun initSerialCommunication() {
         SerialCommunicationService.instance.setService(this)
-        SerialCommunicationService.instance.requestUSBpermission(applicationContext)
+        if(!SerialCommunicationService.instance.isConnected){
+            SerialCommunicationService.instance.requestUSBpermission(this)
+        }
     }
 
     // cannot initialize the MediaControls object before the onCreate because it calls
