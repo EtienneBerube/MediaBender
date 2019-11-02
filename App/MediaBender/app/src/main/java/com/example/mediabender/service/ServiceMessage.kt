@@ -2,6 +2,9 @@ package com.example.mediabender.service
 
 import kotlin.experimental.and
 
+/**
+ * Class that decript the byte message received from the Arduino
+ */
 data class ServiceMessage(val message: Byte) {
     private val GESTURES:Byte = 0x7F
     private val FLAGS:Byte = 0x7F
@@ -14,31 +17,15 @@ data class ServiceMessage(val message: Byte) {
     var isGestureAvailable:Boolean
     var isRequestAnswer:Boolean
     init {
-        when(message and GESTURES){
-            Gesture.NONE.toByte->{
-                gesture=Gesture.NONE
-            }
-            Gesture.UP.toByte->{
-                gesture=Gesture.UP
-            }
-            Gesture.DOWN.toByte->{
-                gesture=Gesture.DOWN
-            }
-            Gesture.LEFT.toByte->{
-                gesture=Gesture.LEFT
-            }
-            Gesture.RIGHT.toByte->{
-                gesture=Gesture.RIGHT
-            }
-            Gesture.NEAR.toByte->{
-                gesture=Gesture.NEAR
-            }
-            Gesture.FAR.toByte->{
-                gesture=Gesture.FAR
-            }
-            else->{
-                gesture=Gesture.UNKNOWERROR
-            }
+        gesture = when(message and GESTURES){
+            Gesture.NONE.toByte->Gesture.NONE
+            Gesture.UP.toByte->Gesture.UP
+            Gesture.DOWN.toByte->Gesture.DOWN
+            Gesture.LEFT.toByte->Gesture.LEFT
+            Gesture.RIGHT.toByte->Gesture.RIGHT
+            Gesture.NEAR.toByte->Gesture.NEAR
+            Gesture.FAR.toByte->Gesture.FAR
+            else->Gesture.UNKNOWERROR
         }
         isSystemInitException = ((message and Flags.SYSTEMINITEXCEPTION.toByte) == Flags.SYSTEMINITEXCEPTION.toByte)
         isSensorInitException = ((message and Flags.SENSORINITEXCEPTION.toByte) == Flags.SENSORINITEXCEPTION.toByte)
@@ -56,7 +43,6 @@ data class ServiceMessage(val message: Byte) {
             }
             //Add flags here
         }
-
         isRequestAnswer = (message and REQUEST)==REQUEST
     }
 }

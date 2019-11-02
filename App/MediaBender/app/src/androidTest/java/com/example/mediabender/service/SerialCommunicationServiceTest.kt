@@ -34,12 +34,12 @@ class SerialCommunicationServiceTest {
     @Test
     fun listenerTest() {
         val instance:SerialCommunicationService = SerialCommunicationService.instance
-        val bytes = ByteArray(2)
+        val message = ServiceMessage(0x00)
         var invoked = false
         instance.setDataOnReceiveListener {
             invoked=true
         }
-        instance.dataReceiveListener.invoke(bytes)
+        instance.dataReceiveListener.invoke(message)
         assertTrue(invoked)
     }
 

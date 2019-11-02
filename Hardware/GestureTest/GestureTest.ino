@@ -138,6 +138,7 @@ void loop() {
     message_gesture = 0x00;
   }
   if(Serial.available()){
+    message_request=message_request|REQUESTANSWER;
     handleRequest();
   }
 }
@@ -199,7 +200,6 @@ void handleRequest(){
   switch(request&REQUESTS){
     case REQUEST_FLAG:
     flagRequest();
-    message_request|REQUESTANSWER;
     Serial.write(message_request);
     break;
     case REQUEST_SENSIBILITY:
@@ -228,18 +228,20 @@ void flagRequest(){
 void setSensibility(byte sensibility){
   switch(sensibility&SENSIBILITIES){
     case SENSIBILITY_LOW:
-    //To implement
+    apds.setGestureGain(0);
     break;
     case SENSIBILITY_MEDIUM:
-    //To implement
+    apds.setGestureGain(1);
     break;
     case SENSIBILITY_HIGH:
-    //To implement
+    apds.setGestureGain(2);
     break;
     case SENSIBILITY_MAX:
-    //To implement
+    apds.setGestureGain(3);
     break;
     default:
+    apds.setGestureGain(0);
     break;
   }
 }
+

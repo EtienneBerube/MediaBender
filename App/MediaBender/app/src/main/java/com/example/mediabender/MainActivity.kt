@@ -11,7 +11,10 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.mediabender.activities.SettingsActivity
 import com.example.mediabender.models.MediaEventType
+import com.example.mediabender.service.Request
+import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
+import com.example.mediabender.service.ServiceRequest
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,9 +59,20 @@ class MainActivity : AppCompatActivity() {
     private fun initSerialCommunication() {
         SerialCommunicationService.instance.setService(this)
         SerialCommunicationService.instance.setDataOnReceiveListener{
-            runOnUiThread {
-                val toast = Toast.makeText(this, "${it.gesture.toString} : ${it.gesture.toByte}", Toast.LENGTH_SHORT)
-                toast.show()
+            runOnUiThread {// function to test communication. Will be erased later.
+                if(it.isRequestAnswer){
+                    val toast = Toast.makeText(this,
+                        "Gesture Available: ${it.isGestureAvailable}\n" +
+                                "Sensor init Exception: ${it.isSensorInitException}\n" +
+                                "System init Exception: ${it.isSystemInitException}"
+                        , Toast.LENGTH_SHORT)
+                    toast.show()
+                }else{
+                    val toast = Toast.makeText(this,
+                        "${it.gesture.toString} : ${it.gesture.toByte}"
+                        , Toast.LENGTH_SHORT)
+                    toast.show()
+                }
             }
         }
         if(!SerialCommunicationService.instance.isConnected){
@@ -126,6 +140,7 @@ class MainActivity : AppCompatActivity() {
             mediaControls.executeEvent(MediaEventType.PLAY,this)
             musicPlaying = true
         }
+        SerialCommunicationService.instance.sendRequest(ServiceRequest(Request.FLAG))
     }
 
     private fun displayToast(buttonName: String) {

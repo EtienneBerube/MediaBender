@@ -15,29 +15,19 @@ import java.io.UnsupportedEncodingException
 import android.content.IntentFilter
 import android.widget.Toast
 
-private const val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
 
-/**
- * In order to use the service in an activity, one must add:
- *
- * onCreate(){
- * SerialCommunicationService.instance.setService(this)
- * SerialCommunicationService.instance.setDataOnReceiveListener{ runOnUiThread{
- * DEFINE LISTENER HERE. IT CAN BE LEFT BLANK. }}
- * }
- *
- * onResume(){
- * SerialCommunicationService.instance.requestUSBpermission(context)
- * }
- *
- */
 class SerialCommunicationService {
+    private val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
     private var device: UsbDevice? = null
     private lateinit var serialPort: UsbSerialDevice
     private lateinit var usbManager: UsbManager
     private var connection: UsbDeviceConnection? = null
     var dataReceiveListener : (ServiceMessage) -> Unit = {}
     var isConnected = false
+    var isSystemInitException = false
+    var isSensorInitException = false
+    var isGestureAvailable = false
+
 
     fun setService(activity: Activity) {
         usbManager = activity.getSystemService(Context.USB_SERVICE) as UsbManager
@@ -157,7 +147,6 @@ class SerialCommunicationService {
      * At the moment, we just take the data into a list.
      */
     private val dataReceivedCallBack = UsbSerialInterface.UsbReadCallback {
-        //TODO: implement a received data algorithm/Protocol
         try {
             if (it.isNotEmpty()) {
                 dataReceived(it)
@@ -173,7 +162,10 @@ class SerialCommunicationService {
     private fun dataReceived(it:ByteArray){
         val message = ServiceMessage(it[0])
         if(message.isRequestAnswer){
-            //TODO: request algorithm
+            isGestureAvailable = message.isGestureAvailable
+            isSystemInitException = message.isSystemInitException
+            isSensorInitException = message.isSensorInitException
+            //TODO: Exception algorithm
         }else{
             dataReceiveListener.invoke(message)
         }
@@ -230,13 +222,10 @@ class SerialCommunicationService {
     }
 
     /**
-     * Function to write to the Arduino. Might have to be implemented later.
-     * Never used.
+     * Function to write to the Arduino. ServiceRequest necessary to writte to arduino
      */
-    private fun sendRequest(request: ServiceRequest) {
-        val req = ByteArray(1)
-        req[0] = request.toByte
-        serialPort.write(req)
+    fun sendRequest(request: ServiceRequest) {
+        serialPort.write(byteArrayOf(request.toByte))
     }
 
 }
