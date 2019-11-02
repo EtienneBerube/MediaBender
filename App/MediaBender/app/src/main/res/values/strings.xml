@@ -7,10 +7,10 @@
     </string-array>
     <string name="menu_move_to_settings">Go to Settings</string>
 
-    <string name="gesture_event_map_left">PREVIOUS_SONG</string>
-    <string name="gesture_event_map_right">SKIP_SONG</string>
-    <string name="gesture_event_map_far">PAUSE</string>
-    <string name="gesture_event_map_near">PLAY</string>
-    <string name="gesture_event_map_up">RAISE_VOLUME</string>
-    <string name="gesture_event_map_down">LOWER_VOLUME</string>
+    <string name="gesture_event_map_left">gesture_event_map_left</string>
+    <string name="gesture_event_map_right">gesture_event_map_right</string>
+    <string name="gesture_event_map_far">gesture_event_map_far</string>
+    <string name="gesture_event_map_near">gesture_event_map_near</string>
+    <string name="gesture_event_map_up">gesture_event_map_up</string>
+    <string name="gesture_event_map_down">gesture_event_map_down</string>
 </resources>
