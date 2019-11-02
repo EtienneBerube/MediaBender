@@ -54,6 +54,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun initSerialCommunication() {
         SerialCommunicationService.instance.setService(this)
+        SerialCommunicationService.instance.setDataOnReceiveListener{
+            runOnUiThread {
+                val toast = Toast.makeText(this, "${it.gesture.toString} : ${it.gesture.toByte}", Toast.LENGTH_SHORT)
+                toast.show()
+            }
+        }
         if(!SerialCommunicationService.instance.isConnected){
             SerialCommunicationService.instance.requestUSBpermission(this)
         }

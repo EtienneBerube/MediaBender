@@ -36,8 +36,7 @@ class SerialCommunicationService {
     private lateinit var serialPort: UsbSerialDevice
     private lateinit var usbManager: UsbManager
     private var connection: UsbDeviceConnection? = null
-    var data: ArrayList<Byte> = ArrayList()
-    var dataReceiveListener : (ByteArray) -> Unit = {}
+    var dataReceiveListener : (ServiceMessage) -> Unit = {}
     var isConnected = false
 
     fun setService(activity: Activity) {
@@ -72,7 +71,6 @@ class SerialCommunicationService {
                     device = entry.value
                     val deviceVID = entry.value.vendorId
                     if (deviceVID == 0x2341) {//Arduino Vendor ID
-                        //appendLog(context, "ARDUINO DEVICE ID FOUND\n")
                         val pi =
                             PendingIntent.getBroadcast(context, 0, Intent(ACTION_USB_PERMISSION), 0)
                         usbManager.requestPermission(device, pi)
@@ -103,7 +101,6 @@ class SerialCommunicationService {
             when (intent.action) {
                 ACTION_USB_PERMISSION -> {
                     if (intent.extras!!.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED)) {
-                        //appendLog(context, "USB PERMISSION GRANTED\n")
                         openPort(context)
                     } else {
                         appendLog(context, "PERMISSION NOT GRANTED\n")
@@ -164,7 +161,6 @@ class SerialCommunicationService {
         try {
             if (it.isNotEmpty()) {
                 dataReceived(it)
-                data.addAll(it.asList())
             }
         } catch (e: UnsupportedEncodingException) {
             e.printStackTrace()
@@ -175,7 +171,12 @@ class SerialCommunicationService {
      * This function invokes the function variable dataReceiveListener by passing the Byte array.
      */
     private fun dataReceived(it:ByteArray){
-        dataReceiveListener.invoke(it)
+        val message = ServiceMessage(it[0])
+        if(message.isRequestAnswer){
+            //TODO: request algorithm
+        }else{
+            dataReceiveListener.invoke(message)
+        }
     }
     /**
      * This function is where the magic happens. We let external Activities define the function of
@@ -183,7 +184,7 @@ class SerialCommunicationService {
      * is received. An Activity have to implement this listener, either as an empty function or
      * with an actual algorithm.
      */
-    fun setDataOnReceiveListener(feedback : (ByteArray) -> Unit){
+    fun setDataOnReceiveListener(feedback : (ServiceMessage) -> Unit){
         dataReceiveListener = feedback
     }
 
@@ -213,7 +214,6 @@ class SerialCommunicationService {
         if(!isConnected){
             val usbDevices = usbManager.deviceList
             if (usbDevices.isNotEmpty()) {
-                var found = false
                 for (entry in usbDevices.entries) {
                     val deviceVID = entry.value.vendorId
                     if (deviceVID == 0x2341) {
@@ -233,8 +233,10 @@ class SerialCommunicationService {
      * Function to write to the Arduino. Might have to be implemented later.
      * Never used.
      */
-    private fun writeToSerial(string: String) {
-        serialPort.write(string.toByteArray())
+    private fun sendRequest(request: ServiceRequest) {
+        val req = ByteArray(1)
+        req[0] = request.toByte
+        serialPort.write(req)
     }
 
 }
