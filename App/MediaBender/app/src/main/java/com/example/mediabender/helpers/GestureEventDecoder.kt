@@ -40,6 +40,7 @@ class GestureEventDecoder(private val context: Context) {
                 return field
             }
         }
+        private set
 
     fun gestureToEvent(gesture: Gesture): MediaEventType{
         return gestureMap[gesture] ?: MediaEventType.NONE
