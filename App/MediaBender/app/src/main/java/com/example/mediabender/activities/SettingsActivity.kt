@@ -18,6 +18,10 @@ import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
 import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.models.MediaPlayer
 import com.example.mediabender.models.PlayerAccount
+import com.example.mediabender.service.Request
+import com.example.mediabender.service.Sensibility
+import com.example.mediabender.service.SerialCommunicationService
+import com.example.mediabender.service.ServiceRequest
 
 
 class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {

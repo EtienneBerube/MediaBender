@@ -2,6 +2,9 @@ package com.example.mediabender.service
 
 import kotlin.experimental.or
 
+/**
+ * ServiceRequest class to formulate a request to the Arduino.
+ */
 data class ServiceRequest(val request:Request,val sensibility: Sensibility){
     constructor(request:Request): this(request,Sensibility.LOW)
     var toByte:Byte

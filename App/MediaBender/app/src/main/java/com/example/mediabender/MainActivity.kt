@@ -13,7 +13,10 @@ import android.widget.Toast
 import com.example.mediabender.activities.SettingsActivity
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.models.MediaEventType
+import com.example.mediabender.service.Request
+import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
+import com.example.mediabender.service.ServiceRequest
 
 class MainActivity : AppCompatActivity() {
 
@@ -133,6 +136,7 @@ class MainActivity : AppCompatActivity() {
             mediaControls.executeEvent(MediaEventType.PLAY,this)
             musicPlaying = true
         }
+        SerialCommunicationService.instance.sendRequest(ServiceRequest(Request.FLAG))
     }
 
     private fun displayToast(buttonName: String) {
