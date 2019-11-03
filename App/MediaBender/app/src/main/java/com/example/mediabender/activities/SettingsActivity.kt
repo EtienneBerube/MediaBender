@@ -30,6 +30,10 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+
+        // Note that the Toolbar defined in the layout has the id "my_toolbar"
+        setSupportActionBar(findViewById(R.id.my_toolbar))
+
         playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(getSharedPreferences("Player Accounts", Context.MODE_PRIVATE))
 
         if(!checkIfPermissionGranted())

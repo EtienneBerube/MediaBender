@@ -1,21 +1,25 @@
-package com.example.mediabender.activities
+package com.example.mediabender
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.example.mediabender.MediaControls
-import com.example.mediabender.R
+import com.example.mediabender.activities.SettingsActivity
+import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.SerialCommunicationService
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mediaControls: MediaControls
+    private lateinit var metadataHelper: MetadataHelper
+    private lateinit var mainActivity: View
     private lateinit var albumArt: ImageView
     private lateinit var songTitleTV: TextView
     private lateinit var songArtistNameTV: TextView
@@ -27,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        // Note that the Toolbar defined in the layout has the id "my_toolbar"
+        setSupportActionBar(findViewById(R.id.my_toolbar))
 
         initSerialCommunication()
         initMediaControls()
@@ -34,9 +40,9 @@ class MainActivity : AppCompatActivity() {
         addListenersOnButtons()
     }
 
-    override fun onResume() {
-        super.onResume()
-        SerialCommunicationService.instance.requestUSBpermission(applicationContext)
+    override fun onDestroy() {
+        metadataHelper.unregisterBroadcastReceiver()
+        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -53,31 +59,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun initSerialCommunication() {
         SerialCommunicationService.instance.setService(this)
+        SerialCommunicationService.instance.requestUSBpermission(applicationContext)
     }
 
     // cannot initialize the MediaControls object before the onCreate because it calls
     // getSystemService in its construction, which is not available before onCreate is called
     private fun initMediaControls() {
         mediaControls = MediaControls(this)
+        metadataHelper = MetadataHelper(this)
     }
 
     private fun initViews() {
         albumArt = findViewById(R.id.albumArtViewer)
         songTitleTV = findViewById(R.id.songTitleMainTextView)
         songArtistNameTV = findViewById(R.id.artistNameMainTextView)
-
+        mainActivity = findViewById(R.id.mainActivity)
         musicPlaying = mediaControls.isMusicPlaying()
         playButton = findViewById(R.id.playPauseButtMain)
-        if (musicPlaying) playButton.setImageResource(R.drawable.pause_white)
-        else playButton.setImageResource(R.drawable.play_arrow_white)
+        if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_black)
+        else playButton.setImageResource(R.drawable.icons_play_arrow_black)
 
         skipPlayingButton = findViewById(R.id.fastForwardButtMain)
         backPlayingButton = findViewById(R.id.fastRewindButtMain)
-    }
-
-    override fun onBackPressed() {
-
-        super.onBackPressed()
     }
 
     private fun addListenersOnButtons() {
@@ -88,12 +91,12 @@ class MainActivity : AppCompatActivity() {
 
         skipPlayingButton.setOnClickListener {
             //displayToast("Skip")
-            mediaControls.next()
+            mediaControls.executeEvent(MediaEventType.SKIP_SONG,this)
         }
 
         backPlayingButton.setOnClickListener {
             //displayToast("Back")
-            mediaControls.previous()
+            mediaControls.executeEvent(MediaEventType.PREVIOUS_SONG,this)
         }
     }
 
@@ -103,16 +106,20 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    override fun onBackPressed() {
+        // stay in app when back button pressed, so we do nothing
+    }
+
     private fun playPauseButtPressed() {
         if (musicPlaying) {
-            playButton.setImageResource(R.drawable.play_arrow_white)
+            playButton.setImageResource(R.drawable.icons_play_arrow_black)
             //displayToast("Pause")
-            mediaControls.pause()
+            mediaControls.executeEvent(MediaEventType.PAUSE,this)
             musicPlaying = false
         } else {
-            playButton.setImageResource(R.drawable.pause_white)
+            playButton.setImageResource(R.drawable.icons_pause_black)
             //displayToast("Play")
-            mediaControls.play()
+            mediaControls.executeEvent(MediaEventType.PLAY,this)
             musicPlaying = true
         }
     }
@@ -124,4 +131,14 @@ class MainActivity : AppCompatActivity() {
             Toast.LENGTH_SHORT
         ).show()
     }
+
+    private fun loadResourcesForWhiteTheme(){
+
+    }
+
+    private fun loadResourcesForDarkTheme(){
+        val root = mainActivity.rootView
+        root.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
+    }
+
 }

@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
-    tools:context=".activities.MainActivity">
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/relativeLayout"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:id="@+id/relativeLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/my_toolbar">
 
         <!--Image for the Album art of the current song playing-->
         <ImageView
@@ -17,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="300sp"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="75dp"
             android:layout_marginRight="15dp"
             android:src="@drawable/album_art_default" />
 
@@ -71,7 +89,7 @@
             android:layout_marginLeft="55dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/roundbutton"
-            android:src="@drawable/fast_rewind_white">
+            android:src="@drawable/icons_fast_rewind_white">
 
         </ImageButton>
 
@@ -85,7 +103,7 @@
             android:layout_marginRight="55dp"
 
             android:background="@drawable/roundbutton"
-            android:src="@drawable/fast_forward_white">
+            android:src="@drawable/icons_fast_forward_white">
 
         </ImageButton>
 
