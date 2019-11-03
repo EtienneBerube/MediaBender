@@ -66,8 +66,8 @@ class MainActivity : AppCompatActivity() {
         SerialCommunicationService.instance.setService(this)
         SerialCommunicationService.instance.setDataOnReceiveListener{
             runOnUiThread {
-                Log.d("Got gesture", "${it.gesture.toString} : ${it.gesture.toByte}")
                 val event = gestureDecoder.gestureToEvent(it.gesture)
+                Toast.makeText(applicationContext,"Got gesture: ${it.gesture.toString} -> ${event.name}", Toast.LENGTH_SHORT).show()
                 mediaControls.executeEvent(event, this)
             }
         }

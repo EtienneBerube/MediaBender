@@ -7,40 +7,35 @@ import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.Gesture
 
 class GestureEventDecoder(private val context: Context) {
-    private val sharedPreferences: SharedPreferences
 
-    init{
-        sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
-    }
     companion object{
         private var isInitialized = false
         private val SHARED_PREFERENCE_NAME = "gesture_event_map"
     }
-    private var gestureMap: Map<Gesture, MediaEventType> = mapOf()
-        get() {
-            if(!isInitialized) {
-                isInitialized = true
-                val map = getFromSharedPreferences()
-                if(map.entries.all { it.value == MediaEventType.NONE }){
-                    //Is not a custom gesture
-                    return mapOf(
-                        Gesture.LEFT to MediaEventType.PREVIOUS_SONG,
-                        Gesture.RIGHT to MediaEventType.SKIP_SONG,
-                        Gesture.NEAR to MediaEventType.PLAY,
-                        Gesture.FAR to MediaEventType.PAUSE,
-                        Gesture.UP to MediaEventType.RAISE_VOLUME,
-                        Gesture.DOWN to MediaEventType.LOWER_VOLUME,
-                        Gesture.NONE to MediaEventType.NONE
-                    )
-                }else{
-                    return map
-                }
 
-            }else{
-                return field
-            }
-        }
+    private val sharedPreferences: SharedPreferences
+    private var gestureMap: Map<Gesture, MediaEventType> = mapOf()
         private set
+
+    init{
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
+
+        val map = getFromSharedPreferences()
+        if(map.entries.all { it.value == MediaEventType.NONE }){
+            //Is not a custom gesture
+            gestureMap =  mapOf(
+                Gesture.LEFT to MediaEventType.PREVIOUS_SONG,
+                Gesture.RIGHT to MediaEventType.SKIP_SONG,
+                Gesture.NEAR to MediaEventType.PLAY,
+                Gesture.FAR to MediaEventType.PAUSE,
+                Gesture.UP to MediaEventType.RAISE_VOLUME,
+                Gesture.DOWN to MediaEventType.LOWER_VOLUME,
+                Gesture.NONE to MediaEventType.NONE
+            )
+        }else{
+            gestureMap = map
+        }
+    }
 
     fun gestureToEvent(gesture: Gesture): MediaEventType{
         return gestureMap[gesture] ?: MediaEventType.NONE
