@@ -11,7 +11,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.mediabender.activities.SettingsActivity
+import com.example.mediabender.models.MediaEventType
+import com.example.mediabender.service.Request
+import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
+import com.example.mediabender.service.ServiceRequest
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,7 +59,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun initSerialCommunication() {
         SerialCommunicationService.instance.setService(this)
-        SerialCommunicationService.instance.requestUSBpermission(applicationContext)
+        SerialCommunicationService.instance.setDataOnReceiveListener{
+            runOnUiThread {// function to test communication. Will be erased later.
+                if(it.isRequestAnswer){
+                    val toast = Toast.makeText(this,
+                        "Gesture Available: ${it.isGestureAvailable}\n" +
+                                "Sensor init Exception: ${it.isSensorInitException}\n" +
+                                "System init Exception: ${it.isSystemInitException}"
+                        , Toast.LENGTH_SHORT)
+                    toast.show()
+                }else{
+                    val toast = Toast.makeText(this,
+                        "${it.gesture.toString} : ${it.gesture.toByte}"
+                        , Toast.LENGTH_SHORT)
+                    toast.show()
+                }
+            }
+        }
+        if(!SerialCommunicationService.instance.isConnected){
+            SerialCommunicationService.instance.requestUSBpermission(this)
+        }
     }
 
     // cannot initialize the MediaControls object before the onCreate because it calls
@@ -87,12 +110,12 @@ class MainActivity : AppCompatActivity() {
 
         skipPlayingButton.setOnClickListener {
             //displayToast("Skip")
-            mediaControls.next()
+            mediaControls.executeEvent(MediaEventType.SKIP_SONG,this)
         }
 
         backPlayingButton.setOnClickListener {
             //displayToast("Back")
-            mediaControls.previous()
+            mediaControls.executeEvent(MediaEventType.PREVIOUS_SONG,this)
         }
     }
 
@@ -109,11 +132,12 @@ class MainActivity : AppCompatActivity() {
     private fun playPauseButtPressed() {
         if (musicPlaying) { // if playing, update view to paused mode, and pause media
             updatePlaybackState(false)
-            mediaControls.pause()
+            mediaControls.executeEvent(MediaEventType.PAUSE,this)
         } else {    // if not playing, update view to playing mode, and play media
             updatePlaybackState(true)
-            mediaControls.play()
+            mediaControls.executeEvent(MediaEventType.PLAY,this)
         }
+        SerialCommunicationService.instance.sendRequest(ServiceRequest(Request.FLAG))
     }
 
     // display the track, artist and album art on main screen
