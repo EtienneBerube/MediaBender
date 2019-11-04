@@ -33,6 +33,7 @@ open class MetadataHelper(context: Context) {
     private var albumID:String = ""
     private var artist:String = ""
     private var albumArt: Bitmap? = null
+    private var playbackState: Boolean = false
     private var player: Int? = null
 
     private var iF = IntentFilter()
@@ -78,11 +79,15 @@ open class MetadataHelper(context: Context) {
     inner class MyReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             setCurrentPlayer(intent.action ?: "")
+            setPlaybackState(intent)
             setTrack(intent.getStringExtra("track"))
             setAlbum(intent.getStringExtra("album"))
             setArtist(intent.getStringExtra("artist"))
 
-            (context as MainActivity).displayCurrentSong(track,artist,null)
+            with (context as MainActivity) {
+                displayCurrentSong(track,artist,null)
+                updatePlaybackState(playbackState)
+            }
         }
 
         // if any of the arguments are null, sets the string to blank
@@ -136,6 +141,14 @@ open class MetadataHelper(context: Context) {
         } // set albumID of given track from trackID
         private fun setArtist(_artist: String?) {
             artist = _artist ?: ""
+        }
+        private fun setPlaybackState(intent: Intent) {
+            playbackState = when (player) {
+                PLAYER_INVALID -> playbackState
+                PLAYER_SPOTIFY -> intent.getBooleanExtra("playstate",playbackState)
+                PLAYER_GOOGLEPLAY -> intent.getBooleanExtra("playing",playbackState)
+                else -> playbackState
+            }
         }
 
         // NOT FUNCTIONAL

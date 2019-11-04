@@ -107,25 +107,32 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun playPauseButtPressed() {
-        if (musicPlaying) {
-            playButton.setImageResource(R.drawable.play_arrow_white)
-            //displayToast("Pause")
+        if (musicPlaying) { // if playing, update view to paused mode, and pause media
+            updatePlaybackState(false)
             mediaControls.pause()
-            musicPlaying = false
-        } else {
-            playButton.setImageResource(R.drawable.pause_white)
-            //displayToast("Play")
+        } else {    // if not playing, update view to playing mode, and play media
+            updatePlaybackState(true)
             mediaControls.play()
-            musicPlaying = true
         }
     }
 
-    // TODO: get the album art (issues with finding where album art stored on phone)
-    // WILL NOT REFRESH THE ALBUM ART IF ITS PASSED AS NULL
+    // display the track, artist and album art on main screen
+    // album_art == null -> art will not change
+    // album_art != null -> art will be updated
     fun displayCurrentSong(track: String, artist: String, album_art: Bitmap?) {
-        songTitleTV.setText(track)
-        songArtistNameTV.setText(artist)
+        songTitleTV.text = track
+        songArtistNameTV.text = artist
         if (album_art != null) albumArt.setImageBitmap(album_art)
+    }
+
+    // update the playback state (both the internal boolean and the views)
+    fun updatePlaybackState(playing: Boolean) {
+        musicPlaying = playing  // change state
+        if (musicPlaying) { // if currently playing, set to pause button
+            playButton.setImageResource(R.drawable.pause_white)
+        } else {    // if currently paused, set to play button
+            playButton.setImageResource(R.drawable.play_arrow_white)
+        }
     }
 
     private fun displayToast(buttonName: String) {
