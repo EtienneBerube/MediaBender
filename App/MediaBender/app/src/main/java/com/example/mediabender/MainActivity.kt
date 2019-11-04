@@ -1,6 +1,7 @@
 package com.example.mediabender
 
 import android.content.Intent
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -117,6 +118,14 @@ class MainActivity : AppCompatActivity() {
             mediaControls.play()
             musicPlaying = true
         }
+    }
+
+    // TODO: get the album art (issues with finding where album art stored on phone)
+    // WILL NOT REFRESH THE ALBUM ART IF ITS PASSED AS NULL
+    fun displayCurrentSong(track: String, artist: String, album_art: Bitmap?) {
+        songTitleTV.setText(track)
+        songArtistNameTV.setText(artist)
+        if (album_art != null) albumArt.setImageBitmap(album_art)
     }
 
     private fun displayToast(buttonName: String) {
