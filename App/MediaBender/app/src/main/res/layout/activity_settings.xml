@@ -14,11 +14,12 @@
         tools:context=".activities.SettingsActivity">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/my_toolbar"
+            android:id="@+id/settings_toolbar"
             android:layout_width="0dp"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
+            android:nestedScrollingEnabled="false"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

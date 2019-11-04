@@ -7,17 +7,18 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
-import android.widget.AdapterView
-import android.widget.Button
-import android.widget.Spinner
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.example.mediabender.R
 import com.example.mediabender.dialogs.PlayerConnectionDialog
 import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
 import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.models.MediaPlayer
 import com.example.mediabender.models.PlayerAccount
+
+
+
 
 
 class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {
@@ -27,12 +28,13 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private var googlePlayViewHolder = PlayerSettingsCardViewHolder()
     private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
         // Note that the Toolbar defined in the layout has the id "my_toolbar"
-        setSupportActionBar(findViewById(R.id.my_toolbar))
+        setSupportActionBar(findViewById(R.id.settings_toolbar))
 
         playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(getSharedPreferences("Player Accounts", Context.MODE_PRIVATE))
 
@@ -43,6 +45,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         setupApplePlayMusic()
         setupSpotify()
         setupGooglePlayMusic()
+        setUpToolBar()
+
     }
 
     override fun onResume() {
@@ -147,6 +151,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 changeTheme("DEFAULT")
             }
         }
+
+
     }
 
     private fun testSensorConnection(){
@@ -185,5 +191,19 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     fun getRunningPlayers(): Set<String>{
         //TODO implement with apis
         return HashSet()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
+    private fun setUpToolBar(){
+        //actionbar
+        val actionbar = supportActionBar
+        //set actionbar title
+        actionbar!!.title = "Settings"
+        //set back button
+        actionbar.setDisplayHomeAsUpEnabled(true)
     }
 }

@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // Note that the Toolbar defined in the layout has the id "my_toolbar"
-        setSupportActionBar(findViewById(R.id.my_toolbar))
+        setSupportActionBar(findViewById(R.id.main_toolbar))
 
         initSerialCommunication()
         initMediaControls()
