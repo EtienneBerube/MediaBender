@@ -34,7 +34,7 @@
             android:layout_marginTop="75dp"
             android:fontFamily="sans-serif-medium"
             android:text="Settings"
-            android:textColor="#FFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="30sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -47,7 +47,7 @@
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-medium"
             android:text="Accounts"
-            android:textColor="#FFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="30sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/settings_card" />
