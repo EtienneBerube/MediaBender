@@ -18,24 +18,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
 
-        <activity android:name=".activities.SettingsActivity"
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTask"></activity>
+        <!--Settings activity-->
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:launchMode="singleTask"
+            android:parentActivityName=".MainActivity"></activity>
 
+        <!--Splash screen-->
+        <activity
+            android:name=".SplashScreen"
+            android:noHistory="true"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <activity android:name=".SplashScreen"
-            android:theme="@style/SplashTheme"
-            android:noHistory="true">
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
-                    <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
+        </activity>
 
-            </activity>
-
-
-        <activity android:name=".MainActivity">
+        <!--Main activity-->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="uiMode">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

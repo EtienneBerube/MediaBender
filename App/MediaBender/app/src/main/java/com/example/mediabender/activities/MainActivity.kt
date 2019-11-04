@@ -1,6 +1,7 @@
 package com.example.mediabender
 
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -10,9 +11,11 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.mediabender.activities.SettingsActivity
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.SerialCommunicationService
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var playButton: ImageButton
     private lateinit var skipPlayingButton: ImageButton
     private lateinit var backPlayingButton: ImageButton
+    private lateinit var menu_main: Menu
     private var musicPlaying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         initMediaControls()
         initViews()
         addListenersOnButtons()
+
     }
 
     override fun onDestroy() {
@@ -47,6 +52,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
+        this.menu_main = menu!!
+
+        when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_NO -> loadResourcesForWhiteTheme()
+            Configuration.UI_MODE_NIGHT_YES -> loadResourcesForDarkTheme()
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -76,8 +87,17 @@ class MainActivity : AppCompatActivity() {
         mainActivity = findViewById(R.id.mainActivity)
         musicPlaying = mediaControls.isMusicPlaying()
         playButton = findViewById(R.id.playPauseButtMain)
-        if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_black)
-        else playButton.setImageResource(R.drawable.icons_play_arrow_black)
+
+        if (musicPlaying && (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) playButton.setImageResource(
+            R.drawable.icons_pause_black
+        )
+        else if (musicPlaying && (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) playButton.setImageResource(
+            R.drawable.icons_pause_white
+        )
+        else if (!musicPlaying && (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) playButton.setImageResource(
+            R.drawable.icons_play_arrow_black
+        )
+        else playButton.setImageResource(R.drawable.icons_play_arrow_white)
 
         skipPlayingButton = findViewById(R.id.fastForwardButtMain)
         backPlayingButton = findViewById(R.id.fastRewindButtMain)
@@ -91,18 +111,18 @@ class MainActivity : AppCompatActivity() {
 
         skipPlayingButton.setOnClickListener {
             //displayToast("Skip")
-            mediaControls.executeEvent(MediaEventType.SKIP_SONG,this)
+            mediaControls.executeEvent(MediaEventType.SKIP_SONG, this)
         }
 
         backPlayingButton.setOnClickListener {
             //displayToast("Back")
-            mediaControls.executeEvent(MediaEventType.PREVIOUS_SONG,this)
+            mediaControls.executeEvent(MediaEventType.PREVIOUS_SONG, this)
         }
     }
 
 
     private fun goToSettingsPage() {
-        val intent = Intent(this,SettingsActivity::class.java)
+        val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 
@@ -112,14 +132,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun playPauseButtPressed() {
         if (musicPlaying) {
-            playButton.setImageResource(R.drawable.icons_play_arrow_black)
+
+            when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_play_arrow_black)
+                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_play_arrow_white)
+            }
+
             //displayToast("Pause")
-            mediaControls.executeEvent(MediaEventType.PAUSE,this)
+            mediaControls.executeEvent(MediaEventType.PAUSE, this)
             musicPlaying = false
         } else {
-            playButton.setImageResource(R.drawable.icons_pause_black)
+
+            when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_pause_black)
+                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_pause_white)
+            }
             //displayToast("Play")
-            mediaControls.executeEvent(MediaEventType.PLAY,this)
+            mediaControls.executeEvent(MediaEventType.PLAY, this)
             musicPlaying = true
         }
     }
@@ -132,13 +161,49 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
-    private fun loadResourcesForWhiteTheme(){
+    override fun onConfigurationChanged(newConfig: Configuration) {
 
+        super.onConfigurationChanged(newConfig)
+
+        val currentNightMode = mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
+            loadResourcesForWhiteTheme()
+            Toast.makeText(this, "Light theme on!", Toast.LENGTH_LONG).show()
+        } // Night mode is not active, we're using the light theme
+        else {
+            loadResourcesForDarkTheme()
+
+            Toast.makeText(this, "DARK THEME ON!", Toast.LENGTH_LONG).show()
+        } // Night mode is active, we're using dark theme
     }
 
-    private fun loadResourcesForDarkTheme(){
-        val root = mainActivity.rootView
-        root.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
+
+    private fun loadResourcesForDarkTheme() {
+        if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_white)
+        else playButton.setImageResource(R.drawable.icons_play_arrow_white)
+        skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_white)
+        backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_white)
+        mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
+        val toolbar = supportActionBar
+        toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
+        main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryWhite))
+        menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
+        songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
+        artistNameMainTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+    }
+
+    private fun loadResourcesForWhiteTheme() {
+        if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_black)
+        else playButton.setImageResource(R.drawable.icons_pause_black)
+        skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_black)
+        backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_black)
+        songTitleTV.setTextColor(getColor(R.color.colorPrimaryDark))
+        artistNameMainTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
+        supportActionBar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryWhite))
+        main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryDark))
+        menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
     }
 
 }
