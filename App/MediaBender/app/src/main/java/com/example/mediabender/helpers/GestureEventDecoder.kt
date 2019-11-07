@@ -9,7 +9,6 @@ import com.example.mediabender.service.Gesture
 class GestureEventDecoder(private val context: Context) {
 
     companion object{
-        private var isInitialized = false
         private val SHARED_PREFERENCE_NAME = "gesture_event_map"
     }
 
