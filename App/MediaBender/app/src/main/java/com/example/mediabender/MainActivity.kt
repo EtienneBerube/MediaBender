@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageButton
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.mediabender.activities.SettingsActivity
+import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.Request
 import com.example.mediabender.service.Sensibility
@@ -28,14 +30,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var playButton: ImageButton
     private lateinit var skipPlayingButton: ImageButton
     private lateinit var backPlayingButton: ImageButton
+    private lateinit var gestureDecoder: GestureEventDecoder
+
     private var musicPlaying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initSerialCommunication()
         initMediaControls()
+        initSerialCommunication()
         initViews()
         addListenersOnButtons()
     }
@@ -58,22 +62,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initSerialCommunication() {
+        gestureDecoder = GestureEventDecoder(applicationContext)
+
         SerialCommunicationService.instance.setService(this)
         SerialCommunicationService.instance.setDataOnReceiveListener{
-            runOnUiThread {// function to test communication. Will be erased later.
-                if(it.isRequestAnswer){
-                    val toast = Toast.makeText(this,
-                        "Gesture Available: ${it.isGestureAvailable}\n" +
-                                "Sensor init Exception: ${it.isSensorInitException}\n" +
-                                "System init Exception: ${it.isSystemInitException}"
-                        , Toast.LENGTH_SHORT)
-                    toast.show()
-                }else{
-                    val toast = Toast.makeText(this,
-                        "${it.gesture.toString} : ${it.gesture.toByte}"
-                        , Toast.LENGTH_SHORT)
-                    toast.show()
-                }
+            runOnUiThread {
+                val event = gestureDecoder.gestureToEvent(it.gesture)
+                Toast.makeText(applicationContext,"Got gesture: ${it.gesture.toString} -> ${event.name}", Toast.LENGTH_SHORT).show()
+                mediaControls.executeEvent(event, this)
             }
         }
         if(!SerialCommunicationService.instance.isConnected){
