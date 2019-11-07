@@ -61,17 +61,29 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun initSerialCommunication() {
-        gestureDecoder = GestureEventDecoder(applicationContext)
+    override fun onResume() {
+        super.onResume()
 
-        SerialCommunicationService.instance.setService(this)
-        SerialCommunicationService.instance.setDataOnReceiveListener{
+        SerialCommunicationService.instance.setDataOnReceiveListener {
             runOnUiThread {
                 val event = gestureDecoder.gestureToEvent(it.gesture)
                 Toast.makeText(applicationContext,"Got gesture: ${it.gesture.toString} -> ${event.name}", Toast.LENGTH_SHORT).show()
                 mediaControls.executeEvent(event, this)
             }
         }
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        SerialCommunicationService.instance.removeDataOnReceiveListener()
+    }
+
+    private fun initSerialCommunication() {
+        gestureDecoder = GestureEventDecoder(applicationContext)
+
+        SerialCommunicationService.instance.setService(this)
         if(!SerialCommunicationService.instance.isConnected){
             SerialCommunicationService.instance.requestUSBpermission(this)
         }
@@ -106,12 +118,12 @@ class MainActivity : AppCompatActivity() {
 
         skipPlayingButton.setOnClickListener {
             //displayToast("Skip")
-            mediaControls.executeEvent(MediaEventType.SKIP_SONG,this)
+            mediaControls.next()
         }
 
         backPlayingButton.setOnClickListener {
             //displayToast("Back")
-            mediaControls.executeEvent(MediaEventType.PREVIOUS_SONG,this)
+            mediaControls.previous()
         }
     }
 

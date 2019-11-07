@@ -22,7 +22,7 @@ class SerialCommunicationService {
     private lateinit var serialPort: UsbSerialDevice
     private lateinit var usbManager: UsbManager
     private var connection: UsbDeviceConnection? = null
-    var dataReceiveListener : (ServiceMessage) -> Unit = {}
+    var dataReceiveListener : ((ServiceMessage) -> Unit)? = {}
     var isConnected = false
     var isSystemInitException = false
     var isSensorInitException = false
@@ -167,7 +167,8 @@ class SerialCommunicationService {
             isSensorInitException = message.isSensorInitException
             //TODO: Exception algorithm
         }else{
-            dataReceiveListener.invoke(message)
+            //Null safety addition
+            dataReceiveListener?.invoke(message)
         }
     }
     /**
@@ -178,6 +179,10 @@ class SerialCommunicationService {
      */
     fun setDataOnReceiveListener(feedback : (ServiceMessage) -> Unit){
         dataReceiveListener = feedback
+    }
+
+    fun removeDataOnReceiveListener(){
+        dataReceiveListener = null
     }
 
     /**

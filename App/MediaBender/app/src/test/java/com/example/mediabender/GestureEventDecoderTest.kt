@@ -102,7 +102,4 @@ class GestureEventDecoderTest {
         result = gestureEventDecoder.gestureToEvent(Gesture.GESTURE3)
         Assert.assertEquals(MediaEventType.NONE,result)
     }
-
-
-
 }
