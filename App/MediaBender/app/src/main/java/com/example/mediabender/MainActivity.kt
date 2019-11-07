@@ -74,8 +74,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
 
         SerialCommunicationService.instance.removeDataOnReceiveListener()
     }
