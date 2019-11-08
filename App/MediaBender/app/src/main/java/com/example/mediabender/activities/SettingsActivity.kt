@@ -230,14 +230,9 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         ).show()
     }
 
-    private fun remapGesture() {
-        //TODO implement later
-        val toast = Toast.makeText(
-            applicationContext,
-            "Gesture mapping not implemented yet",
-            Toast.LENGTH_SHORT
-        )
-        toast.show()
+    private fun remapGesture(){
+        val intent = Intent(this,GestureMappingActivity::class.java)
+        startActivity(intent)
     }
 
     fun setRunningIndicator(playerPackage: MediaPlayer, active: Boolean) {
@@ -330,7 +325,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 )
             }
         }
-
 
     }
 }
