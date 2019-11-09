@@ -5,6 +5,6 @@
     android:title="@string/menu_move_to_settings"
 android:id="@+id/moveToSettingsAction"
     android:icon="@drawable/icons_settings_white"
-    app:showAsAction="ifRoom"/>
+    app:showAsAction="ifRoom" />
 
 </menu>

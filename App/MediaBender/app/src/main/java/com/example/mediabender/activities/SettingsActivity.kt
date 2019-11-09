@@ -22,14 +22,12 @@ import com.example.mediabender.service.SerialCommunicationService
 import com.example.mediabender.service.ServiceRequest
 
 
-
-
-
 class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {
 
     private var spotifyViewHolder = PlayerSettingsCardViewHolder()
     private var appleMusicViewHolder = PlayerSettingsCardViewHolder()
     private var googlePlayViewHolder = PlayerSettingsCardViewHolder()
+
     private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
 
 
@@ -39,11 +37,17 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
         // Note that the Toolbar defined in the layout has the id "my_toolbar"
         setSupportActionBar(findViewById(R.id.settings_toolbar))
+        supportActionBar?.elevation = 0f
 
-        playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(getSharedPreferences("Player Accounts", Context.MODE_PRIVATE))
+        playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(
+            getSharedPreferences(
+                "Player Accounts",
+                Context.MODE_PRIVATE
+            )
+        )
 
-        if(!checkIfPermissionGranted())
-            startActivity( Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+        if (!checkIfPermissionGranted())
+            startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
 
         setupSettings()
         setupApplePlayMusic()
@@ -59,9 +63,9 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         val running = getRunningPlayers()
 
         MediaPlayer.values().forEach {
-            if(running.contains(it.packageName)){
+            if (running.contains(it.packageName)) {
                 setRunningIndicator(it, true)
-            }else{
+            } else {
                 setRunningIndicator(it, false)
             }
         }
@@ -69,7 +73,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
     override fun acceptConnectionOnDismiss(name: MediaPlayer, playerAccount: PlayerAccount) {
         playerSharedPreferenceHelper.savePlayerAccount(playerAccount, name)
-        when(name){
+        when (name) {
             MediaPlayer.SPOTIFY -> {
                 setupSpotify()
             }
@@ -82,7 +86,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         }
     }
 
-    private fun checkIfPermissionGranted(): Boolean{
+    private fun checkIfPermissionGranted(): Boolean {
         var granted = false;
         val appOps = applicationContext
             .getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
@@ -100,7 +104,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         return granted
     }
 
-    private fun setupSpotify(){
+    private fun setupSpotify() {
         spotifyViewHolder.cardView = findViewById(R.id.spotify_card)
         spotifyViewHolder.cardView.setOnClickListener {
             val dialog = PlayerConnectionDialog(MediaPlayer.SPOTIFY)
@@ -110,9 +114,14 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         spotifyViewHolder.activeCircle = findViewById(R.id.spotify_active_circle)
 
         spotifyViewHolder.connectedTextView = findViewById(R.id.spotify_connection_textview)
-        spotifyViewHolder.setConnectedTextWithEmail(playerSharedPreferenceHelper.getPlayerAccount(MediaPlayer.SPOTIFY))
+        spotifyViewHolder.setConnectedTextWithEmail(
+            playerSharedPreferenceHelper.getPlayerAccount(
+                MediaPlayer.SPOTIFY
+            )
+        )
     }
-    private fun setupGooglePlayMusic(){
+
+    private fun setupGooglePlayMusic() {
         googlePlayViewHolder.cardView = findViewById(R.id.google_play_card)
         googlePlayViewHolder.cardView.setOnClickListener {
             val dialog = PlayerConnectionDialog(MediaPlayer.GOOGLE_PLAY)
@@ -122,9 +131,14 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         googlePlayViewHolder.activeCircle = findViewById(R.id.google_play_active_circle)
 
         googlePlayViewHolder.connectedTextView = findViewById(R.id.google_play_connection_textview)
-        googlePlayViewHolder.setConnectedTextWithEmail(playerSharedPreferenceHelper.getPlayerAccount(MediaPlayer.GOOGLE_PLAY))
+        googlePlayViewHolder.setConnectedTextWithEmail(
+            playerSharedPreferenceHelper.getPlayerAccount(
+                MediaPlayer.GOOGLE_PLAY
+            )
+        )
     }
-    private fun setupApplePlayMusic(){
+
+    private fun setupApplePlayMusic() {
         appleMusicViewHolder.cardView = findViewById(R.id.apple_music_card)
         appleMusicViewHolder.cardView.setOnClickListener {
             val dialog = PlayerConnectionDialog(MediaPlayer.APPLE_MUSIC)
@@ -134,51 +148,73 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         appleMusicViewHolder.activeCircle = findViewById(R.id.apple_music_active_circle)
 
         appleMusicViewHolder.connectedTextView = findViewById(R.id.apple_music_connection_textview)
-        appleMusicViewHolder.setConnectedTextWithEmail(playerSharedPreferenceHelper.getPlayerAccount(MediaPlayer.APPLE_MUSIC))
+        appleMusicViewHolder.setConnectedTextWithEmail(
+            playerSharedPreferenceHelper.getPlayerAccount(
+                MediaPlayer.APPLE_MUSIC
+            )
+        )
     }
 
-    private fun setupSettings(){
+    private fun setupSettings() {
         findViewById<Button>(R.id.settings_test_connection_button).setOnClickListener { testSensorConnection() }
         findViewById<Button>(R.id.settings_gesture_button).setOnClickListener { remapGesture() }
-        findViewById<Spinner>(R.id.settings_theme_spinner).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
+        //For the theme drop down menu
+        findViewById<Spinner>(R.id.settings_theme_spinner).onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
 
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    changeTheme("DEFAULT")
+                }
             }
 
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                changeTheme("DEFAULT")
-            }
-        }
-
 
     }
 
-    private fun testSensorConnection(){
+    private fun testSensorConnection() {
         //TODO implement later
-        val toast = Toast.makeText(applicationContext,"Testing connection not implemented yet", Toast.LENGTH_SHORT)
-        toast.show()
-    }
-    private fun changeTheme(theme: String){
-        //TODO implement later
-        val toast = Toast.makeText(applicationContext,"Changing theme not implemented yet", Toast.LENGTH_SHORT)
-        toast.show()
-    }
-    private fun remapGesture(){
-        //TODO implement later
-        val toast = Toast.makeText(applicationContext,"Gesture mapping not implemented yet", Toast.LENGTH_SHORT)
+        val toast = Toast.makeText(
+            applicationContext,
+            "Testing connection not implemented yet",
+            Toast.LENGTH_SHORT
+        )
         toast.show()
     }
 
-    fun setRunningIndicator(playerPackage: MediaPlayer, active: Boolean){
-        val resource = if(active) R.drawable.active_circle_account else R.drawable.inactive_circle_account
+    private fun changeTheme(theme: String) {
+        //TODO implement later
+        val toast = Toast.makeText(
+            applicationContext,
+            "Changing theme not implemented yet",
+            Toast.LENGTH_SHORT
+        )
+        toast.show()
+    }
 
-        when(playerPackage){
+    private fun remapGesture() {
+        //TODO implement later
+        val toast = Toast.makeText(
+            applicationContext,
+            "Gesture mapping not implemented yet",
+            Toast.LENGTH_SHORT
+        )
+        toast.show()
+    }
+
+    fun setRunningIndicator(playerPackage: MediaPlayer, active: Boolean) {
+        val resource =
+            if (active) R.drawable.active_circle_account else R.drawable.inactive_circle_account
+
+        when (playerPackage) {
             MediaPlayer.SPOTIFY -> {
                 spotifyViewHolder.activeCircle.setImageResource(resource)
             }
@@ -192,7 +228,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
     }
 
-    fun getRunningPlayers(): Set<String>{
+    fun getRunningPlayers(): Set<String> {
         //TODO implement with apis
         return HashSet()
     }
@@ -202,12 +238,13 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         return true
     }
 
-    private fun setUpToolBar(){
+    private fun setUpToolBar() {
         //actionbar
         val actionbar = supportActionBar
         //set actionbar title
-        actionbar!!.title = "Settings"
+
         //set back button
-        actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar?.setDisplayHomeAsUpEnabled(true)
+        actionbar?.title = ""
     }
 }

@@ -2,6 +2,7 @@ package com.example.mediabender
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -36,8 +37,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // Note that the Toolbar defined in the layout has the id "my_toolbar"
-        setSupportActionBar(findViewById(R.id.main_toolbar))
 
+        setUpToolbar()
         initSerialCommunication()
         initMediaControls()
         initViews()
@@ -132,22 +133,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun playPauseButtPressed() {
         if (musicPlaying) {
-
-            when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)) {
-                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_play_arrow_black)
-                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_play_arrow_white)
-            }
+//
+//            when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)) {
+//                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_play_arrow_black)
+//                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_play_arrow_white)
+//            }
+            playButton.setImageResource(R.drawable.icons_play_arrow_white)
 
             //displayToast("Pause")
             mediaControls.executeEvent(MediaEventType.PAUSE, this)
             musicPlaying = false
         } else {
+            playButton.setImageResource(R.drawable.icons_pause_white)
+//            when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)) {
+//                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_pause_black)
+//                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_pause_white)
+//            }
 
-            when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)) {
-                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_pause_black)
-                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_pause_white)
-            }
-            //displayToast("Play")
             mediaControls.executeEvent(MediaEventType.PLAY, this)
             musicPlaying = true
         }
@@ -165,7 +167,8 @@ class MainActivity : AppCompatActivity() {
 
         super.onConfigurationChanged(newConfig)
 
-        val currentNightMode = mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val currentNightMode =
+            mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
         if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
             loadResourcesForWhiteTheme()
@@ -182,21 +185,25 @@ class MainActivity : AppCompatActivity() {
         if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_white)
         else playButton.setImageResource(R.drawable.icons_play_arrow_white)
 
+        playButton.background = getDrawable(R.drawable.red_round_button_background)
         skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_white)
         backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_white)
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         val toolbar = supportActionBar
-        toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
+        //Toolbar colour
+        toolbar?.setBackgroundDrawable(getDrawable(R.color.darkForToolbar))
         main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryWhite))
         menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
-        mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
+        mainActivity.setBackgroundColor(getColor(R.color.darkForMainActivity))
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
         artistNameMainTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        window.statusBarColor = getColor(R.color.colorPrimaryDark)
     }
 
     private fun loadResourcesForWhiteTheme() {
-        if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_black)
-        else playButton.setImageResource(R.drawable.icons_pause_black)
+        playButton.background = getDrawable(R.drawable.black_round_button_black)
+        if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_white)
+        else playButton.setImageResource(R.drawable.icons_play_arrow_white)
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_black)
         backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_black)
@@ -206,6 +213,41 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryWhite))
         main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryDark))
         menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
+        window.statusBarColor = getColor(R.color.whiteForStatusBar)
     }
 
+    // display the track, artist and album art on main screen
+    // album_art == null -> art will not change
+    // album_art != null -> art will be updated
+    fun displayCurrentSong(track: String, artist: String, album_art: Bitmap?) {
+        songTitleTV.text = track
+        songArtistNameTV.text = artist
+        if (album_art != null) albumArt.setImageBitmap(album_art)
+    }
+
+    // update the playback state (both the internal boolean and the views)
+    fun updatePlaybackState(playing: Boolean) {
+        musicPlaying = playing  // change state
+
+        if (musicPlaying) { // if currently playing, set to pause button
+//            when (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+//                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_pause_white)
+//                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_pause_black)
+//            }
+            playButton.setImageResource(R.drawable.icons_pause_white)
+
+        } else {    // if currently paused, set to play button
+//            when (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+//                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_play_arrow_white)
+//                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_play_arrow_black)
+//            }
+            playButton.setImageResource(R.drawable.icons_play_arrow_white)
+        }
+    }
+
+    private fun setUpToolbar() {
+        setSupportActionBar(findViewById(R.id.main_toolbar))
+        supportActionBar?.elevation = 0f
+        supportActionBar?.title = ""
+    }
 }
