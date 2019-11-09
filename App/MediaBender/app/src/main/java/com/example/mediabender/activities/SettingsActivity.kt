@@ -280,7 +280,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
     private fun loadWhiteTheme() {
         settings_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
-//        themeSpinner.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         settings_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_black)
         settingsLabel.setTextColor(getColor(R.color.colorPrimaryDark))
         accountsLabel.setTextColor(getColor(R.color.colorPrimaryDark))
@@ -292,8 +291,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private fun loadDarkTheme() {
         settings_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         settings_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_white)
-//        themeSpinner.setBackgroundColor(getColor(R.color.colorPrimaryDark))
-//        themeSpinner.popupBackground.colorFilter= getColor(R.color.colorPrimaryDark)
         settingsLabel.setTextColor(getColor(R.color.colorPrimaryWhite))
         accountsLabel.setTextColor(getColor(R.color.colorPrimaryWhite))
         window.statusBarColor = getColor(R.color.colorPrimaryDark)

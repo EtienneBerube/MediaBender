@@ -200,7 +200,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = supportActionBar
         //Toolbar colour
         toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
-        main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryWhite))
+//        main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryWhite))
         menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
@@ -216,10 +216,10 @@ class MainActivity : AppCompatActivity() {
         skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_black)
         backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_black)
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryDark))
-        artistNameMainTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        artistNameMainTextView?.setTextColor(getColor(R.color.colorPrimaryDark))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         supportActionBar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryWhite))
-        main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryDark))
+//        main_toolbar?.setTitleTextColor(getColor(R.color.colorPrimaryDark))
         menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
     }
