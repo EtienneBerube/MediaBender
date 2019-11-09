@@ -9,17 +9,13 @@ import android.provider.Settings
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import com.example.mediabender.R
 import com.example.mediabender.dialogs.PlayerConnectionDialog
 import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
 import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
+import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaPlayer
 import com.example.mediabender.models.PlayerAccount
-import com.example.mediabender.service.Request
-import com.example.mediabender.service.Sensibility
-import com.example.mediabender.service.SerialCommunicationService
-import com.example.mediabender.service.ServiceRequest
 
 
 class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {
@@ -160,7 +156,11 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         findViewById<Button>(R.id.settings_gesture_button).setOnClickListener { remapGesture() }
 
         //For the theme drop down menu
-        findViewById<Spinner>(R.id.settings_theme_spinner).onItemSelectedListener =
+        val spinner = findViewById<Spinner>(R.id.settings_theme_spinner)
+
+        spinner.adapter = createArrayAdapterForSpinner()
+
+        spinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -173,7 +173,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                     position: Int,
                     id: Long
                 ) {
-                    changeTheme("DEFAULT")
+                    changeTheme(parent?.getItemAtPosition(position).toString())
                 }
             }
 
@@ -192,12 +192,15 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
     private fun changeTheme(theme: String) {
         //TODO implement later
-        val toast = Toast.makeText(
+        val themeHelper =
+            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+        themeHelper.saveTheme(theme)
+        if (themeHelper.getTheme() != null) Toast.makeText(
             applicationContext,
-            "Changing theme not implemented yet",
+            "$theme saved",
             Toast.LENGTH_SHORT
-        )
-        toast.show()
+        ).show()
+        else Toast.makeText(applicationContext, "theme NOT saved!!", Toast.LENGTH_SHORT).show()
     }
 
     private fun remapGesture() {
@@ -247,4 +250,27 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         actionbar?.setDisplayHomeAsUpEnabled(true)
         actionbar?.title = ""
     }
+
+
+    private fun createArrayAdapterForSpinner(): ArrayAdapter<CharSequence> {
+        val themeHelper =
+            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+        val savedTheme = themeHelper.getTheme()
+
+        when (savedTheme) {
+            "Light" -> return ArrayAdapter.createFromResource(
+                this,
+                R.array.themesLightSaved,
+                R.layout.support_simple_spinner_dropdown_item
+            )
+            else -> return ArrayAdapter.createFromResource(
+                this,
+                R.array.themesDarkSaved,
+                R.layout.support_simple_spinner_dropdown_item
+            )
+        }
+
+
+    }
 }
+

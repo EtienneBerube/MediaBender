@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">Media Bender</string>
 
-    <string-array name="themes">
+    <string-array name="themesLightSaved">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="themesDarkSaved">
         <item>Dark</item>
         <item>Light</item>
     </string-array>

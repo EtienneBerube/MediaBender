@@ -1,5 +1,6 @@
 package com.example.mediabender
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -14,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 import com.example.mediabender.activities.SettingsActivity
+import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.SerialCommunicationService
 import kotlinx.android.synthetic.main.activity_main.*
@@ -31,13 +33,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var skipPlayingButton: ImageButton
     private lateinit var backPlayingButton: ImageButton
     private lateinit var menu_main: Menu
+    private var darkThemeChosen = false
     private var musicPlaying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // Note that the Toolbar defined in the layout has the id "my_toolbar"
-
+        setChosenTheme()
         setUpToolbar()
         initSerialCommunication()
         initMediaControls()
@@ -51,13 +54,20 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+          setChosenTheme()
+        if (darkThemeChosen) loadResourcesForDarkTheme()
+        else loadResourcesForWhiteTheme()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         this.menu_main = menu!!
 
-        when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_NO -> loadResourcesForWhiteTheme()
-            Configuration.UI_MODE_NIGHT_YES -> loadResourcesForDarkTheme()
+        when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) {
+            false -> loadResourcesForWhiteTheme()
+            true -> loadResourcesForDarkTheme()
         }
         return super.onCreateOptionsMenu(menu)
     }
@@ -89,13 +99,13 @@ class MainActivity : AppCompatActivity() {
         musicPlaying = mediaControls.isMusicPlaying()
         playButton = findViewById(R.id.playPauseButtMain)
 
-        if (musicPlaying && (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) playButton.setImageResource(
+        if (musicPlaying && (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO || darkThemeChosen) playButton.setImageResource(
             R.drawable.icons_pause_black
         )
-        else if (musicPlaying && (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) playButton.setImageResource(
+        else if (musicPlaying && (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) playButton.setImageResource(
             R.drawable.icons_pause_white
         )
-        else if (!musicPlaying && (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) playButton.setImageResource(
+        else if (!musicPlaying && (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO || darkThemeChosen) playButton.setImageResource(
             R.drawable.icons_play_arrow_black
         )
         else playButton.setImageResource(R.drawable.icons_play_arrow_white)
@@ -170,7 +180,7 @@ class MainActivity : AppCompatActivity() {
         val currentNightMode =
             mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
-        if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_NO || darkThemeChosen) {
             loadResourcesForWhiteTheme()
 
         } // Night mode is not active, we're using the light theme
@@ -193,7 +203,7 @@ class MainActivity : AppCompatActivity() {
         //Toolbar colour
         toolbar?.setBackgroundDrawable(getDrawable(R.color.darkForToolbar))
         main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryWhite))
-        menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
+        menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
         mainActivity.setBackgroundColor(getColor(R.color.darkForMainActivity))
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
         artistNameMainTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
@@ -212,7 +222,7 @@ class MainActivity : AppCompatActivity() {
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         supportActionBar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryWhite))
         main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryDark))
-        menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
+        menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
     }
 
@@ -249,5 +259,17 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.main_toolbar))
         supportActionBar?.elevation = 0f
         supportActionBar?.title = ""
+    }
+
+    private fun setChosenTheme() {
+        val themeHelper =
+            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+        val chosenTheme = themeHelper.getTheme()
+
+        when (chosenTheme) {
+            "Light" -> darkThemeChosen = false
+            "Dark" -> darkThemeChosen = true
+            null -> darkThemeChosen = false
+        }
     }
 }
