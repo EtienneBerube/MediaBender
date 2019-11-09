@@ -1,21 +1,21 @@
-package com.example.mediabender
+package com.example.mediabender.activities
 
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.example.mediabender.activities.SettingsActivity
+import com.example.mediabender.MediaControls
+import com.example.mediabender.MetadataHelper
+import com.example.mediabender.R
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.Request
-import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
 import com.example.mediabender.service.ServiceRequest
 

@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/mediabender_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashScreen"
+        <activity android:name=".activities.SplashScreen"
             android:theme="@style/SplashTheme"
             android:noHistory="true">
             <intent-filter>
@@ -31,7 +31,7 @@
             android:launchMode="singleTask">
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
