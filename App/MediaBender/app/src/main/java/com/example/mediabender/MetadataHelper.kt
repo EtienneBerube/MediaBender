@@ -10,7 +10,6 @@ import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Size
 import android.widget.Toast
-import com.example.mediabender.activities.MainActivity
 import java.io.FileDescriptor
 
 open class MetadataHelper(context: Context) {
