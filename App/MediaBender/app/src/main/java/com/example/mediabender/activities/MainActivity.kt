@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     override fun onRestart() {
         super.onRestart()
           setChosenTheme()
-        if (darkThemeChosen) loadResourcesForDarkTheme()
+        if ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) loadResourcesForDarkTheme()
         else loadResourcesForWhiteTheme()
     }
 
@@ -121,12 +121,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         skipPlayingButton.setOnClickListener {
-            //displayToast("Skip")
             mediaControls.executeEvent(MediaEventType.SKIP_SONG, this)
         }
 
         backPlayingButton.setOnClickListener {
-            //displayToast("Back")
             mediaControls.executeEvent(MediaEventType.PREVIOUS_SONG, this)
         }
     }
@@ -201,10 +199,10 @@ class MainActivity : AppCompatActivity() {
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         val toolbar = supportActionBar
         //Toolbar colour
-        toolbar?.setBackgroundDrawable(getDrawable(R.color.darkForToolbar))
+        toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
         main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryWhite))
         menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
-        mainActivity.setBackgroundColor(getColor(R.color.darkForMainActivity))
+        mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
         artistNameMainTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         window.statusBarColor = getColor(R.color.colorPrimaryDark)

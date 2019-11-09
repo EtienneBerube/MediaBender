@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settings_parent_scroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/settings_inner_layout"
@@ -13,6 +12,7 @@
         android:layout_height="match_parent"
         tools:context=".activities.SettingsActivity">
 
+        <!--Need To Change Colour-->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/settings_toolbar"
             android:layout_width="0dp"
@@ -26,9 +26,9 @@
             app:layout_constraintTop_toTopOf="@+id/relativeLayout"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-
+        <!--Need to Change Colour-->
         <TextView
-            android:id="@+id/textView10"
+            android:id="@+id/settingsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -39,9 +39,9 @@
             android:textSize="30sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
+        <!--Need To Change Colour-->
         <TextView
-            android:id="@+id/textView12"
+            android:id="@+id/accountsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -67,7 +67,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView10">
+            app:layout_constraintTop_toBottomOf="@+id/settingsTitle">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/settings_inner_constraint"
@@ -87,6 +87,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <!--Need To Change Colour-->
                 <Spinner
                     android:id="@+id/settings_theme_spinner"
                     android:layout_width="wrap_content"
@@ -152,7 +153,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView12">
+            app:layout_constraintTop_toBottomOf="@+id/accountsTitle">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/spotify_inner_constraint"

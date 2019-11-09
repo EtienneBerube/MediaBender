@@ -22,7 +22,8 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:launchMode="singleTask"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:configChanges="uiMode">
         </activity>
 
         <!--Splash screen-->
