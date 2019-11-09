@@ -28,7 +28,7 @@
 
         <!--Splash screen-->
         <activity
-            android:name=".SplashScreen"
+            android:name=".activities.SplashScreen"
             android:noHistory="true"
             android:theme="@style/SplashTheme"
             android:configChanges="uiMode">
