@@ -11,7 +11,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
+
 import com.example.mediabender.activities.SettingsActivity
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.SerialCommunicationService
@@ -169,12 +169,11 @@ class MainActivity : AppCompatActivity() {
 
         if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
             loadResourcesForWhiteTheme()
-            Toast.makeText(this, "Light theme on!", Toast.LENGTH_LONG).show()
+
         } // Night mode is not active, we're using the light theme
         else {
             loadResourcesForDarkTheme()
 
-            Toast.makeText(this, "DARK THEME ON!", Toast.LENGTH_LONG).show()
         } // Night mode is active, we're using dark theme
     }
 
@@ -182,6 +181,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadResourcesForDarkTheme() {
         if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_white)
         else playButton.setImageResource(R.drawable.icons_play_arrow_white)
+
         skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_white)
         backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_white)
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
@@ -189,6 +189,7 @@ class MainActivity : AppCompatActivity() {
         toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
         main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryWhite))
         menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
+        mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
         artistNameMainTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
     }
@@ -196,6 +197,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadResourcesForWhiteTheme() {
         if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_black)
         else playButton.setImageResource(R.drawable.icons_pause_black)
+        mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_black)
         backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_black)
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryDark))
