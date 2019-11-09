@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRestart() {
         super.onRestart()
-          setChosenTheme()
+        setChosenTheme()
         if ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) loadResourcesForDarkTheme()
         else loadResourcesForWhiteTheme()
     }
@@ -163,27 +163,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayToast(buttonName: String) {
-        Toast.makeText(
-            this,
-            "$buttonName button pressed, but not implemented yet",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
 
         super.onConfigurationChanged(newConfig)
 
+        setChosenTheme()
         val currentNightMode =
             mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
-        if (currentNightMode == Configuration.UI_MODE_NIGHT_NO || darkThemeChosen) {
-            loadResourcesForWhiteTheme()
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) {
+            loadResourcesForDarkTheme()
 
         } // Night mode is not active, we're using the light theme
         else {
-            loadResourcesForDarkTheme()
+            loadResourcesForWhiteTheme()
 
         } // Night mode is active, we're using dark theme
     }
