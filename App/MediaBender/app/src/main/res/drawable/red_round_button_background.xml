@@ -7,7 +7,7 @@
 <!--        android:endColor="#80FF00FF"-->
 <!--        android:angle="270" />-->
 
-    <solid android:color="#ED4949"></solid>
+    <solid android:color="#A13823"></solid>
 
     <padding
         android:bottom="4dp"

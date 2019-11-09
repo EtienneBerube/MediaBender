@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settings_parent_scroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/settings_inner_layout"
@@ -13,28 +12,43 @@
         android:layout_height="match_parent"
         tools:context=".activities.SettingsActivity">
 
+        <!--Need To Change Colour-->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/settings_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:nestedScrollingEnabled="false"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/relativeLayout"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <!--Need to Change Colour-->
         <TextView
-            android:id="@+id/textView10"
+            android:id="@+id/settingsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="75dp"
             android:fontFamily="sans-serif-medium"
             android:text="Settings"
-            android:textColor="#FFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="30sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
+        <!--Need To Change Colour-->
         <TextView
-            android:id="@+id/textView12"
+            android:id="@+id/accountsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif-medium"
             android:text="Accounts"
-            android:textColor="#FFFFFF"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="30sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/settings_card" />
@@ -53,7 +67,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView10">
+            app:layout_constraintTop_toBottomOf="@+id/settingsTitle">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/settings_inner_constraint"
@@ -73,13 +87,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <!--Need To Change Colour-->
                 <Spinner
                     android:id="@+id/settings_theme_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:layout_marginEnd="12dp"
-                    android:entries="@array/themes"
+                    android:entries="@array/themesDarkSaved"
                     android:minWidth="50dp"
                     android:spinnerMode="dropdown"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -138,7 +153,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView12">
+            app:layout_constraintTop_toBottomOf="@+id/accountsTitle">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/spotify_inner_constraint"
