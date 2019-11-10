@@ -2,11 +2,9 @@ package com.example.mediabender.helpers
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.provider.MediaStore
 import com.example.mediabender.R
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.Gesture
-import com.google.gson.Gson
 import kotlin.collections.HashMap
 
 class GestureEventDecoder(private val context: Context) {
