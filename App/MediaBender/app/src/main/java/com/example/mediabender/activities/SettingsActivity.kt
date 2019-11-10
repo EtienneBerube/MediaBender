@@ -308,15 +308,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         val savedTheme = themeHelper.getTheme()
 
         when (savedTheme) {
-            "Light" -> {
-                darkThemeChosen = false
-                return ArrayAdapter.createFromResource(
-                    this,
-                    R.array.themesLightSaved,
-                    R.layout.support_simple_spinner_dropdown_item
-                )
-            }
-            else -> {
+            "Dark" -> {
                 darkThemeChosen = true
                 return ArrayAdapter.createFromResource(
                     this,
@@ -324,6 +316,15 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                     R.layout.support_simple_spinner_dropdown_item
                 )
             }
+            else -> {
+                darkThemeChosen = false
+                return ArrayAdapter.createFromResource(
+                    this,
+                    R.array.themesLightSaved,
+                    R.layout.support_simple_spinner_dropdown_item
+                )
+            }
+
         }
 
     }
