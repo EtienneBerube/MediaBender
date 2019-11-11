@@ -144,11 +144,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         skipPlayingButton.setOnClickListener {
-            mediaControls.executeEvent(MediaEventType.SKIP_SONG, this)
+            mediaControls.executeEvent(MediaEventType.SKIP_SONG)
         }
 
         backPlayingButton.setOnClickListener {
-            mediaControls.executeEvent(MediaEventType.PREVIOUS_SONG, this)
+            mediaControls.executeEvent(MediaEventType.PREVIOUS_SONG)
         }
     }
 
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity() {
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
 
             //displayToast("Pause")
-            mediaControls.executeEvent(MediaEventType.PAUSE, this)
+            mediaControls.executeEvent(MediaEventType.PAUSE)
             musicPlaying = false
         } else {
             playButton.setImageResource(R.drawable.icons_pause_white)
@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity() {
 //                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_pause_white)
 //            }
 
-            mediaControls.executeEvent(MediaEventType.PLAY, this)
+            mediaControls.executeEvent(MediaEventType.PLAY)
             musicPlaying = true
         }
     }
