@@ -56,7 +56,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/settings_card"
             android:layout_width="0dp"
-            android:layout_height="300dp"
+            android:layout_height="200dp"
             android:layout_margin="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
@@ -83,7 +83,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:text="Theme"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -106,7 +106,7 @@
                     android:id="@+id/settings_gesture_button"
 
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="50dp"
                     android:layout_marginStart="12dp"
 
                     android:layout_marginTop="12dp"
@@ -124,7 +124,7 @@
                     android:id="@+id/settings_test_connection_button"
 
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="50dp"
                     android:layout_marginStart="12dp"
 
                     android:layout_marginTop="12dp"

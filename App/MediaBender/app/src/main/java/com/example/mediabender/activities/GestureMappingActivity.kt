@@ -1,27 +1,37 @@
 package com.example.mediabender.activities
 
+import android.content.Context
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import com.example.mediabender.R
 import com.example.mediabender.helpers.GestureEventDecoder
+import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.Gesture
+import kotlinx.android.synthetic.main.activity_gesture_mapping.*
 
 class GestureMappingActivity : AppCompatActivity() {
 
     private lateinit var gestureEventDecoder: GestureEventDecoder
-
+    private lateinit var titleLabel : TextView
     private lateinit var spinner_up: Spinner
     private lateinit var spinner_down: Spinner
     private lateinit var spinner_left: Spinner
     private lateinit var spinner_right: Spinner
     private lateinit var spinner_far: Spinner
     private lateinit var spinner_near: Spinner
-
     private lateinit var b_save_gestures: Button
-
+    private lateinit var gestureView: View
+    private lateinit var upTextView: TextView
+    private lateinit var downTextView: TextView
+    private lateinit var leftTextView: TextView
+    private lateinit var rightTextView: TextView
+    private lateinit var farTextView: TextView
+    private lateinit var nearTextView: TextView
+    private var darkThemeChosen = false
     private lateinit var controls_standard: Array<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +39,20 @@ class GestureMappingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_gesture_mapping)
 
         gestureEventDecoder = GestureEventDecoder(applicationContext)
+        setChosenTheme()
+        setUpToolbar()
         setupUI()
+        setUpSpinners()
+        loadAppropriateTheme()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        setChosenTheme()
+        if( (gestureView.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) loadDarkTheme()
+        else loadWhiteTheme()
+
+        loadAppropriateTheme()
     }
 
     // need to make sure that when someone tries to go back, they are aware their map wasn't saved
@@ -38,7 +61,22 @@ class GestureMappingActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        loadAppropriateTheme()
+        finish()
+        startActivity(intent)
+    }
+
     private fun setupUI() {
+
+        upTextView = findViewById(R.id.tv_gesture_up)
+        downTextView = findViewById(R.id.tv_gesture_down)
+        leftTextView = findViewById(R.id.tv_gesture_left)
+        rightTextView = findViewById(R.id.tv_gesture_right)
+        farTextView = findViewById(R.id.tv_gesture_far)
+        nearTextView = findViewById(R.id.tv_gesture_near)
+        titleLabel = findViewById(R.id.gesturesTitleTV)
 
         b_save_gestures = findViewById(R.id.b_save_gestures)
 
@@ -50,7 +88,8 @@ class GestureMappingActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Saved.", Toast.LENGTH_LONG).show()
                 finish()
             } else {
-                Toast.makeText(applicationContext,
+                Toast.makeText(
+                    applicationContext,
                     "Each control must have only one associated gesture.",
                     Toast.LENGTH_LONG
                 ).show()
@@ -63,7 +102,11 @@ class GestureMappingActivity : AppCompatActivity() {
         spinner_right = findViewById(R.id.spinner_right)
         spinner_far = findViewById(R.id.spinner_far)
         spinner_near = findViewById(R.id.spinner_near)
+        gestureView = findViewById(R.id.scroll_gestures_constraint)
 
+    }
+
+    private fun setUpSpinners(){
         // creating array of standard controls options for spinners
         controls_standard = arrayOf(
             getString(R.string.mapping_spinner_play),
@@ -119,7 +162,7 @@ class GestureMappingActivity : AppCompatActivity() {
                     getString(R.string.mapping_spinner_volumeUp) -> MediaEventType.RAISE_VOLUME
                     getString(R.string.mapping_spinner_volumeDown) -> MediaEventType.LOWER_VOLUME
                     else -> MediaEventType.NONE // this case will never happen
-                    }
+                }
 
                 // based on which spinner, fetch the gesture for the associated spinner
                 val gesture: Gesture = when (parent?.id) {
@@ -135,16 +178,53 @@ class GestureMappingActivity : AppCompatActivity() {
                 // TODO might be interesting to add feedback to the user saying "hey, this gesture is for more than one control"
             }
         }
-        findViewById<Spinner>(R.id.spinner_up).onItemSelectedListener = myOnItemSelectedListener
-        findViewById<Spinner>(R.id.spinner_down).onItemSelectedListener = myOnItemSelectedListener
-        findViewById<Spinner>(R.id.spinner_left).onItemSelectedListener = myOnItemSelectedListener
-        findViewById<Spinner>(R.id.spinner_right).onItemSelectedListener = myOnItemSelectedListener
-        findViewById<Spinner>(R.id.spinner_far).onItemSelectedListener = myOnItemSelectedListener
-        findViewById<Spinner>(R.id.spinner_near).onItemSelectedListener = myOnItemSelectedListener
+        spinner_up.onItemSelectedListener = myOnItemSelectedListener
+        spinner_down.onItemSelectedListener = myOnItemSelectedListener
+        spinner_far.onItemSelectedListener = myOnItemSelectedListener
+        spinner_left.onItemSelectedListener = myOnItemSelectedListener
+        spinner_right.onItemSelectedListener = myOnItemSelectedListener
+        spinner_near.onItemSelectedListener = myOnItemSelectedListener
     }
 
+    private fun loadAppropriateTheme(){
+        val currentMode = gestureView.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+
+        if (currentMode == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) loadDarkTheme()
+        else loadWhiteTheme()
+    }
+
+    private fun loadDarkTheme(){
+        upTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        titleLabel.setTextColor(getColor(R.color.colorPrimaryWhite))
+        downTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        leftTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        rightTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        farTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        card_gestures_standard_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
+        nearTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        gestures_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryDark))
+        gestureView.setBackgroundColor(getColor(R.color.colorPrimaryDark))
+        gestures_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_white)
+
+        window.statusBarColor = getColor(R.color.colorPrimaryDark)
+    }
+
+    private fun loadWhiteTheme(){
+        titleLabel.setTextColor(getColor(R.color.colorPrimaryDark))
+        upTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        downTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        leftTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        gestureView.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
+        rightTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        card_gestures_standard_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
+        farTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        nearTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        gestures_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
+        gestures_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_black)
+        window.statusBarColor = getColor(R.color.whiteForStatusBar)
+    }
     // save the gesture map to shared preferences
-    fun saveGestures() {
+    private fun saveGestures() {
         gestureEventDecoder.saveToSharedPreferences()
     }
 
@@ -160,8 +240,27 @@ class GestureMappingActivity : AppCompatActivity() {
                 MediaEventType.RAISE_VOLUME -> getString(R.string.mapping_spinner_volumeUp)
                 MediaEventType.LOWER_VOLUME -> getString(R.string.mapping_spinner_volumeDown)
                 else -> "NONE"  // this will never occur
-        })
+            }
+        )
         return temp
     }
 
+    private fun setUpToolbar(){
+        setSupportActionBar(findViewById(R.id.gestures_toolbar))
+        supportActionBar?.elevation = 0f
+        val actionbar = supportActionBar
+        actionbar?.title = ""
+        actionbar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+
+    private fun setChosenTheme(){
+        val themeHelper = ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+        val  chosenTheme = themeHelper.getTheme()
+
+        when (chosenTheme){
+            "Dark" -> darkThemeChosen = true
+            else -> darkThemeChosen = false
+        }
+    }
 }
