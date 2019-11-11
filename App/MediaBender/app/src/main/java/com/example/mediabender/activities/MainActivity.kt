@@ -141,11 +141,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun playPauseButtPressed() {
         if (musicPlaying) {
-//
-//            when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)) {
-//                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_play_arrow_black)
-//                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_play_arrow_white)
-//            }
+
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
 
             //displayToast("Pause")
@@ -153,10 +149,7 @@ class MainActivity : AppCompatActivity() {
             musicPlaying = false
         } else {
             playButton.setImageResource(R.drawable.icons_pause_white)
-//            when ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)) {
-//                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_pause_black)
-//                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_pause_white)
-//            }
+
 
             mediaControls.executeEvent(MediaEventType.PLAY, this)
             musicPlaying = true
@@ -194,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = supportActionBar
         //Toolbar colour
         toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
-//        main_toolbar.setTitleTextColor(getColor(R.color.colorPrimaryWhite))
+
         menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
@@ -213,7 +206,6 @@ class MainActivity : AppCompatActivity() {
         artistNameMainTextView?.setTextColor(getColor(R.color.colorPrimaryDark))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         supportActionBar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryWhite))
-//        main_toolbar?.setTitleTextColor(getColor(R.color.colorPrimaryDark))
         menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
     }
@@ -231,18 +223,10 @@ class MainActivity : AppCompatActivity() {
     fun updatePlaybackState(playing: Boolean) {
         musicPlaying = playing  // change state
 
-        if (musicPlaying) { // if currently playing, set to pause button
-//            when (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-//                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_pause_white)
-//                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_pause_black)
-//            }
+        if (musicPlaying) {
             playButton.setImageResource(R.drawable.icons_pause_white)
 
-        } else {    // if currently paused, set to play button
-//            when (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-//                Configuration.UI_MODE_NIGHT_YES -> playButton.setImageResource(R.drawable.icons_play_arrow_white)
-//                Configuration.UI_MODE_NIGHT_NO -> playButton.setImageResource(R.drawable.icons_play_arrow_black)
-//            }
+        } else {
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
         }
     }

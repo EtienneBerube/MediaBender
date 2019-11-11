@@ -64,6 +64,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         super.onConfigurationChanged(newConfig)
 
         loadAppropriateTheme()
+        finish()
+        startActivity(intent)
     }
 
 
@@ -214,7 +216,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     }
 
     private fun changeTheme(theme: String) {
-        //TODO Implement the changing of themes
 
         val themeHelper =
             ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
@@ -328,5 +329,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         }
 
     }
+
+
 }
 
