@@ -39,6 +39,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activities.GestureMappingActivity"
+            android:theme="@style/AppTheme" >
+        </activity>
+
         <!--Main activity-->
         <activity
             android:name=".MainActivity"
