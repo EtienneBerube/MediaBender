@@ -154,7 +154,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
     private fun setupSettings() {
         settingsLabel = findViewById(R.id.settingsTitle)
-        settingsActivity = findViewById(R.id.settings_inner_layout)
+        settingsActivity = findViewById(R.id.settings_parent_scroll)
         accountsLabel = findViewById(R.id.accountsTitle)
         findViewById<Button>(R.id.settings_test_connection_button).setOnClickListener { testSensorConnection() }
         findViewById<Button>(R.id.settings_gesture_button).setOnClickListener { remapGesture() }
