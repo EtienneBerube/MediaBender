@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 import com.example.mediabender.activities.SettingsActivity
+import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.SerialCommunicationService
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var playButton: ImageButton
     private lateinit var skipPlayingButton: ImageButton
     private lateinit var backPlayingButton: ImageButton
+    private lateinit var gestureDecoder: GestureEventDecoder
     private lateinit var menu_main: Menu
     private var darkThemeChosen = false
     private var musicPlaying = false
@@ -40,6 +42,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // Note that the Toolbar defined in the layout has the id "my_toolbar"
+        gestureDecoder = GestureEventDecoder(applicationContext)
+
         setChosenTheme()
         setUpToolbar()
         initSerialCommunication()
@@ -77,6 +81,25 @@ class MainActivity : AppCompatActivity() {
             goToSettingsPage()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+
+        SerialCommunicationService.instance.removeDataOnReceiveListener()
+    }
+    override fun onResume() {
+        super.onResume()
+
+        SerialCommunicationService.instance.setDataOnReceiveListener {
+            runOnUiThread {
+                val event = gestureDecoder.gestureToEvent(it.gesture)
+                Toast.makeText(applicationContext,"Got gesture: ${it.gesture.toString} -> ${event.name}", Toast.LENGTH_SHORT).show()
+                mediaControls.executeEvent(event, this)
+            }
+        }
+
     }
 
     private fun initSerialCommunication() {

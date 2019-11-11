@@ -5,9 +5,6 @@ import android.content.*
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.MediaMetadata
-import android.media.session.MediaController
-import android.media.session.MediaSessionManager
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore

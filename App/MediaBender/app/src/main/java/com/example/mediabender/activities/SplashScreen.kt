@@ -1,4 +1,4 @@
-package com.example.mediabender
+package com.example.mediabender.activities
 
 import android.content.Context
 import android.content.Intent
@@ -6,9 +6,10 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import com.example.mediabender.MainActivity
+import com.example.mediabender.R
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import kotlinx.android.synthetic.main.activity_splash_screen.*
-import java.lang.Exception
 
 class SplashScreen : AppCompatActivity() {
 
@@ -51,3 +52,4 @@ class SplashScreen : AppCompatActivity() {
         splashScreen.setBackgroundColor(getColor(R.color.colorPrimaryDark))
     }
 }
+

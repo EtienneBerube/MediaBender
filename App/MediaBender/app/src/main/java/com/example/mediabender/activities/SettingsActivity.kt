@@ -49,9 +49,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
             )
         )
 
-        if (!checkIfPermissionGranted())
-            startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
-
         setupSettings()
         setupApplePlayMusic()
         setupSpotify()
@@ -102,24 +99,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 setupGooglePlayMusic()
             }
         }
-    }
-
-    private fun checkIfPermissionGranted(): Boolean {
-        var granted = false;
-        val appOps = applicationContext
-            .getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode = appOps.checkOpNoThrow(
-            AppOpsManager.OPSTR_GET_USAGE_STATS,
-            android.os.Process.myUid(), applicationContext.getPackageName()
-        )
-
-        if (mode == AppOpsManager.MODE_DEFAULT) {
-            granted =
-                applicationContext.checkCallingOrSelfPermission(android.Manifest.permission.PACKAGE_USAGE_STATS) === PackageManager.PERMISSION_GRANTED
-        } else {
-            granted = mode == AppOpsManager.MODE_ALLOWED
-        }
-        return granted
     }
 
     private fun setupSpotify() {
