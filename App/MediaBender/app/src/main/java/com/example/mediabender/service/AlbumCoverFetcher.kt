@@ -71,7 +71,7 @@ class AlbumCoverFetcher(private val context: Context) : AsyncTask<String, Void, 
                     .url(COVER_ART_ORG_API_URL + "${mbid}/front")
                     .build()
 
-                Log.d("Cover Fetch", "Sending request for cover")
+                Log.d("Cover Fetch", "Sending request for cover with id: $mbid")
                 val response = client.newCall(coverRequest)
                     .execute()
 
