@@ -28,6 +28,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
 
 dependencies {
@@ -40,9 +43,10 @@ dependencies {
     implementation 'com.jaredrummler:android-processes:1.1.1'
     implementation 'com.github.felHR85:UsbSerial:6.1.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'org.apache.httpcomponents:fluent-hc:4.5.9'
+    implementation "com.squareup.okhttp3:okhttp:4.2.1"
     implementation 'com.fasterxml.jackson.core:jackson-core:2.10.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
+    implementation 'org.apache.lucene:lucene-queryparser:8.3.0'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:1.10.19'

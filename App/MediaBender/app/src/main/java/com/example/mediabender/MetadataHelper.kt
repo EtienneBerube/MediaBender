@@ -4,19 +4,16 @@ import android.annotation.SuppressLint
 import android.content.*
 import android.database.Cursor
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.net.Uri
-import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
 import android.widget.Toast
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.apache.http.client.fluent.Request
-import java.io.FileDescriptor
+import com.example.mediabender.service.AlbumCoverFetcher
+import java.lang.RuntimeException
+import android.content.Intent
+import android.content.Intent.getIntent
+
 
 open class MetadataHelper(context: Context) {
 
@@ -29,15 +26,17 @@ open class MetadataHelper(context: Context) {
 //       soundcloud, who's intent is the same as the GooglePlay music event, and thus handled the
 //       same way
 
-    private val MUSIC_BRAINZ_API_URL = "https://musicbrainz.org/ws/2/release-group/"
-    private val COVER_ART_ORG_API_URL = "https://coverartarchive.org/release/"
+    private var lastArtist: String? = null
+    private var lastAlbum: String? = null
+    private var lastTrack: String? = null
 
+    private val coverFetcher: AlbumCoverFetcher
     private val context = context
-    private var track:String = ""
-    private var trackID:String = ""
-    private var album:String = ""
-    private var albumID:String = ""
-    private var artist:String = ""
+    private var track: String = ""
+    private var trackID: String = ""
+    private var album: String = ""
+    private var albumID: String = ""
+    private var artist: String = ""
     private var albumArt: Bitmap? = null
     private var playbackState: Boolean = false
     private var player: Int? = null
@@ -78,22 +77,26 @@ open class MetadataHelper(context: Context) {
 
         // setting the current player to INVALID_PLAYER so that it is never null
         setCurrentPlayer("")
+
+        coverFetcher = AlbumCoverFetcher(context)
     }
 
     // broadcast receiver to set variables to live data on song change
     // TODO: soundcloud behaving weirdly when music player opened but paused, the app doesnt seem to "connect" to it right away
     inner class MyReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            setCurrentPlayer(intent.action ?: "")
-            setPlaybackState(intent)
-            setTrack(intent.getStringExtra("track"))
-            setAlbum(intent.getStringExtra("album"))
-            setArtist(intent.getStringExtra("artist"))
-            setAlbumArt(intent)
+            if (!wasLaunchedFromRecents(intent)) {
+                setCurrentPlayer(intent.action ?: "")
+                setPlaybackState(intent)
+                setTrack(intent.getStringExtra("track"))
+                setAlbum(intent.getStringExtra("album"))
+                setArtist(intent.getStringExtra("artist"))
+                displayAlbumArt()
+                with(context as MainActivity) {
+                    displayCurrentSong(track, artist)
+                    updatePlaybackState(playbackState)
 
-            with (context as MainActivity) {
-                displayCurrentSong(track,artist,null)
-                updatePlaybackState(playbackState)
+                }
             }
         }
 
@@ -112,148 +115,60 @@ open class MetadataHelper(context: Context) {
         private fun setTrack(_track: String?) {
             track = _track ?: ""
         }
-        private fun setTrackID(intent: Intent) {
 
-            trackID = when (player) {
-                PLAYER_SPOTIFY -> (intent.getStringExtra("id") ?: "").removePrefix("spotify:track:")
-                PLAYER_GOOGLEPLAY -> intent.getLongExtra("songId", -1).toString()
-                PLAYER_INVALID ->  ""
-                else -> ""  // NEVER occurs todo redo with the enum thing
-            }
-        } // set trackID based on player
         private fun setAlbum(_album: String?) {
             album = _album ?: ""
         }
-        private fun setAlbumID(_trackID: String) {
-            // creating selection for query
-            val selection: String = MediaStore.Audio.Media._ID + " = ?"
 
-            if (player == PLAYER_GOOGLEPLAY) {
-                /*val cursor: Cursor? = context.contentResolver.query(
-                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    arrayOf(MediaStore.Audio.Media._ID,MediaStore.Audio.Media.ALBUM_ID),
-                    selection,
-                    arrayOf(_trackID),
-                    null
-                )
-
-                // if album exists, get the id
-                if (cursor?.moveToNext()!!) {
-                    albumID =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM_ID))
-                }
-                cursor.close()*/
-
-            } else albumID = ""
-        } // set albumID of given track from trackID
         private fun setArtist(_artist: String?) {
             artist = _artist ?: ""
         }
+
         private fun setPlaybackState(intent: Intent) {
             playbackState = when (player) {
                 PLAYER_INVALID -> playbackState
-                PLAYER_SPOTIFY -> intent.getBooleanExtra("playstate",playbackState)
-                PLAYER_GOOGLEPLAY -> intent.getBooleanExtra("playing",playbackState)
+                PLAYER_SPOTIFY -> intent.getBooleanExtra("playstate", playbackState)
+                PLAYER_GOOGLEPLAY -> intent.getBooleanExtra("playing", playbackState)
                 else -> playbackState
             }
         }
 
-        private fun setAlbumArt(intent: Intent): Bitmap? {
-
-            var toReturn: Bitmap? = null
-
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
-            val isConnected: Boolean = activeNetwork?.isConnected ?: false
-
-            if(isConnected){
-                val mBReponse = Request.Get(MUSIC_BRAINZ_API_URL+"?query=release:${album}%20AND%20artist:${artist}}&fmt=json")
-                    .execute()
-                    .returnContent()
-                    .asString()
-
-                val mBJsonReponse = ObjectMapper().readTree(mBReponse)
-                mBJsonReponse.get("releases")?.let{
-                    //get first matching result
-                    val mbid = it.elements().next()?.get("id")
-                    val byteImage = Request.Get(COVER_ART_ORG_API_URL + "${mbid}/front")
-                        .execute()
-                        .returnContent().asBytes()
-
-                    toReturn = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.size)
+        private fun displayAlbumArt() {
+            try {
+                if ((lastAlbum == null && lastArtist == null && lastTrack == null) || lastAlbum != album || lastTrack != track || lastArtist != artist) {
+                    lastAlbum = album
+                    lastArtist = artist
+                    lastTrack = track
+                    AlbumCoverFetcher(context).execute(album, artist)
+                } else {
+                    Log.d("Cover Fetcher", "Debounced an HTTP call")
                 }
-
-            }
-
-            return toReturn
-        }
-
-        // NOT FUNCTIONAL
-        // will need to check if q and do either loadThumbnail method or query
-        @SuppressLint("NewApi")
-        private fun setAlbumArt2(intent: Intent) {
-            val cr: ContentResolver = context.contentResolver
-
-            val cursor1 = cr.query(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                arrayOf(MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.ALBUM_ID),
-                //MediaStore.Audio.Media.ALBUM + "=?",
-                //        MediaStore.Audio.Media.ARTIST + "=?",
-                MediaStore.Audio.Media.IS_MUSIC + "=1",
-                null,
-                //arrayOf(album,artist),
-                null,
-                null
-            )
-
-            var albumid2: Long = 0
-
-            if (cursor1 != null) {
-                while (cursor1.moveToNext()) {
-                    val cursorAlbum = cursor1.getString(cursor1.getColumnIndex(MediaStore.Audio.Media.ALBUM))
-                    if ( cursorAlbum == album) {
-                        albumid2 = cursor1.getLong(cursor1.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
-                        break
-                    }
-                }
-
-            }
-
-            // uri of current song album art
-            val uri: Uri = ContentUris.withAppendedId(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                albumid2)
-            albumArt = cr.loadThumbnail(uri, Size(200,200),null)
-
-
-            val cursor: Cursor? = cr.query(
-                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                arrayOf(MediaStore.Audio.Albums._ID,MediaStore.Audio.Albums.ALBUM_ART),
-                MediaStore.Audio.Albums._ID + "=?",
-                arrayOf(albumid2.toString()),
-                    null
-            )
-
-            if (cursor != null && cursor.moveToFirst()) {
-                val path: String = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))
+            } catch (e: IllegalStateException) {
+                Log.d("Cover Fetcher", "Debounced an HTTP call: Already running")
             }
         }
 
+        protected fun wasLaunchedFromRecents(intent: Intent): Boolean {
+            return intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
+        }
     }
 
     fun getTrack(): String {
         return track
     }
+
     fun getAlbum(): String {
         return album
     }
+
     fun getArtist(): String {
         return artist
     }
 
     fun setCurrentPlayer(action: String) {
-        if ("android" in  action) {
+        if ("android" in action) {
             player = PLAYER_GOOGLEPLAY
-        } else if ("spotify" in  action) {
+        } else if ("spotify" in action) {
             player = PLAYER_SPOTIFY
         } else {    // if intent action unrecognized source, claim invalid player
             player = PLAYER_INVALID

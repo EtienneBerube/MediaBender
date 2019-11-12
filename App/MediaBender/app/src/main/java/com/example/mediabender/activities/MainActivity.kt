@@ -236,10 +236,16 @@ class MainActivity : AppCompatActivity() {
     // display the track, artist and album art on main screen
     // album_art == null -> art will not change
     // album_art != null -> art will be updated
-    fun displayCurrentSong(track: String, artist: String, album_art: Bitmap?) {
+    fun displayCurrentSong(track: String, artist: String) {
         songTitleTV.text = track
         songArtistNameTV.text = artist
-        if (album_art != null) albumArt.setImageBitmap(album_art)
+        albumArt.setImageDrawable(getDrawable(R.drawable.placeholder_song))
+    }
+
+    fun changeCoverArt(bitmap: Bitmap?){
+        bitmap?.let {
+            albumArt.setImageBitmap(it)
+        }
     }
 
     // update the playback state (both the internal boolean and the views)
