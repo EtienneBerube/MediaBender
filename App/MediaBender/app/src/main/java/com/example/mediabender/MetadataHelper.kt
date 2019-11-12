@@ -5,11 +5,17 @@ import android.content.*
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
+import android.util.Log
 import android.util.Size
 import android.widget.Toast
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.apache.http.client.fluent.Request
 import java.io.FileDescriptor
 
 open class MetadataHelper(context: Context) {
@@ -22,6 +28,9 @@ open class MetadataHelper(context: Context) {
 // NOTE: any player with android in the action is equivalent to GooglePlay music. An example is
 //       soundcloud, who's intent is the same as the GooglePlay music event, and thus handled the
 //       same way
+
+    private val MUSIC_BRAINZ_API_URL = "https://musicbrainz.org/ws/2/release-group/"
+    private val COVER_ART_ORG_API_URL = "https://coverartarchive.org/release/"
 
     private val context = context
     private var track:String = ""
@@ -80,6 +89,7 @@ open class MetadataHelper(context: Context) {
             setTrack(intent.getStringExtra("track"))
             setAlbum(intent.getStringExtra("album"))
             setArtist(intent.getStringExtra("artist"))
+            setAlbumArt(intent)
 
             with (context as MainActivity) {
                 displayCurrentSong(track,artist,null)
@@ -148,30 +158,34 @@ open class MetadataHelper(context: Context) {
             }
         }
 
-        // NOT FUNCTIONAL
-        private fun setAlbumArt(album_id: Long): Bitmap? {
+        private fun setAlbumArt(intent: Intent): Bitmap? {
 
-            // if album_id > -1 then an album exists
-            if (album_id > -1) {
-                // path uri where album art stored
-                val artwork_uri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            var toReturn: Bitmap? = null
 
-                // uri of current song album art
-                val uri: Uri = ContentUris.withAppendedId(artwork_uri, album_id)
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+            val isConnected: Boolean = activeNetwork?.isConnected ?: false
 
-                // creating parcel file descriptor to access file ("r" for read only mode)
-                val pfd: ParcelFileDescriptor? =
-                    context.contentResolver.openFileDescriptor(uri, "r")
+            if(isConnected){
+                val mBReponse = Request.Get(MUSIC_BRAINZ_API_URL+"?query=release:${album}%20AND%20artist:${artist}}&fmt=json")
+                    .execute()
+                    .returnContent()
+                    .asString()
 
-                // if pfd exist, then create bitmap from resource
-                if (pfd != null) {
-                    val fd: FileDescriptor = pfd.fileDescriptor
-                    albumArt = BitmapFactory.decodeFileDescriptor(fd)
+                val mBJsonReponse = ObjectMapper().readTree(mBReponse)
+                mBJsonReponse.get("releases")?.let{
+                    //get first matching result
+                    val mbid = it.elements().next()?.get("id")
+                    val byteImage = Request.Get(COVER_ART_ORG_API_URL + "${mbid}/front")
+                        .execute()
+                        .returnContent().asBytes()
+
+                    toReturn = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.size)
                 }
+
             }
 
-            // otherwise return null
-            return null
+            return toReturn
         }
 
         // NOT FUNCTIONAL
