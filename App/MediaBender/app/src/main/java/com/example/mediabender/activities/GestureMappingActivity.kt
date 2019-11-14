@@ -70,12 +70,12 @@ class GestureMappingActivity : AppCompatActivity() {
 
     private fun setupUI() {
 
-        upTextView = findViewById(R.id.tv_gesture_up)
-        downTextView = findViewById(R.id.tv_gesture_down)
-        leftTextView = findViewById(R.id.tv_gesture_left)
-        rightTextView = findViewById(R.id.tv_gesture_right)
-        farTextView = findViewById(R.id.tv_gesture_far)
-        nearTextView = findViewById(R.id.tv_gesture_near)
+        upTextView = findViewById(R.id.tv_gesture_up_standard)
+        downTextView = findViewById(R.id.tv_gesture_down_standard)
+        leftTextView = findViewById(R.id.tv_gesture_left_standard)
+        rightTextView = findViewById(R.id.tv_gesture_right_standard)
+        farTextView = findViewById(R.id.tv_gesture_far_standard)
+        nearTextView = findViewById(R.id.tv_gesture_near_standard)
         titleLabel = findViewById(R.id.gesturesTitleTV)
 
         b_save_gestures = findViewById(R.id.b_save_gestures)
@@ -96,12 +96,12 @@ class GestureMappingActivity : AppCompatActivity() {
             }
         }
 
-        spinner_up = findViewById(R.id.spinner_up)
-        spinner_down = findViewById(R.id.spinner_down)
-        spinner_left = findViewById(R.id.spinner_left)
-        spinner_right = findViewById(R.id.spinner_right)
-        spinner_far = findViewById(R.id.spinner_far)
-        spinner_near = findViewById(R.id.spinner_near)
+        spinner_up = findViewById(R.id.spinner_up_standard)
+        spinner_down = findViewById(R.id.spinner_down_standard)
+        spinner_left = findViewById(R.id.spinner_left_standard)
+        spinner_right = findViewById(R.id.spinner_right_standard)
+        spinner_far = findViewById(R.id.spinner_far_standard)
+        spinner_near = findViewById(R.id.spinner_near_standard)
         gestureView = findViewById(R.id.scroll_gestures_constraint)
 
     }
@@ -168,12 +168,12 @@ class GestureMappingActivity : AppCompatActivity() {
 
                 // based on which spinner, fetch the gesture for the associated spinner
                 val gesture: Gesture = when (parent?.id) {
-                    R.id.spinner_up -> Gesture.UP
-                    R.id.spinner_down -> Gesture.DOWN
-                    R.id.spinner_left -> Gesture.LEFT
-                    R.id.spinner_right -> Gesture.RIGHT
-                    R.id.spinner_far -> Gesture.FAR
-                    R.id.spinner_near -> Gesture.NEAR
+                    R.id.spinner_up_standard -> Gesture.UP
+                    R.id.spinner_down_standard -> Gesture.DOWN
+                    R.id.spinner_left_standard -> Gesture.LEFT
+                    R.id.spinner_right_standard -> Gesture.RIGHT
+                    R.id.spinner_far_standard -> Gesture.FAR
+                    R.id.spinner_near_standard -> Gesture.NEAR
                     else -> Gesture.NONE    // this case will never happen
                 }
                 gestureEventDecoder.editGestureMap(gesture, event)
