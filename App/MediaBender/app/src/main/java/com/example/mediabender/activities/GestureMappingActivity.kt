@@ -114,7 +114,8 @@ class GestureMappingActivity : AppCompatActivity() {
             getString(R.string.mapping_spinner_next),
             getString(R.string.mapping_spinner_previous),
             getString(R.string.mapping_spinner_volumeUp),
-            getString(R.string.mapping_spinner_volumeDown)
+            getString(R.string.mapping_spinner_volumeDown),
+            getString(R.string.mapping_spinner_none)
         )
 
         // creating an array adapter for the spinners
@@ -161,6 +162,7 @@ class GestureMappingActivity : AppCompatActivity() {
                     getString(R.string.mapping_spinner_previous) -> MediaEventType.PREVIOUS_SONG
                     getString(R.string.mapping_spinner_volumeUp) -> MediaEventType.RAISE_VOLUME
                     getString(R.string.mapping_spinner_volumeDown) -> MediaEventType.LOWER_VOLUME
+                    getString(R.string.mapping_spinner_none) -> MediaEventType.NONE
                     else -> MediaEventType.NONE // this case will never happen
                 }
 
@@ -231,7 +233,7 @@ class GestureMappingActivity : AppCompatActivity() {
     // get the position in the spinner values array (in strings resource) of event
     private fun getSpinnerStartingPosition(gesture: Gesture): Int {
         val e: MediaEventType = gestureEventDecoder.gestureToEvent(gesture)
-        val temp = controls_standard.indexOf(
+        return controls_standard.indexOf(
             when (e) {
                 MediaEventType.PLAY -> getString(R.string.mapping_spinner_play)
                 MediaEventType.PAUSE -> getString(R.string.mapping_spinner_pause)
@@ -239,10 +241,10 @@ class GestureMappingActivity : AppCompatActivity() {
                 MediaEventType.PREVIOUS_SONG -> getString(R.string.mapping_spinner_previous)
                 MediaEventType.RAISE_VOLUME -> getString(R.string.mapping_spinner_volumeUp)
                 MediaEventType.LOWER_VOLUME -> getString(R.string.mapping_spinner_volumeDown)
+                MediaEventType.NONE -> getString(R.string.mapping_spinner_none)
                 else -> "NONE"  // this will never occur
             }
         )
-        return temp
     }
 
     private fun setUpToolbar(){

@@ -17,6 +17,7 @@
     <string name="mapping_spinner_previous">Previous</string>
     <string name="mapping_spinner_volumeUp">Volume up</string>
     <string name="mapping_spinner_volumeDown">Volume down</string>
+    <string name="mapping_spinner_none">None</string>
 
     <string name="menu_move_to_settings">Go to Settings</string>
 
