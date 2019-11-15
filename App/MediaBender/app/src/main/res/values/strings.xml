@@ -11,12 +11,15 @@
         <item>Light</item>
     </string-array>
 
-    <string name="mapping_spinner_play">Play</string>
-    <string name="mapping_spinner_pause">Pause</string>
-    <string name="mapping_spinner_next">Next</string>
-    <string name="mapping_spinner_previous">Previous</string>
-    <string name="mapping_spinner_volumeUp">Volume up</string>
-    <string name="mapping_spinner_volumeDown">Volume down</string>
+    <string name="mapping_spinner_up">Up</string>
+    <string name="mapping_spinner_down">Down</string>
+    <string name="mapping_spinner_right">Right</string>
+    <string name="mapping_spinner_left">Left</string>
+    <string name="mapping_spinner_far">Far</string>
+    <string name="mapping_spinner_near">Near</string>
+
+    <string name="mapping_spinner_answer">Answer</string>
+    <string name="mapping_spinner_decline">Decline</string>
 
     <string name="menu_move_to_settings">Go to Settings</string>
 

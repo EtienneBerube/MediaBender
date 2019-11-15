@@ -6,6 +6,9 @@ import com.example.mediabender.R
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.Gesture
 import kotlin.collections.HashMap
+import com.google.common.collect.BiMap
+import com.google.common.collect.EnumBiMap
+import com.google.common.collect.HashBiMap
 
 class GestureEventDecoder(private val context: Context) {
 
@@ -14,16 +17,17 @@ class GestureEventDecoder(private val context: Context) {
     }
 
     private val sharedPreferences: SharedPreferences
-    private var gestureMap: Map<Gesture, MediaEventType> = mapOf()
+    private var gestureMap: EnumBiMap<Gesture, MediaEventType>
         private set
 
     init{
         sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
 
-        //val map: Map<Gesture, MediaEventType>? = null
-        val map: Map<Gesture, MediaEventType> = getFromSharedPreferences()
-        if (map.entries.all { it.value == MediaEventType.NONE }){    // map has never been initialized, initialize a basic map
-            gestureMap =  mapOf(
+        // TODO: there is an important weird edge case: if the user manually sets all of their gestures
+        // to none, then the app will reinitialize their gestures to the default gestures
+        val map: EnumBiMap<Gesture, MediaEventType> = getFromSharedPreferences()
+        if (map.all {it.value == MediaEventType.NONE}){    // map has never been initialized, initialize a basic map
+            gestureMap = EnumBiMap.create( mapOf(
                 Gesture.LEFT to MediaEventType.PREVIOUS_SONG,
                 Gesture.RIGHT to MediaEventType.SKIP_SONG,
                 Gesture.NEAR to MediaEventType.PLAY,
@@ -31,7 +35,7 @@ class GestureEventDecoder(private val context: Context) {
                 Gesture.UP to MediaEventType.RAISE_VOLUME,
                 Gesture.DOWN to MediaEventType.LOWER_VOLUME,
                 Gesture.NONE to MediaEventType.NONE
-            )
+            ))
             saveToSharedPreferences()
         } else {    // map has been initialized, so take it
             gestureMap = map
@@ -39,17 +43,17 @@ class GestureEventDecoder(private val context: Context) {
     }
 
     fun gestureToEvent(gesture: Gesture): MediaEventType {
-        val temp1 = gestureMap[gesture]
-        val temp2 = gestureMap.get(gesture)
-        val temp3 = gestureMap[gesture] ?: "NONE"
-
         return gestureMap[gesture] ?: MediaEventType.NONE
     }
+    fun eventToGesture(event: MediaEventType): Gesture {
+        return gestureMap.inverse()[event] ?: Gesture.NONE
+    }
+
 
     // retrieve the map from shared preference data
     // returns null if can't find map
-    private fun getFromSharedPreferences(): Map<Gesture, MediaEventType> {
-        return mapOf(
+    private fun getFromSharedPreferences(): EnumBiMap<Gesture, MediaEventType> {
+        return EnumBiMap.create( mapOf(
             Gesture.UP to stringToMediaEvent(
                 sharedPreferences.getString(context.getString(R.string.gesture_up),"NULL")),
             Gesture.DOWN to stringToMediaEvent(
@@ -64,7 +68,7 @@ class GestureEventDecoder(private val context: Context) {
                 sharedPreferences.getString(context.getString(R.string.gesture_near),"NULL")),
             Gesture.NONE to stringToMediaEvent(
                 sharedPreferences.getString(context.getString(R.string.gesture_none),"NULL"))
-        )
+        ))
     }
 
     // save the mapping to shared preferences
@@ -81,16 +85,25 @@ class GestureEventDecoder(private val context: Context) {
     }
 
     // edit the gestureMap member
+    // NOTE: this function uses forcePut because EnumBiMap does not support multiple keys mapping to
+    //       the same value. The method forcePut removes any other key-values pairs in the map that
+    //       also have the same value as the one that is being put into the map. Thus, the size of
+    //       the map can:
+    //          -> decrease (if there are 2 more entries with the same value already in map)
+    //          -> stay same (if there is exactly 1 entry with the same value already in map)
+    //          -> increase (if there are no entries with the same value already in the map)
     // NOTE: it is important to note that this function edits the member gestureMap, but DOES NOT
     //       SAVE IT TO SHARED PREFERENCES. We want to save the map only once, once all user changes
     //       have been made
     fun editGestureMap(gesture: Gesture, event: MediaEventType) {
-        (gestureMap as HashMap<Gesture, MediaEventType>)[gesture] = event
+        gestureMap.forcePut(gesture,event)
     }
 
     // returns true if each MediaEventType is mapped to only one Gesture
+    // since we are using forcePut to enter key-value pairs, if ever the user has chosen to override
+    // one of the mapping, then the map will have a length of less than 7
     fun mapIsValid(): Boolean {
-        return gestureMap.values.count() == gestureMap.values.distinct().count()
+        return gestureMap.keys.count() == 7
     }
 
     private fun stringToMediaEvent(str: String?): MediaEventType {
