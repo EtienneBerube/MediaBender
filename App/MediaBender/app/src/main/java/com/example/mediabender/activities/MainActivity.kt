@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // Note that the Toolbar defined in the layout has the id "my_toolbar"
-        gestureDecoder = GestureEventDecoder(applicationContext)
+        gestureDecoder = GestureEventDecoder.getInstance(applicationContext)
 
         setChosenTheme()
         setUpToolbar()

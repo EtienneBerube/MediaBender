@@ -7,12 +7,11 @@ import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.Gesture
 import kotlin.collections.HashMap
 
-class GestureEventDecoder(private val context: Context) {
+class GestureEventDecoder private constructor(private var context: Context) {
 
-    companion object{
-        private val SHARED_PREFERENCE_NAME = "gesture_event_map"
-    }
+    companion object : SingletonHolder<GestureEventDecoder, Context>(::GestureEventDecoder)
 
+    private val SHARED_PREFERENCE_NAME = "gesture_event_map"
     private val sharedPreferences: SharedPreferences
     private var gestureMap: Map<Gesture, MediaEventType> = mapOf()
         private set
@@ -68,7 +67,7 @@ class GestureEventDecoder(private val context: Context) {
     }
 
     // save the mapping to shared preferences
-    fun saveToSharedPreferences() {
+    private fun saveToSharedPreferences() {
         with(sharedPreferences.edit()) {
             putString(context.getString(R.string.gesture_up),gestureMap[Gesture.UP].toString())
             putString(context.getString(R.string.gesture_down),gestureMap[Gesture.DOWN].toString())
@@ -84,8 +83,13 @@ class GestureEventDecoder(private val context: Context) {
     // NOTE: it is important to note that this function edits the member gestureMap, but DOES NOT
     //       SAVE IT TO SHARED PREFERENCES. We want to save the map only once, once all user changes
     //       have been made
-    fun editGestureMap(gesture: Gesture, event: MediaEventType) {
-        (gestureMap as HashMap<Gesture, MediaEventType>)[gesture] = event
+//    fun editGestureMap(gesture: Gesture, event: MediaEventType) {
+//        (gestureMap as HashMap<Gesture, MediaEventType>)[gesture] = event
+//    }
+
+    fun updateGestupMap(newMap: HashMap<Gesture, MediaEventType>){
+        this.gestureMap = newMap
+        saveToSharedPreferences()
     }
 
     // returns true if each MediaEventType is mapped to only one Gesture
