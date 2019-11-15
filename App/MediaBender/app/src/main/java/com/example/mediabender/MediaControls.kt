@@ -14,6 +14,7 @@ import androidx.core.app.ComponentActivity
 import androidx.fragment.app.FragmentActivity
 import com.example.mediabender.dialogs.MediaEventFeedbackDialog
 import com.example.mediabender.models.MediaEventType
+import java.lang.Exception
 
 class MediaControls(context: Context) {
 
@@ -30,18 +31,22 @@ class MediaControls(context: Context) {
         executeEvent(event)
 
         //Shows command
-        val mediaFeedbackDialog = MediaEventFeedbackDialog(event)
-        (activity as? FragmentActivity)?.let {
-            val fragmentManager = it.supportFragmentManager
-            val fragmentTransition = fragmentManager.beginTransaction()
+        try {
+            val mediaFeedbackDialog = MediaEventFeedbackDialog(event)
+            (activity as? FragmentActivity)?.let {
+                val fragmentManager = it.supportFragmentManager
+                val fragmentTransition = fragmentManager.beginTransaction()
 
-            //Removes if exists
-            val prev = fragmentManager.findFragmentByTag("media_feedback")
-            if (prev != null) {
-                fragmentTransition.remove(prev)
+                //Removes if exists
+                val prev = fragmentManager.findFragmentByTag("media_feedback")
+                if (prev != null) {
+                    fragmentTransition.remove(prev)
+                }
+                fragmentTransition.addToBackStack(null)
+                mediaFeedbackDialog.show(fragmentTransition, "media_feedback")
             }
-            fragmentTransition.addToBackStack(null)
-            mediaFeedbackDialog.show(fragmentTransition, "media_feedback")
+        }catch(e:Exception){
+            //TODO: implement a crash algo.
         }
     }
 

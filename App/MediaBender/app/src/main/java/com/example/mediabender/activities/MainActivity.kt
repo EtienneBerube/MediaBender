@@ -86,25 +86,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-
-        SerialCommunicationService.instance.removeDataOnReceiveListener()
+        SerialCommunicationService.instance.isAppInBackground = true
     }
     override fun onResume() {
         super.onResume()
-
-        SerialCommunicationService.instance.setDataOnReceiveListener {
-            runOnUiThread {
-                val event = gestureDecoder.gestureToEvent(it.gesture)
-                Toast.makeText(applicationContext,"Got gesture: ${it.gesture.toString} -> ${event.name}", Toast.LENGTH_SHORT).show()
-                mediaControls.executeEvent(event, this)
-            }
-        }
+        SerialCommunicationService.instance.isAppInBackground = false
 
     }
 
     private fun initSerialCommunication() {
         SerialCommunicationService.instance.setService(this)
         SerialCommunicationService.instance.requestUSBpermission(applicationContext)
+        SerialCommunicationService.instance.setDataOnReceiveListener {
+            runOnUiThread {
+                val event = gestureDecoder.gestureToEvent(it.gesture)
+                //Toast.makeText(applicationContext,"Got gesture: ${it.gesture.toString} -> ${event.name}", Toast.LENGTH_SHORT).show()
+                mediaControls.executeEvent(event, this)
+            }
+        }
     }
 
     // cannot initialize the MediaControls object before the onCreate because it calls

@@ -14,6 +14,8 @@ import com.felhr.usbserial.UsbSerialInterface
 import java.io.UnsupportedEncodingException
 import android.content.IntentFilter
 import android.widget.Toast
+import com.example.mediabender.MediaControls
+import com.example.mediabender.helpers.GestureEventDecoder
 
 
 class SerialCommunicationService {
@@ -27,7 +29,9 @@ class SerialCommunicationService {
     var isSystemInitException = false
     var isSensorInitException = false
     var isGestureAvailable = false
-
+    var isAppInBackground = false
+    private lateinit var gestureDecoder:GestureEventDecoder
+    private lateinit var mediaControls:MediaControls
 
     fun setService(activity: Activity) {
         usbManager = activity.getSystemService(Context.USB_SERVICE) as UsbManager
@@ -35,6 +39,8 @@ class SerialCommunicationService {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
         filter.addAction(ACTION_USB_PERMISSION)
         activity.applicationContext.registerReceiver(broadcastReceiver, filter)
+        gestureDecoder = GestureEventDecoder(activity.applicationContext)
+        mediaControls = MediaControls(activity.applicationContext)
     }
 
     companion object {
@@ -91,7 +97,9 @@ class SerialCommunicationService {
             when (intent.action) {
                 ACTION_USB_PERMISSION -> {
                     if (intent.extras!!.getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED)) {
-                        openPort(context)
+                        if(testUSBConnection()){
+                            openPort(context)
+                        }
                     } else {
                         appendLog(context, "PERMISSION NOT GRANTED\n")
                     }
@@ -149,7 +157,12 @@ class SerialCommunicationService {
     private val dataReceivedCallBack = UsbSerialInterface.UsbReadCallback {
         try {
             if (it.isNotEmpty()) {
-                dataReceived(it)
+                if(isAppInBackground){
+                    val event = gestureDecoder.gestureToEvent(ServiceMessage(it[0]).gesture)
+                    mediaControls.executeEvent(event)
+                }else{
+                    dataReceived(it)
+                }
             }
         } catch (e: UnsupportedEncodingException) {
             e.printStackTrace()
