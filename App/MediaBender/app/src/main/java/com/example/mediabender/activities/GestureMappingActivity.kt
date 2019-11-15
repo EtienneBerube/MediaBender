@@ -38,7 +38,7 @@ class GestureMappingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gesture_mapping)
 
-        gestureEventDecoder = GestureEventDecoder(applicationContext)
+        gestureEventDecoder = GestureEventDecoder.getInstance(applicationContext)
         setChosenTheme()
         setUpToolbar()
         setupUI()

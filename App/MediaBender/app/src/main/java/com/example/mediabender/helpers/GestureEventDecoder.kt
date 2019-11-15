@@ -10,12 +10,11 @@ import com.google.common.collect.BiMap
 import com.google.common.collect.EnumBiMap
 import com.google.common.collect.HashBiMap
 
-class GestureEventDecoder(private val context: Context) {
+class GestureEventDecoder private constructor(private var context: Context) {
 
-    companion object{
-        private val SHARED_PREFERENCE_NAME = "gesture_event_map"
-    }
+    companion object : SingletonHolder<GestureEventDecoder, Context>(::GestureEventDecoder)
 
+    private val SHARED_PREFERENCE_NAME = "gesture_event_map"
     private val sharedPreferences: SharedPreferences
     private var gestureMap: EnumBiMap<Gesture, MediaEventType>
         private set
@@ -96,7 +95,12 @@ class GestureEventDecoder(private val context: Context) {
     //       SAVE IT TO SHARED PREFERENCES. We want to save the map only once, once all user changes
     //       have been made
     fun editGestureMap(gesture: Gesture, event: MediaEventType) {
-        gestureMap.forcePut(gesture,event)
+        gestureMap.forcePut(gesture, event)
+    }
+
+    fun updateGestupMap(newMap: EnumBiMap<Gesture, MediaEventType>){
+        this.gestureMap = newMap
+        saveToSharedPreferences()
     }
 
     // returns true if each MediaEventType is mapped to only one Gesture

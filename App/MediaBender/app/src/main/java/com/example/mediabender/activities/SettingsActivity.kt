@@ -1,12 +1,11 @@
 package com.example.mediabender.activities
 
-import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import android.os.Bundle
-import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -18,7 +17,6 @@ import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaPlayer
 import com.example.mediabender.models.PlayerAccount
 import kotlinx.android.synthetic.main.activity_settings.*
-import kotlinx.android.synthetic.main.activity_settings.view.*
 
 
 class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {
@@ -32,6 +30,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private lateinit var settingsActivity: View
     private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
     private var darkThemeChosen = false
+    private lateinit var installedPlayers: List<ApplicationInfo>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,9 +49,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         )
 
         setupSettings()
-        setupApplePlayMusic()
-        setupSpotify()
-        setupGooglePlayMusic()
         setUpToolBar()
         loadAppropriateTheme()
     }
@@ -69,15 +65,10 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     override fun onResume() {
         super.onResume()
 
-        val running = getRunningPlayers()
-
-        MediaPlayer.values().forEach {
-            if (running.contains(it.packageName)) {
-                setRunningIndicator(it, true)
-            } else {
-                setRunningIndicator(it, false)
-            }
-        }
+        getAllAppsOnPhone()
+        setupApplePlayMusic()
+        setupSpotify()
+        setupGooglePlayMusic()
     }
 
     override fun onRestart() {
@@ -104,8 +95,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private fun setupSpotify() {
         spotifyViewHolder.cardView = findViewById(R.id.spotify_card)
         spotifyViewHolder.cardView.setOnClickListener {
-            val dialog = PlayerConnectionDialog(MediaPlayer.SPOTIFY)
-            dialog.show(supportFragmentManager, "Spotify Connection")
+             packageManager.getLaunchIntentForPackage(MediaPlayer.SPOTIFY.packageName)?.let { startActivity(it) }
         }
 
         spotifyViewHolder.activeCircle = findViewById(R.id.spotify_active_circle)
@@ -116,13 +106,16 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 MediaPlayer.SPOTIFY
             )
         )
+
+        if(MediaPlayer.SPOTIFY.packageName !in installedPlayers.map { player -> player.packageName }){
+            spotifyViewHolder.cardView.visibility = View.GONE
+        }
     }
 
     private fun setupGooglePlayMusic() {
         googlePlayViewHolder.cardView = findViewById(R.id.google_play_card)
         googlePlayViewHolder.cardView.setOnClickListener {
-            val dialog = PlayerConnectionDialog(MediaPlayer.GOOGLE_PLAY)
-            dialog.show(supportFragmentManager, "Google Play Connection")
+            packageManager.getLaunchIntentForPackage(MediaPlayer.GOOGLE_PLAY.packageName)?.let { startActivity(it) }
         }
 
         googlePlayViewHolder.activeCircle = findViewById(R.id.google_play_active_circle)
@@ -133,13 +126,16 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 MediaPlayer.GOOGLE_PLAY
             )
         )
+
+        if(MediaPlayer.GOOGLE_PLAY.packageName !in installedPlayers.map { player -> player.packageName }){
+            googlePlayViewHolder.cardView.visibility = View.GONE
+        }
     }
 
     private fun setupApplePlayMusic() {
         appleMusicViewHolder.cardView = findViewById(R.id.apple_music_card)
         appleMusicViewHolder.cardView.setOnClickListener {
-            val dialog = PlayerConnectionDialog(MediaPlayer.APPLE_MUSIC)
-            dialog.show(supportFragmentManager, "Apple Music Connection")
+            packageManager.getLaunchIntentForPackage(MediaPlayer.APPLE_MUSIC.packageName)?.let { startActivity(it) }
         }
 
         appleMusicViewHolder.activeCircle = findViewById(R.id.apple_music_active_circle)
@@ -150,6 +146,10 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 MediaPlayer.APPLE_MUSIC
             )
         )
+
+        if(MediaPlayer.APPLE_MUSIC.packageName !in installedPlayers.map { player -> player.packageName }){
+            appleMusicViewHolder.cardView.visibility = View.GONE
+        }
     }
 
     private fun setupSettings() {
@@ -233,11 +233,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
     }
 
-    fun getRunningPlayers(): Set<String> {
-        //TODO implement with apis
-        return HashSet()
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
@@ -307,6 +302,11 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
         }
 
+    }
+
+    fun getAllAppsOnPhone(){
+        this.installedPlayers = packageManager.getInstalledApplications(0).filter { it.packageName in MediaPlayer.values().map { player -> player.packageName } }
+        Log.d("Installed apps","Got installed apps")
     }
 
 
