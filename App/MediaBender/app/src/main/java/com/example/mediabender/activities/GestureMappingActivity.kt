@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.activity_gesture_mapping.*
 class GestureMappingActivity : AppCompatActivity() {
 
     private lateinit var gestureEventDecoder: GestureEventDecoder
-    private lateinit var titleLabel : TextView
+    private lateinit var standardEventsTextView : TextView
     private lateinit var spinner_play: Spinner
     private lateinit var spinner_pause: Spinner
     private lateinit var spinner_next: Spinner
@@ -31,7 +31,12 @@ class GestureMappingActivity : AppCompatActivity() {
     private lateinit var previousTextView: TextView
     private lateinit var volUpTextView: TextView
     private lateinit var volDownTextView: TextView
+    private lateinit var answerTextView: TextView
+    private lateinit var declineTextView: TextView
+    private lateinit var phoneEventsTextView: TextView
+
     private var darkThemeChosen = false
+
     private lateinit var gestures: Array<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +81,8 @@ class GestureMappingActivity : AppCompatActivity() {
         previousTextView = findViewById(R.id.tv_event_previous)
         volUpTextView = findViewById(R.id.tv_event_volUp)
         volDownTextView = findViewById(R.id.tv_event_volDown)
-        titleLabel = findViewById(R.id.standardEventsTitleTV)
+        standardEventsTextView = findViewById(R.id.standardEventsTitleTV)
+
 
         b_save_events = findViewById(R.id.b_save_events)
 
@@ -195,7 +201,7 @@ class GestureMappingActivity : AppCompatActivity() {
 
     private fun loadDarkTheme(){
         playTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        titleLabel.setTextColor(getColor(R.color.colorPrimaryWhite))
+        standardEventsTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         pauseTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         nextTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         previousTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
@@ -206,11 +212,16 @@ class GestureMappingActivity : AppCompatActivity() {
         gestureView.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         gestures_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_white)
 
+        answerTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        declineTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        phoneEventsTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        card_events_phone_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
+
         window.statusBarColor = getColor(R.color.colorPrimaryDark)
     }
 
     private fun loadWhiteTheme(){
-        titleLabel.setTextColor(getColor(R.color.colorPrimaryDark))
+        standardEventsTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         playTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         pauseTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         nextTextView.setTextColor(getColor(R.color.colorPrimaryDark))
@@ -222,12 +233,18 @@ class GestureMappingActivity : AppCompatActivity() {
         gestures_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         gestures_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_black)
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
+
+        answerTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        declineTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        phoneEventsTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        card_events_phone_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
     }
+
     // save the gesture map to shared preferences
     private fun saveGestures() {
         gestureEventDecoder.saveToSharedPreferences()
     }
-    
+
     // get the position in the spinner values array for the passed event
     private fun getSpinnerStartingPosition(event: MediaEventType): Int {
         val g: Gesture = gestureEventDecoder.eventToGesture(event)
@@ -254,11 +271,10 @@ class GestureMappingActivity : AppCompatActivity() {
 
     private fun setChosenTheme(){
         val themeHelper = ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
-        val  chosenTheme = themeHelper.getTheme()
 
-        when (chosenTheme){
-            "Dark" -> darkThemeChosen = true
-            else -> darkThemeChosen = false
+        darkThemeChosen = when (themeHelper.getTheme()){
+            "Dark" -> true
+            else -> false
         }
     }
 }

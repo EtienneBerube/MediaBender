@@ -23,13 +23,21 @@
 
     <string name="menu_move_to_settings">Go to Settings</string>
 
-    <string name="gesture_up">gesture_event_map_up</string>
-    <string name="gesture_down">gesture_event_map_down</string>
-    <string name="gesture_left">gesture_event_map_left</string>
-    <string name="gesture_right">gesture_event_map_right</string>
-    <string name="gesture_far">gesture_event_map_far</string>
-    <string name="gesture_near">gesture_event_map_near</string>
-    <string name="gesture_none">gesture_event_map_none</string>
+    <string name="gesture_up_media">gesture_media_map_up</string>
+    <string name="gesture_down_media">gesture_media_map_down</string>
+    <string name="gesture_left_media">gesture_media_map_left</string>
+    <string name="gesture_right_media">gesture_media_map_right</string>
+    <string name="gesture_far_media">gesture_media_map_far</string>
+    <string name="gesture_near_media">gesture_media_map_near</string>
+    <string name="gesture_none_media">gesture_media_map_none</string>
+
+    <string name="gesture_up_phone">gesture_phone_map_up</string>
+    <string name="gesture_down_phone">gesture_phone_map_down</string>
+    <string name="gesture_left_phone">gesture_phone_map_left</string>
+    <string name="gesture_right_phone">gesture_phone_map_right</string>
+    <string name="gesture_far_phone">gesture_phone_map_far</string>
+    <string name="gesture_near_phone">gesture_phone_map_near</string>
+    <string name="gesture_none_phone">gesture_phone_map_none</string>
 
 
 </resources>

@@ -5,10 +5,7 @@ import android.content.SharedPreferences
 import com.example.mediabender.R
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.Gesture
-import kotlin.collections.HashMap
-import com.google.common.collect.BiMap
 import com.google.common.collect.EnumBiMap
-import com.google.common.collect.HashBiMap
 
 class GestureEventDecoder private constructor(private var context: Context) {
 
@@ -16,17 +13,24 @@ class GestureEventDecoder private constructor(private var context: Context) {
 
     private val SHARED_PREFERENCE_NAME = "gesture_event_map"
     private val sharedPreferences: SharedPreferences
-    private var gestureMap: EnumBiMap<Gesture, MediaEventType>
-        private set
+
+    // map types for gettting from shared preferences
+    private val MAP_MEDIA: Int = 0
+    private val MAP_PHONE: Int = 1
+    private var mediaGestureMap: EnumBiMap<Gesture, MediaEventType>
+    private var phoneGestureMap: EnumBiMap<Gesture, MediaEventType>
 
     init{
         sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
 
         // TODO: there is an important weird edge case: if the user manually sets all of their gestures
         // to none, then the app will reinitialize their gestures to the default gestures
-        val map: EnumBiMap<Gesture, MediaEventType> = getFromSharedPreferences()
-        if (map.all {it.value == MediaEventType.NONE}){    // map has never been initialized, initialize a basic map
-            gestureMap = EnumBiMap.create( mapOf(
+
+        val mediaMap: EnumBiMap<Gesture, MediaEventType>? = getFromSharedPreferences(MAP_MEDIA)
+        val phoneMap: EnumBiMap<Gesture, MediaEventType>? = getFromSharedPreferences(MAP_PHONE)
+
+        if (mediaMap!!.all {it.value == MediaEventType.NONE}){    // map has never been initialized, initialize a basic map
+            mediaGestureMap = EnumBiMap.create( mapOf(
                 Gesture.LEFT to MediaEventType.PREVIOUS_SONG,
                 Gesture.RIGHT to MediaEventType.SKIP_SONG,
                 Gesture.NEAR to MediaEventType.PLAY,
@@ -37,53 +41,99 @@ class GestureEventDecoder private constructor(private var context: Context) {
             ))
             saveToSharedPreferences()
         } else {    // map has been initialized, so take it
-            gestureMap = map
+            mediaGestureMap = mediaMap
         }
+
+        if (phoneMap!!.all {it.value == MediaEventType.NONE}){    // map has never been initialized, initialize a basic map
+            phoneGestureMap = EnumBiMap.create( mapOf(
+                Gesture.LEFT to PhoneEventType.DECLINE,
+                Gesture.RIGHT to PhoneEventType.ANSWER,
+                Gesture.NONE to PhoneEventType.NONE
+            ))
+            saveToSharedPreferences()
+        } else {    // map has been initialized, so take it
+            phoneGestureMap = phoneMap
+        }
+
+
+
+
+
+
     }
 
     fun gestureToEvent(gesture: Gesture): MediaEventType {
-        return gestureMap[gesture] ?: MediaEventType.NONE
+        return mediaGestureMap[gesture] ?: MediaEventType.NONE
     }
     fun eventToGesture(event: MediaEventType): Gesture {
-        return gestureMap.inverse()[event] ?: Gesture.NONE
+        return mediaGestureMap.inverse()[event] ?: Gesture.NONE
     }
 
 
-    // retrieve the map from shared preference data
-    // returns null if can't find map
-    private fun getFromSharedPreferences(): EnumBiMap<Gesture, MediaEventType> {
-        return EnumBiMap.create( mapOf(
-            Gesture.UP to stringToMediaEvent(
-                sharedPreferences.getString(context.getString(R.string.gesture_up),"NULL")),
-            Gesture.DOWN to stringToMediaEvent(
-                sharedPreferences.getString(context.getString(R.string.gesture_down),"NULL")),
-            Gesture.LEFT to stringToMediaEvent(
-                sharedPreferences.getString(context.getString(R.string.gesture_left),"NULL")),
-            Gesture.RIGHT to stringToMediaEvent(
-                sharedPreferences.getString(context.getString(R.string.gesture_right),"NULL")),
-            Gesture.FAR to stringToMediaEvent(
-                sharedPreferences.getString(context.getString(R.string.gesture_far),"NULL")),
-            Gesture.NEAR to stringToMediaEvent(
-                sharedPreferences.getString(context.getString(R.string.gesture_near),"NULL")),
-            Gesture.NONE to stringToMediaEvent(
-                sharedPreferences.getString(context.getString(R.string.gesture_none),"NULL"))
-        ))
+    // retrieve the desired map from shared preference data
+    // for MAP_TYPE use one of the two constants defined at top of class, either:
+    //      MAP_MEDIA to retrieve the map of media controls
+    //      MAP_PHONE to retrieve the map of phone controls
+    private fun getFromSharedPreferences(MAP_TYPE: Int): EnumBiMap<Gesture, MediaEventType>? {
+        return when(MAP_TYPE) {
+            MAP_MEDIA -> EnumBiMap.create( mapOf(
+                Gesture.UP to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_up_media),"NULL")),
+                Gesture.DOWN to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_down_media),"NULL")),
+                Gesture.LEFT to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_left_media),"NULL")),
+                Gesture.RIGHT to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_right_media),"NULL")),
+                Gesture.FAR to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_far_media),"NULL")),
+                Gesture.NEAR to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_near_media),"NULL")),
+                Gesture.NONE to MediaEventType.NONE
+            ))
+            MAP_PHONE -> EnumBiMap.create( mapOf(
+                Gesture.UP to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_up_phone),"NULL")),
+                Gesture.DOWN to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_down_phone),"NULL")),
+                Gesture.LEFT to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_left_phone),"NULL")),
+                Gesture.RIGHT to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_right_phone),"NULL")),
+                Gesture.FAR to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_far_phone),"NULL")),
+                Gesture.NEAR to stringToMediaEvent(
+                    sharedPreferences.getString(context.getString(R.string.gesture_near_phone),"NULL")),
+                Gesture.NONE to MediaEventType.NONE
+            ))
+            else -> null
+        }
     }
 
     // save the mapping to shared preferences
     fun saveToSharedPreferences() {
         with(sharedPreferences.edit()) {
-            putString(context.getString(R.string.gesture_up),gestureMap[Gesture.UP].toString())
-            putString(context.getString(R.string.gesture_down),gestureMap[Gesture.DOWN].toString())
-            putString(context.getString(R.string.gesture_left),gestureMap[Gesture.LEFT].toString())
-            putString(context.getString(R.string.gesture_right),gestureMap[Gesture.RIGHT].toString())
-            putString(context.getString(R.string.gesture_far),gestureMap[Gesture.FAR].toString())
-            putString(context.getString(R.string.gesture_near),gestureMap[Gesture.NEAR].toString())
+            // saving the media map
+            putString(context.getString(R.string.gesture_up_media),mediaGestureMap[Gesture.UP].toString())
+            putString(context.getString(R.string.gesture_down_media),mediaGestureMap[Gesture.DOWN].toString())
+            putString(context.getString(R.string.gesture_left_media),mediaGestureMap[Gesture.LEFT].toString())
+            putString(context.getString(R.string.gesture_right_media),mediaGestureMap[Gesture.RIGHT].toString())
+            putString(context.getString(R.string.gesture_far_media),mediaGestureMap[Gesture.FAR].toString())
+            putString(context.getString(R.string.gesture_near_media),mediaGestureMap[Gesture.NEAR].toString())
+
+            // saving the phone map
+            putString(context.getString(R.string.gesture_up_phone),phoneGestureMap[Gesture.UP].toString())
+            putString(context.getString(R.string.gesture_down_phone),phoneGestureMap[Gesture.DOWN].toString())
+            putString(context.getString(R.string.gesture_left_phone),phoneGestureMap[Gesture.LEFT].toString())
+            putString(context.getString(R.string.gesture_right_phone),phoneGestureMap[Gesture.RIGHT].toString())
+            putString(context.getString(R.string.gesture_far_phone),phoneGestureMap[Gesture.FAR].toString())
+            putString(context.getString(R.string.gesture_near_phone),phoneGestureMap[Gesture.NEAR].toString())
+
             apply()
         }
     }
 
-    // edit the gestureMap member
+    // edit the mediaGestureMap member
     // NOTE: this function uses forcePut because EnumBiMap does not support multiple keys mapping to
     //       the same value. The method forcePut removes any other key-values pairs in the map that
     //       also have the same value as the one that is being put into the map. Thus, the size of
@@ -91,15 +141,15 @@ class GestureEventDecoder private constructor(private var context: Context) {
     //          -> decrease (if there are 2 more entries with the same value already in map)
     //          -> stay same (if there is exactly 1 entry with the same value already in map)
     //          -> increase (if there are no entries with the same value already in the map)
-    // NOTE: it is important to note that this function edits the member gestureMap, but DOES NOT
+    // NOTE: it is important to note that this function edits the member mediaGestureMap, but DOES NOT
     //       SAVE IT TO SHARED PREFERENCES. We want to save the map only once, once all user changes
     //       have been made
     fun editGestureMap(gesture: Gesture, event: MediaEventType) {
-        gestureMap.forcePut(gesture, event)
+        mediaGestureMap.forcePut(gesture, event)
     }
 
     fun updateGestupMap(newMap: EnumBiMap<Gesture, MediaEventType>){
-        this.gestureMap = newMap
+        this.mediaGestureMap = newMap
         saveToSharedPreferences()
     }
 
@@ -107,7 +157,7 @@ class GestureEventDecoder private constructor(private var context: Context) {
     // since we are using forcePut to enter key-value pairs, if ever the user has chosen to override
     // one of the mapping, then the map will have a length of less than 7
     fun mapIsValid(): Boolean {
-        return gestureMap.keys.count() == 7
+        return mediaGestureMap.keys.count() == 7    // TODO make sure this condition is still fine to make sure the map is valid
     }
 
     private fun stringToMediaEvent(str: String?): MediaEventType {
