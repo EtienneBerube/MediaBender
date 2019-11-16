@@ -227,7 +227,7 @@ class GestureMappingActivity : AppCompatActivity() {
     private fun saveGestures() {
         gestureEventDecoder.saveToSharedPreferences()
     }
-
+    
     // get the position in the spinner values array for the passed event
     private fun getSpinnerStartingPosition(event: MediaEventType): Int {
         val g: Gesture = gestureEventDecoder.eventToGesture(event)
