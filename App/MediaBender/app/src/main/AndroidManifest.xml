@@ -3,13 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.mediabender">
 
-    <uses-permission
-        android:name="android.permission.PACKAGE_USAGE_STATS"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission
-        android:name="android.permission.MEDIA_CONTENT_CONTROL"
-        tools:ignore="ProtectedPermissions" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/mediabender_logo"
@@ -17,15 +10,13 @@
         android:roundIcon="@mipmap/mediabender_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-
-        <!--Settings activity-->
+        <activity android:name=".activities.LedSettings"></activity>
+        <!-- Settings activity -->
         <activity
             android:name=".activities.SettingsActivity"
             android:configChanges="uiMode"
             android:launchMode="singleTask"
-            android:parentActivityName=".MainActivity"></activity>
-
-        <!--Splash screen-->
+            android:parentActivityName=".MainActivity" /> <!-- Splash screen -->
         <activity
             android:name=".activities.SplashScreen"
             android:configChanges="uiMode"
@@ -36,25 +27,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!--Gesture Map Activity-->
+        </activity> <!-- Gesture Map Activity -->
         <activity
             android:name=".activities.GestureMappingActivity"
             android:configChanges="uiMode"
-            android:parentActivityName=".activities.SettingsActivity"></activity>
-
-        <!--Main activity-->
+            android:parentActivityName=".activities.SettingsActivity" /> <!-- Main activity -->
         <activity
             android:name=".MainActivity"
             android:configChanges="uiMode"
             android:launchMode="singleTask">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
@@ -67,7 +53,13 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-
     </application>
+    <uses-permission
+        android:name="android.permission.MEDIA_CONTENT_CONTROL"
+        tools:ignore="ProtectedPermissions" />
+
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
 
 </manifest>

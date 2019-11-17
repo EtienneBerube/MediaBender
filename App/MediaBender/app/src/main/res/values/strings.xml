@@ -1,32 +1,32 @@
 <resources>
     <string name="app_name">Media Bender</string>
 
-    <string-array name="themesLightSaved">
-        <item>Light</item>
-        <item>Dark</item>
-    </string-array>
-
-    <string-array name="themesDarkSaved">
-        <item>Dark</item>
-        <item>Light</item>
-    </string-array>
-
     <string name="mapping_spinner_play">Play</string>
+
     <string name="mapping_spinner_pause">Pause</string>
+
     <string name="mapping_spinner_next">Next</string>
     <string name="mapping_spinner_previous">Previous</string>
     <string name="mapping_spinner_volumeUp">Volume up</string>
     <string name="mapping_spinner_volumeDown">Volume down</string>
-
     <string name="menu_move_to_settings">Go to Settings</string>
-
     <string name="gesture_up">gesture_event_map_up</string>
+
     <string name="gesture_down">gesture_event_map_down</string>
+
     <string name="gesture_left">gesture_event_map_left</string>
     <string name="gesture_right">gesture_event_map_right</string>
     <string name="gesture_far">gesture_event_map_far</string>
     <string name="gesture_near">gesture_event_map_near</string>
     <string name="gesture_none">gesture_event_map_none</string>
+    <string-array name="themesLightSaved">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string-array name="themesDarkSaved">
+        <item>Dark</item>
+        <item>Light</item>
+    </string-array>
 
 
 </resources>

@@ -32,6 +32,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private lateinit var settingsActivity: View
     private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
     private var darkThemeChosen = false
+    private var ledState = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,7 +109,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
             dialog.show(supportFragmentManager, "Spotify Connection")
         }
 
-        spotifyViewHolder.activeCircle = findViewById(R.id.spotify_active_circle)
+        //refactored for sw20
+//        spotifyViewHolder.activeCircle = findViewById(R.id.spotify_active_circle)
 
         spotifyViewHolder.connectedTextView = findViewById(R.id.spotify_connection_textview)
         spotifyViewHolder.setConnectedTextWithEmail(
@@ -125,7 +127,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
             dialog.show(supportFragmentManager, "Google Play Connection")
         }
 
-        googlePlayViewHolder.activeCircle = findViewById(R.id.google_play_active_circle)
+        //refactored for sw20
+//        googlePlayViewHolder.activeCircle = findViewById(R.id.google_play_active_circle)
 
         googlePlayViewHolder.connectedTextView = findViewById(R.id.google_play_connection_textview)
         googlePlayViewHolder.setConnectedTextWithEmail(
@@ -142,7 +145,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
             dialog.show(supportFragmentManager, "Apple Music Connection")
         }
 
-        appleMusicViewHolder.activeCircle = findViewById(R.id.apple_music_active_circle)
+        //refactored for sw20
+//        appleMusicViewHolder.activeCircle = findViewById(R.id.apple_music_active_circle)
 
         appleMusicViewHolder.connectedTextView = findViewById(R.id.apple_music_connection_textview)
         appleMusicViewHolder.setConnectedTextWithEmail(
@@ -158,6 +162,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         accountsLabel = findViewById(R.id.accountsTitle)
         findViewById<Button>(R.id.settings_test_connection_button).setOnClickListener { testSensorConnection() }
         findViewById<Button>(R.id.settings_gesture_button).setOnClickListener { remapGesture() }
+        findViewById<Switch>(R.id.settings_led_switch).setOnClickListener { ledSwitch() }
 
         //For the theme drop down menu
         themeSpinner = findViewById(R.id.settings_theme_spinner)
@@ -215,22 +220,46 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         startActivity(intent)
     }
 
-    fun setRunningIndicator(playerPackage: MediaPlayer, active: Boolean) {
-        val resource =
-            if (active) R.drawable.active_circle_account else R.drawable.inactive_circle_account
 
-        when (playerPackage) {
-            MediaPlayer.SPOTIFY -> {
-                spotifyViewHolder.activeCircle.setImageResource(resource)
-            }
-            MediaPlayer.APPLE_MUSIC -> {
-                appleMusicViewHolder.activeCircle.setImageResource(resource)
-            }
-            MediaPlayer.GOOGLE_PLAY -> {
-                googlePlayViewHolder.activeCircle.setImageResource(resource)
-            }
+    private fun ledSwitch(){
+
+        ledState = !(ledState)
+
+        if (ledState == true){
+            val toast = Toast.makeText(applicationContext,"Feedback Light On",
+                    Toast.LENGTH_SHORT
+            )
+            toast.show()
+        }
+        else {
+            val toast = Toast.makeText(applicationContext,"Feedback Light Off",
+                    Toast.LENGTH_SHORT
+            )
+            toast.show()
         }
 
+
+
+    }
+
+
+    fun setRunningIndicator(playerPackage: MediaPlayer, active: Boolean) {
+        //function definition refactored for SW20
+//        val resource =
+//            if (active) R.drawable.active_circle_account else R.drawable.inactive_circle_account
+//
+//        when (playerPackage) {
+//            MediaPlayer.SPOTIFY -> {
+//                spotifyViewHolder.activeCircle.setImageResource(resource)
+//            }
+//            MediaPlayer.APPLE_MUSIC -> {
+//                appleMusicViewHolder.activeCircle.setImageResource(resource)
+//            }
+//            MediaPlayer.GOOGLE_PLAY -> {
+//                googlePlayViewHolder.activeCircle.setImageResource(resource)
+//            }
+//        }
+//
     }
 
     fun getRunningPlayers(): Set<String> {
