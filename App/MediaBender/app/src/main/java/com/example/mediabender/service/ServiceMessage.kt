@@ -15,6 +15,7 @@ data class ServiceMessage(val message: Byte) {
     var isSystemInitException:Boolean
     var isSensorInitException:Boolean
     var isGestureAvailable:Boolean
+    var isSensibilitySetException:Boolean
     var isRequestAnswer:Boolean
     init {
         gesture = when(message and GESTURES){
@@ -30,6 +31,7 @@ data class ServiceMessage(val message: Byte) {
         isSystemInitException = ((message and Flags.SYSTEMINITEXCEPTION.toByte) == Flags.SYSTEMINITEXCEPTION.toByte)
         isSensorInitException = ((message and Flags.SENSORINITEXCEPTION.toByte) == Flags.SENSORINITEXCEPTION.toByte)
         isGestureAvailable = ((message and Flags.GESTUREUNAVAILABLE.toByte) == Flags.GESTUREUNAVAILABLE.toByte)
+        isSensibilitySetException = ((message and Flags.SENSIBILITYSETEXCEPTION.toByte) == Flags.SENSIBILITYSETEXCEPTION.toByte)
         //Add flags here
         if(message and FLAGS != NULL){
             if(isSystemInitException){
@@ -66,7 +68,7 @@ enum class Flags(var toByte:Byte, var toString:String){
     SYSTEMINITEXCEPTION(0x01,"SYSTEMINITEXCEPTION"),
     SENSORINITEXCEPTION(0x02,"SENSORINITEXCEPTION"),
     GESTUREUNAVAILABLE(0x04,"GESTUREUNAVAILABLE"),
-    FLAG1(0x08,"FLAG1"),
+    SENSIBILITYSETEXCEPTION(0x08,"SENSIBILITYSETEXCEPTION"),
     FLAG2(0x10,"FLAG2"),
     FLAG3(0x20,"FLAG3"),
     FLAG4(0x40,"FLAG4"),
