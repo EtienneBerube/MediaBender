@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import com.example.mediabender.R
+import com.example.mediabender.dialogs.YesNoDialog
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
@@ -57,8 +58,11 @@ class GestureMappingActivity : AppCompatActivity() {
 
     // need to make sure that when someone tries to go back, they are aware their map wasn't saved
     override fun onBackPressed() {
-        Toast.makeText(applicationContext, "Changes not saved.", Toast.LENGTH_LONG).show()
-        super.onBackPressed()
+        YesNoDialog(
+            "You are about to exit with unsaved changes. Are you sure?",
+            {finish()}, // on "yes" press, want to leave without doing anything
+            {}          // on "no" press, want to return to the activity
+        ).show(supportFragmentManager,"GestureMappingActivity: onBackPressed")
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
