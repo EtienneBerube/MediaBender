@@ -48,6 +48,7 @@
             android:layout_alignBottom="@+id/albumArtViewer"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
+            android:elevation="2dp"
             android:layout_marginBottom="-50dp"
             android:text="One Thirty"
             android:textAlignment="center"
@@ -62,6 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/songTitleMainTextView"
             android:layout_alignParentLeft="true"
+            android:elevation="2dp"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="-30dp"
             android:text="Anna Lunoe"
@@ -77,6 +79,7 @@
             android:layout_height="80dp"
             android:layout_alignBottom="@+id/artistNameMainTextView"
             android:layout_centerInParent="true"
+            android:elevation="5dp"
             android:layout_marginBottom="-105dp"
             android:background="@drawable/red_round_button_background" />
 
@@ -87,6 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/playPauseButtMain"
             android:layout_alignParentLeft="true"
+            android:elevation="2dp"
             android:layout_marginLeft="55dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/roundbutton"
@@ -101,6 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/fastRewindButtMain"
             android:layout_alignParentRight="true"
+            android:elevation="2dp"
             android:layout_marginRight="55dp"
             android:background="@drawable/roundbutton"
             android:src="@drawable/icons_fast_forward_white">
@@ -111,15 +116,16 @@
 
         <io.gresse.hugo.vumeterlibrary.VuMeterView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="250dp"
             android:layout_alignParentBottom="true"
             android:id="@+id/vumeter"
             vumeter:vumeter_stopSize="0dp"
+            android:paddingLeft="6dp"
             vumeter:vumeter_speed="10"
             vumeter:vumeter_blockNumber="15"
+                       vumeter:vumeter_blockSpacing="5dp" />
 
-            vumeter:vumeter_backgroundColor="#D64F38"           vumeter:vumeter_blockSpacing="5dp" />
-
+<!--        vumeter:vumeter_backgroundColor="#D64F38"-->
     </RelativeLayout>
 
 

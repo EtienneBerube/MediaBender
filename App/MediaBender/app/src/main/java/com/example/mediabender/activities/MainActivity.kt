@@ -220,7 +220,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = supportActionBar
         //Toolbar colour
         toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
-        indicator.color = getColor(R.color.colorAccent)
+        indicator.color = getColor(R.color.animate_dark_mode)
         menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
@@ -236,6 +236,7 @@ class MainActivity : AppCompatActivity() {
         skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_black)
         backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_black)
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryDark))
+        indicator.color = getColor(R.color.colorAccent)
         artistNameMainTextView?.setTextColor(getColor(R.color.colorPrimaryDark))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         supportActionBar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryWhite))
