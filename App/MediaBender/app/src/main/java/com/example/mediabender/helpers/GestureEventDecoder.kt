@@ -7,12 +7,11 @@ import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.Gesture
 import kotlin.collections.HashMap
 
-class GestureEventDecoder(private val context: Context) {
+class GestureEventDecoder private constructor(private var context: Context) {
 
-    companion object{
-        private val SHARED_PREFERENCE_NAME = "gesture_event_map"
-    }
+    companion object : SingletonHolder<GestureEventDecoder, Context>(::GestureEventDecoder)
 
+    private val SHARED_PREFERENCE_NAME = "gesture_event_map"
     private val sharedPreferences: SharedPreferences
     private var gestureMap: Map<Gesture, MediaEventType> = mapOf()
         private set
@@ -86,6 +85,11 @@ class GestureEventDecoder(private val context: Context) {
     //       have been made
     fun editGestureMap(gesture: Gesture, event: MediaEventType) {
         (gestureMap as HashMap<Gesture, MediaEventType>)[gesture] = event
+    }
+
+    fun updateGestupMap(newMap: HashMap<Gesture, MediaEventType>){
+        this.gestureMap = newMap
+        saveToSharedPreferences()
     }
 
     // returns true if each MediaEventType is mapped to only one Gesture
