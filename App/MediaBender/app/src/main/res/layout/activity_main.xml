@@ -2,6 +2,7 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:vumeter="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainActivity"
     android:layout_width="match_parent"
@@ -35,8 +36,8 @@
             android:layout_width="300sp"
             android:layout_height="300sp"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="55dp"
             android:elevation="4dp"
-            android:layout_marginTop="65dp"
             android:src="@drawable/album_art_default" />
 
         <!--TextView for the Title of the song playing-->
@@ -101,12 +102,23 @@
             android:layout_alignBottom="@+id/fastRewindButtMain"
             android:layout_alignParentRight="true"
             android:layout_marginRight="55dp"
-
             android:background="@drawable/roundbutton"
             android:src="@drawable/icons_fast_forward_white">
 
         </ImageButton>
 
+
+
+        <io.gresse.hugo.vumeterlibrary.VuMeterView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/vumeter"
+            vumeter:vumeter_stopSize="0dp"
+            vumeter:vumeter_speed="10"
+            vumeter:vumeter_blockNumber="15"
+
+            vumeter:vumeter_backgroundColor="#D64F38"           vumeter:vumeter_blockSpacing="5dp" />
 
     </RelativeLayout>
 

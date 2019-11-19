@@ -13,12 +13,14 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-
 import com.example.mediabender.activities.SettingsActivity
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.service.SerialCommunicationService
+import io.gresse.hugo.vumeterlibrary.VuMeterView
+
+
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -35,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var backPlayingButton: ImageButton
     private lateinit var gestureDecoder: GestureEventDecoder
     private lateinit var menu_main: Menu
+    private lateinit var indicator: VuMeterView
     private var darkThemeChosen = false
     private var musicPlaying = false
 
@@ -50,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         initMediaControls()
         initViews()
         addListenersOnButtons()
-
+//        regulateAnimation()
     }
 
     override fun onDestroy() {
@@ -63,6 +66,8 @@ class MainActivity : AppCompatActivity() {
         setChosenTheme()
         if ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) loadResourcesForDarkTheme()
         else loadResourcesForWhiteTheme()
+        if (musicPlaying) indicator.resume(true) else indicator.stop(false)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -100,6 +105,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        if (musicPlaying) indicator.resume(true) else indicator.stop(false)
+
     }
 
     private fun initSerialCommunication() {
@@ -112,6 +119,7 @@ class MainActivity : AppCompatActivity() {
     private fun initMediaControls() {
         mediaControls = MediaControls(this)
         metadataHelper = MetadataHelper(this)
+
     }
 
     private fun initViews() {
@@ -119,6 +127,8 @@ class MainActivity : AppCompatActivity() {
         songTitleTV = findViewById(R.id.songTitleMainTextView)
         songArtistNameTV = findViewById(R.id.artistNameMainTextView)
         mainActivity = findViewById(R.id.mainActivity)
+        indicator = findViewById(R.id.vumeter)
+        indicator.stop(true)
         musicPlaying = mediaControls.isMusicPlaying()
         playButton = findViewById(R.id.playPauseButtMain)
 
@@ -135,6 +145,8 @@ class MainActivity : AppCompatActivity() {
 
         skipPlayingButton = findViewById(R.id.fastForwardButtMain)
         backPlayingButton = findViewById(R.id.fastRewindButtMain)
+
+
     }
 
     private fun addListenersOnButtons() {
@@ -166,14 +178,12 @@ class MainActivity : AppCompatActivity() {
         if (musicPlaying) {
 
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
-
-            //displayToast("Pause")
+            indicator.stop(true)
             mediaControls.executeEvent(MediaEventType.PAUSE)
             musicPlaying = false
         } else {
             playButton.setImageResource(R.drawable.icons_pause_white)
-
-
+            indicator.resume(true)
             mediaControls.executeEvent(MediaEventType.PLAY)
             musicPlaying = true
         }
@@ -210,7 +220,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = supportActionBar
         //Toolbar colour
         toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
-
+        indicator.color = getColor(R.color.colorAccent)
         menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
@@ -269,6 +279,14 @@ class MainActivity : AppCompatActivity() {
             "Light" -> darkThemeChosen = false
             "Dark" -> darkThemeChosen = true
             null -> darkThemeChosen = false
+        }
+    }
+
+    private fun regulateAnimation(){
+        if (musicPlaying){
+            indicator.resume(true)
+        }else {
+            indicator.stop(true)
         }
     }
 }
