@@ -80,6 +80,7 @@ Include Wire.h and SparkFun_APDS-9960.h
 SparkFun_APDS9960 apds = SparkFun_APDS9960();
 static byte message_gesture = 0x00;
 static byte message_request = 0x00;
+static byte flags = 0x00;
 int isr_flag = 0;
 
 void setup() {
@@ -140,6 +141,7 @@ void loop() {
   if(Serial.available()){
     message_request=message_request|REQUESTANSWER;
     handleRequest();
+    message_request = 0x00;
   }
 }
 
@@ -200,6 +202,7 @@ void handleRequest(){
   switch(request&REQUESTS){
     case REQUEST_FLAG:
     flagRequest();
+    message_request = message_request|flags;
     Serial.write(message_request);
     break;
     case REQUEST_SENSIBILITY:
@@ -220,9 +223,9 @@ void handleRequest(){
 
 void flagRequest(){
   if(!apds.isGestureAvailable()){
-    message_request = message_request|FLAG_GESTUREUNAVAILABLE;
+    flags = flags|FLAG_GESTUREUNAVAILABLE;
   }else{
-    message_request = (message_request&(~FLAG_GESTUREUNAVAILABLE));
+    flags = (flags&(~FLAG_GESTUREUNAVAILABLE));
   }
 }
 
