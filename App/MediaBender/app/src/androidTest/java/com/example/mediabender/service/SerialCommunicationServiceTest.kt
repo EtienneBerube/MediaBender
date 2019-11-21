@@ -39,7 +39,7 @@ class SerialCommunicationServiceTest {
         instance.setDataOnReceiveListener {
             invoked=true
         }
-        instance.dataReceiveListener.invoke(message)
+        instance.dataReceiveListener?.invoke(message)
         assertTrue(invoked)
     }
 

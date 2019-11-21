@@ -1,5 +1,6 @@
 package com.example.mediabender.activities
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -19,11 +20,15 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         loadAppropriateTheme()
+    }
+
+    override fun onStart() {
+
+        super.onStart()
 
         Handler().postDelayed({
 
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            showCarefulNotice()
 
         }, Splash_Timeout)
     }
@@ -50,6 +55,35 @@ class SplashScreen : AppCompatActivity() {
     private fun loadDarkTheme() {
         window.statusBarColor = getColor(R.color.colorPrimaryDark)
         splashScreen.setBackgroundColor(getColor(R.color.colorPrimaryDark))
+    }
+
+    private fun showCarefulNotice(){
+        val preferences = getSharedPreferences("careful", Context.MODE_PRIVATE)
+        val firstOpening = preferences.getBoolean("first_opening", true)
+        preferences.edit().putBoolean("first_opening", false).apply()
+
+        if(firstOpening){
+            val builder = AlertDialog.Builder(this@SplashScreen)
+
+            builder.setTitle("Be careful")
+
+            builder.setMessage("This app aims to reduce the amount of distractions while driving. If you need to interact with your phone or if a gesture did not work properly, always put your safety first and stop the car before interacting with your device.")
+
+            builder.setPositiveButton("I will be careful and respect the law"){dialog, which ->
+                dialog.dismiss()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
+
+            // Finally, make the alert dialog using builder
+            val dialog: AlertDialog = builder.create()
+
+            // Display the alert dialog on app interface
+            dialog.show()
+        }else{
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
     }
 }
 

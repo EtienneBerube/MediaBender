@@ -1,18 +1,11 @@
 package com.example.mediabender
 
-import android.annotation.SuppressLint
 import android.content.*
-import android.database.Cursor
 import android.graphics.Bitmap
-import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
-import android.util.Size
 import android.widget.Toast
 import com.example.mediabender.service.AlbumCoverFetcher
-import java.lang.RuntimeException
 import android.content.Intent
-import android.content.Intent.getIntent
 
 
 open class MetadataHelper(context: Context) {
@@ -22,9 +15,9 @@ open class MetadataHelper(context: Context) {
     val PLAYER_INVALID = -1       // only if current action unrecognized (*see setPlayer())
     val PLAYER_SPOTIFY = 0
     val PLAYER_GOOGLEPLAY = 1     // *see note below
-// NOTE: any player with android in the action is equivalent to GooglePlay music. An example is
-//       soundcloud, who's intent is the same as the GooglePlay music event, and thus handled the
-//       same way
+    // NOTE: any player with android in the action is equivalent to GooglePlay music. An example is
+    //       soundcloud, who's intent is the same as the GooglePlay music event, and thus handled the
+    //       same way
 
     private var lastArtist: String? = null
     private var lastAlbum: String? = null
@@ -33,47 +26,49 @@ open class MetadataHelper(context: Context) {
     private val coverFetcher: AlbumCoverFetcher
     private val context = context
     private var track: String = ""
-    private var trackID: String = ""
     private var album: String = ""
-    private var albumID: String = ""
     private var artist: String = ""
-    private var albumArt: Bitmap? = null
     private var playbackState: Boolean = false
     private var player: Int? = null
 
-    private var iF = IntentFilter()
+    private var filter = IntentFilter()
     private val myReceiver = MyReceiver()
 
     init {
         // google play android actions
-        iF.addAction("com.android.music.metachanged")
-        iF.addAction("com.android.music.queuechanged")
-        iF.addAction("com.android.music.playstatechanged")
+        filter.addAction("com.android.music.metachanged")
+        filter.addAction("com.android.music.queuechanged")
+        filter.addAction("com.android.music.playstatechanged")
 
         // amazon mp3 actions
-        iF.addAction("com.amazon.mp3.metachanged")
+        filter.addAction("com.amazon.mp3.metachanged")
 
         // misc. default android player actions
-        iF.addAction("com.htc.music.metachanged")
-        iF.addAction("fm.last.android.metachanged")
-        iF.addAction("com.sec.android.app.music.metachanged")
-        iF.addAction("com.nullsoft.winamp.metachanged")
-        iF.addAction("com.miui.player.metachanged")
-        iF.addAction("com.real.IMP.metachanged")
-        iF.addAction("com.sonyericsson.music.metachanged")
-        iF.addAction("com.rdio.android.metachanged")
-        iF.addAction("com.samsung.sec.android.MusicPlayer.metachanged")
-        iF.addAction("com.andrew.apollo.metachanged")
+        filter.addAction("com.htc.music.metachanged")
+        filter.addAction("fm.last.android.metachanged")
+        filter.addAction("com.sec.android.app.music.metachanged")
+        filter.addAction("com.nullsoft.winamp.metachanged")
+        filter.addAction("com.miui.player.metachanged")
+        filter.addAction("com.real.IMP.metachanged")
+        filter.addAction("com.sonyericsson.music.metachanged")
+        filter.addAction("com.rdio.android.metachanged")
+        filter.addAction("com.samsung.sec.android.MusicPlayer.metachanged")
+        filter.addAction("com.andrew.apollo.metachanged")
+
+        //Apple Music
+        filter.addAction("com.apple.music.playbackstatechanged")
+        filter.addAction("com.apple.music.metadatachanged")
+        filter.addAction("com.apple.music.queuechanged")
 
         // spotify actions found on:
         // https://developer.spotify.com/documentation/android/guides/android-media-notifications/
         // IMPORTANT: for Spotify to work, the user must have enabled "Device Broadcast Status"
-        iF.addAction("com.spotify.music.metadatachanged")
-        iF.addAction("com.spotify.music.queuechanged")
-        iF.addAction("com.spotify.music.playbackstatechanged")
+        filter.addAction("com.spotify.music.metadatachanged")
+        filter.addAction("com.spotify.music.queuechanged")
+        filter.addAction("com.spotify.music.playbackstatechanged")
 
         // registering the broadcast receiver with the intent filter
-        registerBroadcastReceiver(iF)
+        registerBroadcastReceiver(filter)
 
         // setting the current player to INVALID_PLAYER so that it is never null
         setCurrentPlayer("")
@@ -91,7 +86,10 @@ open class MetadataHelper(context: Context) {
                 setTrack(intent.getStringExtra("track"))
                 setAlbum(intent.getStringExtra("album"))
                 setArtist(intent.getStringExtra("artist"))
-                displayAlbumArt()
+
+                if (intent.action!!.contains("metadatachanged"))
+                    displayAlbumArt()
+
                 with(context as MainActivity) {
                     displayCurrentSong(track, artist)
                     updatePlaybackState(playbackState)
