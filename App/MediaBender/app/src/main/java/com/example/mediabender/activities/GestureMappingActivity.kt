@@ -25,6 +25,10 @@ class GestureMappingActivity : AppCompatActivity() {
     private lateinit var spinner_previous: Spinner
     private lateinit var spinner_volUp: Spinner
     private lateinit var spinner_volDown: Spinner
+    private lateinit var spinner_answer: Spinner
+    private lateinit var spinner_decline: Spinner
+    private lateinit var spinner_phone_volUp: Spinner
+    private lateinit var spinner_phone_volDown: Spinner
     private lateinit var b_save_events: Button
     private lateinit var b_default_gestures: Button
     private lateinit var gestureView: View
@@ -125,6 +129,10 @@ class GestureMappingActivity : AppCompatActivity() {
         spinner_previous = findViewById(R.id.spinner_previous)
         spinner_volUp = findViewById(R.id.spinner_volUp)
         spinner_volDown = findViewById(R.id.spinner_volDown)
+        spinner_answer = findViewById(R.id.spinner_answer)
+        spinner_decline = findViewById(R.id.spinner_decline)
+        spinner_phone_volUp = findViewById(R.id.spinner_phone_volUp)
+        spinner_phone_volDown = findViewById(R.id.spinner_phone_volDown)
 
         gestureView = findViewById(R.id.scroll_gestures_constraint)
 
@@ -157,6 +165,10 @@ class GestureMappingActivity : AppCompatActivity() {
             spinner_previous.adapter = adapter
             spinner_volUp.adapter = adapter
             spinner_volDown.adapter = adapter
+            spinner_answer.adapter = adapter
+            spinner_decline.adapter = adapter
+            spinner_phone_volUp.adapter = adapter
+            spinner_phone_volDown.adapter = adapter
         }
 
         // setting the starting value of the spinner based on user shared preferences

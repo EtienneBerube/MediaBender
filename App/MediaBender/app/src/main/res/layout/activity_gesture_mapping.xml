@@ -236,6 +236,48 @@
             android:layout_height="match_parent">
 
             <Spinner
+                android:id="@+id/spinner_phone_volDown"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_phone_event_volUp" />
+
+            <TextView
+                android:id="@+id/tv_phone_event_volDown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:text="Phone volume down"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_phone_event_volUp" />
+
+            <Spinner
+                android:id="@+id/spinner_phone_volUp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_event_decline" />
+
+            <TextView
+                android:id="@+id/tv_phone_event_volUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:text="Phone volume up"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_event_decline" />
+
+            <Spinner
                 android:id="@+id/spinner_decline"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
@@ -250,10 +292,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"
                 android:text="Decline"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_event_answer" />
 
