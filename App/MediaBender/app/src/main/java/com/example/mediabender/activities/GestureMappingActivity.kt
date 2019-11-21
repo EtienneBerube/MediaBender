@@ -48,6 +48,7 @@ class GestureMappingActivity : AppCompatActivity() {
     private lateinit var phoneVolUpTextView: TextView
     private lateinit var phoneVolDownTextView: TextView
 
+    private var mappingChanged = false
     private var darkThemeChosen = false
 
     private lateinit var gestures: Array<String>
@@ -75,11 +76,15 @@ class GestureMappingActivity : AppCompatActivity() {
 
     // need to make sure that when someone tries to go back, they are aware their map wasn't saved
     override fun onBackPressed() {
-        YesNoDialog(
-            "You are about to exit with unsaved changes. Are you sure?",
-            {finish()}, // on "yes" press, want to leave without doing anything
-            {}          // on "no" press, want to return to the activity
-        ).show(supportFragmentManager,"GestureMappingActivity: onBackPressed")
+        if (mappingChanged) {
+            YesNoDialog(
+                "You are about to exit with unsaved changes. Are you sure?",
+                { finish() }, // on "yes" press, want to leave without doing anything
+                {}          // on "no" press, want to return to the activity
+            ).show(supportFragmentManager, "GestureMappingActivity: onBackPressed")
+        } else {
+            finish()
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -221,7 +226,10 @@ class GestureMappingActivity : AppCompatActivity() {
                 }
 
                 if (event != null) { // media gesture
-                    gestureEventDecoder.editMap(gesture, event)
+                    if (gestureEventDecoder.mediaEventToGesture(event) != gesture) { // if no change, don't need to map
+                        gestureEventDecoder.editMap(gesture, event)
+                        mappingChanged = true
+                    }
                 } else { // phone gesture
                     // based on which spinner, fetch the phone control chosen
                     val event2: PhoneEventType = when (parent?.id) {
@@ -231,7 +239,10 @@ class GestureMappingActivity : AppCompatActivity() {
                         R.id.spinner_decline -> PhoneEventType.DECLINE_CALL
                         else -> PhoneEventType.NONE    // this case will never happen
                     }
-                    gestureEventDecoder.editMap(gesture,event2)
+                    if (gestureEventDecoder.phoneEventToGesture(event2) != gesture) { // if no change, don't need to map
+                        gestureEventDecoder.editMap(gesture, event2)
+                        mappingChanged = true
+                    }
                 }
 
             }
@@ -252,11 +263,15 @@ class GestureMappingActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                YesNoDialog(
-                    "You are about to exit with unsaved changes. Are you sure?",
-                    {finish()}, // on "yes" press, want to leave without doing anything
-                    {}          // on "no" press, want to return to the activity
-                ).show(supportFragmentManager,"GestureMappingActivity: onBackPressed")
+                if (mappingChanged) {
+                    YesNoDialog(
+                        "You are about to exit with unsaved changes. Are you sure?",
+                        { finish() }, // on "yes" press, want to leave without doing anything
+                        {}          // on "no" press, want to return to the activity
+                    ).show(supportFragmentManager, "GestureMappingActivity: onBackPressed")
+                } else {
+                    finish()
+                }
             }
         }
         return true
@@ -276,14 +291,17 @@ class GestureMappingActivity : AppCompatActivity() {
         nextTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         previousTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         volUpTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        card_events_standard_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
         volDownTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+
+        card_events_standard_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
         gestures_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         gestureView.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         gestures_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_white)
 
         answerTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         declineTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        phoneVolUpTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        phoneVolDownTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         phoneEventsTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         card_events_phone_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
 
@@ -297,15 +315,19 @@ class GestureMappingActivity : AppCompatActivity() {
         nextTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         gestureView.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         previousTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        card_events_standard_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
         volUpTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         volDownTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+
+        card_events_standard_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
         gestures_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         gestures_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_black)
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
 
         answerTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         declineTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        phoneVolUpTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        phoneVolDownTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+
         phoneEventsTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         card_events_phone_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
     }
