@@ -37,7 +37,7 @@
             android:layout_centerHorizontal="true"
             android:elevation="4dp"
             android:layout_marginTop="65dp"
-            android:src="@drawable/album_art_default" />
+            android:src="@drawable/placeholder_song" />
 
         <!--TextView for the Title of the song playing-->
         <TextView
@@ -48,7 +48,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="-50dp"
-            android:text="One Thirty"
             android:textAlignment="center"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="19sp"
@@ -63,7 +62,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="-30dp"
-            android:text="Anna Lunoe"
             android:textAlignment="center"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="17sp" />
