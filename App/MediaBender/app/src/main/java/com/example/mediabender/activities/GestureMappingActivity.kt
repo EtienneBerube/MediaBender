@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import com.example.mediabender.R
+import com.example.mediabender.dialogs.YesNoDialog
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
@@ -24,6 +26,7 @@ class GestureMappingActivity : AppCompatActivity() {
     private lateinit var spinner_volUp: Spinner
     private lateinit var spinner_volDown: Spinner
     private lateinit var b_save_events: Button
+    private lateinit var b_default_gestures: Button
     private lateinit var gestureView: View
     private lateinit var playTextView: TextView
     private lateinit var pauseTextView: TextView
@@ -62,8 +65,11 @@ class GestureMappingActivity : AppCompatActivity() {
 
     // need to make sure that when someone tries to go back, they are aware their map wasn't saved
     override fun onBackPressed() {
-        Toast.makeText(applicationContext, "Changes not saved.", Toast.LENGTH_LONG).show()
-        super.onBackPressed()
+        YesNoDialog(
+            "You are about to exit with unsaved changes. Are you sure?",
+            {finish()}, // on "yes" press, want to leave without doing anything
+            {}          // on "no" press, want to return to the activity
+        ).show(supportFragmentManager,"GestureMappingActivity: onBackPressed")
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -83,13 +89,11 @@ class GestureMappingActivity : AppCompatActivity() {
         volDownTextView = findViewById(R.id.tv_event_volDown)
         standardEventsTextView = findViewById(R.id.standardEventsTitleTV)
 
-
         b_save_events = findViewById(R.id.b_save_events)
-
         b_save_events.setOnClickListener {
 
             // before saving, need to make sure that user entered mapping is valid
-            if (gestureEventDecoder.mapIsValid()) {
+            if (gestureEventDecoder.mapsAreValid()) {
                 saveGestures()
                 Toast.makeText(applicationContext, "Saved.", Toast.LENGTH_LONG).show()
                 finish()
@@ -102,12 +106,26 @@ class GestureMappingActivity : AppCompatActivity() {
             }
         }
 
+        b_default_gestures = findViewById(R.id.b_default_gestures)
+        b_default_gestures.setOnClickListener {
+            with(gestureEventDecoder) {
+                editGestureMap(Gesture.UP,MediaEventType.RAISE_VOLUME)
+                editGestureMap(Gesture.DOWN,MediaEventType.LOWER_VOLUME)
+                editGestureMap(Gesture.RIGHT,MediaEventType.SKIP_SONG)
+                editGestureMap(Gesture.LEFT,MediaEventType.PREVIOUS_SONG)
+                editGestureMap(Gesture.FAR,MediaEventType.PAUSE)
+                editGestureMap(Gesture.NEAR,MediaEventType.PLAY)
+            }
+            refreshSpinners()
+        }
+
         spinner_play = findViewById(R.id.spinner_play)
         spinner_pause = findViewById(R.id.spinner_pause)
         spinner_next = findViewById(R.id.spinner_next)
         spinner_previous = findViewById(R.id.spinner_previous)
         spinner_volUp = findViewById(R.id.spinner_volUp)
         spinner_volDown = findViewById(R.id.spinner_volDown)
+
         gestureView = findViewById(R.id.scroll_gestures_constraint)
 
     }
@@ -142,12 +160,7 @@ class GestureMappingActivity : AppCompatActivity() {
         }
 
         // setting the starting value of the spinner based on user shared preferences
-        spinner_play.setSelection(getSpinnerStartingPosition(MediaEventType.PLAY))
-        spinner_pause.setSelection(getSpinnerStartingPosition(MediaEventType.PAUSE))
-        spinner_next.setSelection(getSpinnerStartingPosition(MediaEventType.SKIP_SONG))
-        spinner_previous.setSelection(getSpinnerStartingPosition(MediaEventType.PREVIOUS_SONG))
-        spinner_volUp.setSelection(getSpinnerStartingPosition(MediaEventType.RAISE_VOLUME))
-        spinner_volDown.setSelection(getSpinnerStartingPosition(MediaEventType.LOWER_VOLUME))
+        refreshSpinners()
 
         // defining then assigning the onItemSelectedListener to all spinners
         var myOnItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -190,6 +203,19 @@ class GestureMappingActivity : AppCompatActivity() {
         spinner_next.onItemSelectedListener = myOnItemSelectedListener
         spinner_previous.onItemSelectedListener = myOnItemSelectedListener
         spinner_volDown.onItemSelectedListener = myOnItemSelectedListener
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                YesNoDialog(
+                    "You are about to exit with unsaved changes. Are you sure?",
+                    {finish()}, // on "yes" press, want to leave without doing anything
+                    {}          // on "no" press, want to return to the activity
+                ).show(supportFragmentManager,"GestureMappingActivity: onBackPressed")
+            }
+        }
+        return true
     }
 
     private fun loadAppropriateTheme(){
@@ -247,7 +273,7 @@ class GestureMappingActivity : AppCompatActivity() {
 
     // get the position in the spinner values array for the passed event
     private fun getSpinnerStartingPosition(event: MediaEventType): Int {
-        val g: Gesture = gestureEventDecoder.eventToGesture(event)
+        val g: Gesture = gestureEventDecoder.mediaEventToGesture(event)
         return gestures.indexOf(
             when (g) {
                 Gesture.UP -> getString(R.string.mapping_spinner_up)
@@ -259,6 +285,16 @@ class GestureMappingActivity : AppCompatActivity() {
                 else -> "NONE"  // this will never occur
             }
         )
+    }
+
+    // refresh the spinner views with the current gesture map
+    private fun refreshSpinners() {
+        spinner_play.setSelection(getSpinnerStartingPosition(MediaEventType.PLAY))
+        spinner_pause.setSelection(getSpinnerStartingPosition(MediaEventType.PAUSE))
+        spinner_next.setSelection(getSpinnerStartingPosition(MediaEventType.SKIP_SONG))
+        spinner_previous.setSelection(getSpinnerStartingPosition(MediaEventType.PREVIOUS_SONG))
+        spinner_volUp.setSelection(getSpinnerStartingPosition(MediaEventType.RAISE_VOLUME))
+        spinner_volDown.setSelection(getSpinnerStartingPosition(MediaEventType.LOWER_VOLUME))
     }
 
     private fun setUpToolbar(){
