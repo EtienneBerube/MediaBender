@@ -23,6 +23,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        buildTypes.each{
+            it.resValue 'string', 'enc_key', enc_key
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
