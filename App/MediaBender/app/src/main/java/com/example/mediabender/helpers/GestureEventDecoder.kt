@@ -18,7 +18,7 @@ class GestureEventDecoder private constructor(private var context: Context) {
     private val MAP_MEDIA: Int = 0
     private val MAP_PHONE: Int = 1
     private var mediaGestureMap: EnumBiMap<Gesture, MediaEventType>
-    private var phoneGestureMap: EnumBiMap<Gesture, MediaEventType>
+    private var phoneGestureMap: EnumBiMap<Gesture, PhoneEventType>
 
     init{
         sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
@@ -27,7 +27,7 @@ class GestureEventDecoder private constructor(private var context: Context) {
         // to none, then the app will reinitialize their gestures to the default gestures
 
         val mediaMap: EnumBiMap<Gesture, MediaEventType>? = getFromSharedPreferences(MAP_MEDIA)
-        val phoneMap: EnumBiMap<Gesture, MediaEventType>? = getFromSharedPreferences(MAP_PHONE)
+        val phoneMap: EnumBiMap<Gesture, PhoneEventType>? = getFromSharedPreferences(MAP_PHONE)
 
         if (mediaMap!!.all {it.value == MediaEventType.NONE}){    // map has never been initialized, initialize a basic map
             mediaGestureMap = EnumBiMap.create( mapOf(
@@ -44,10 +44,12 @@ class GestureEventDecoder private constructor(private var context: Context) {
             mediaGestureMap = mediaMap
         }
 
-        if (phoneMap!!.all {it.value == MediaEventType.NONE}){    // map has never been initialized, initialize a basic map
+        if (phoneMap!!.all {it.value == PhoneEventType.NONE}){    // map has never been initialized, initialize a basic map
             phoneGestureMap = EnumBiMap.create( mapOf(
                 Gesture.LEFT to PhoneEventType.DECLINE,
                 Gesture.RIGHT to PhoneEventType.ANSWER,
+                Gesture.UP to PhoneEventType.RAISE_VOLUME,
+                Gesture.DOWN to PhoneEventType.LOWER_VOLUME,
                 Gesture.NONE to PhoneEventType.NONE
             ))
             saveToSharedPreferences()
@@ -62,11 +64,18 @@ class GestureEventDecoder private constructor(private var context: Context) {
 
     }
 
-    fun gestureToEvent(gesture: Gesture): MediaEventType {
+    fun gestureToMediaEvent(gesture: Gesture): MediaEventType {
         return mediaGestureMap[gesture] ?: MediaEventType.NONE
     }
-    fun eventToGesture(event: MediaEventType): Gesture {
+    fun gestureToPhoneEvent(gesture: Gesture) : PhoneEventType {
+        return phoneGestureMap[gesture] ?: PhoneEventType.NONE
+    }
+
+    fun mediaEventToGesture(event: MediaEventType): Gesture {
         return mediaGestureMap.inverse()[event] ?: Gesture.NONE
+    }
+    fun phoneEventToGesture(event: PhoneEventType): Gesture {
+        return phoneGestureMap.inverse()[event] ?: Gesture.NONE
     }
 
 
@@ -92,17 +101,17 @@ class GestureEventDecoder private constructor(private var context: Context) {
                 Gesture.NONE to MediaEventType.NONE
             ))
             MAP_PHONE -> EnumBiMap.create( mapOf(
-                Gesture.UP to stringToMediaEvent(
+                Gesture.UP to stringToPhoneEvent(
                     sharedPreferences.getString(context.getString(R.string.gesture_up_phone),"NULL")),
-                Gesture.DOWN to stringToMediaEvent(
+                Gesture.DOWN to stringToPhoneEvent(
                     sharedPreferences.getString(context.getString(R.string.gesture_down_phone),"NULL")),
-                Gesture.LEFT to stringToMediaEvent(
+                Gesture.LEFT to stringToPhoneEvent(
                     sharedPreferences.getString(context.getString(R.string.gesture_left_phone),"NULL")),
-                Gesture.RIGHT to stringToMediaEvent(
+                Gesture.RIGHT to stringToPhoneEvent(
                     sharedPreferences.getString(context.getString(R.string.gesture_right_phone),"NULL")),
-                Gesture.FAR to stringToMediaEvent(
+                Gesture.FAR to stringToPhoneEvent(
                     sharedPreferences.getString(context.getString(R.string.gesture_far_phone),"NULL")),
-                Gesture.NEAR to stringToMediaEvent(
+                Gesture.NEAR to stringToPhoneEvent(
                     sharedPreferences.getString(context.getString(R.string.gesture_near_phone),"NULL")),
                 Gesture.NONE to MediaEventType.NONE
             ))
@@ -147,6 +156,9 @@ class GestureEventDecoder private constructor(private var context: Context) {
     fun editGestureMap(gesture: Gesture, event: MediaEventType) {
         mediaGestureMap.forcePut(gesture, event)
     }
+    fun editPhoneMap(gesture: Gesture, event: MediaEventType) {
+        phoneGestureMap.forcePut(gesture, event)
+    }
 
     fun updateGestupMap(newMap: EnumBiMap<Gesture, MediaEventType>){
         this.mediaGestureMap = newMap
@@ -155,9 +167,12 @@ class GestureEventDecoder private constructor(private var context: Context) {
 
     // returns true if each MediaEventType is mapped to only one Gesture
     // since we are using forcePut to enter key-value pairs, if ever the user has chosen to override
-    // one of the mapping, then the map will have a length of less than 7
-    fun mapIsValid(): Boolean {
-        return mediaGestureMap.keys.count() == 7    // TODO make sure this condition is still fine to make sure the map is valid
+    // one of the mapping, then the mediaGestureMap will have a length of less than 7, and the
+    // phoneGestureMap will have a length of less than 3
+    fun mapsAreValid(): Boolean {
+        // 7 from media controls map: 6 for the gestures, 1 for none
+        // 3 from phone map         : 2 for the gestures, 1 for none
+        return mediaGestureMap.keys.count() == 7 && phoneGestureMap.keys.count() == 3
     }
 
     private fun stringToMediaEvent(str: String?): MediaEventType {
@@ -170,6 +185,15 @@ class GestureEventDecoder private constructor(private var context: Context) {
             "LOWER_VOLUME" -> MediaEventType.LOWER_VOLUME
             "NONE" -> MediaEventType.NONE
             else -> MediaEventType.NONE // will never occur
+        }
+    }
+    private fun stringToPhoneEvent(str: String?): PhoneEventType {
+        return when(str) {
+            "RAISE_VOLUME" -> PhoneEventType.RAISE_VOLUME
+            "LOWER_VOLUME" -> PhoneEventType.LOWER_VOLUME
+            "ACCEPT_CALL" -> PhoneEventType.ACCEPT_CALL
+            "DECLINE_CALL" -> PhoneEventType.DECLINE_CALL
+            else -> PhoneEventType.NONE // will never occur
         }
     }
 
