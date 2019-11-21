@@ -48,58 +48,58 @@ class GestureEventDecoderTest {
 
     @Test
     fun decodeDefaultLeft(){
-        val result = gestureEventDecoder.gestureToEvent(Gesture.LEFT)
+        val result = gestureEventDecoder.gestureToMediaEvent(Gesture.LEFT)
         Assert.assertEquals(MediaEventType.PREVIOUS_SONG,result)
     }
 
     @Test
     fun decodeDefaultRight(){
-        val result = gestureEventDecoder.gestureToEvent(Gesture.RIGHT)
+        val result = gestureEventDecoder.gestureToMediaEvent(Gesture.RIGHT)
         Assert.assertEquals(MediaEventType.SKIP_SONG,result)
     }
 
     @Test
     fun decodeDefaultUp(){
-        val result = gestureEventDecoder.gestureToEvent(Gesture.UP)
+        val result = gestureEventDecoder.gestureToMediaEvent(Gesture.UP)
         Assert.assertEquals(MediaEventType.RAISE_VOLUME,result)
     }
 
     @Test
     fun decodeDefaultDown(){
-        val result = gestureEventDecoder.gestureToEvent(Gesture.DOWN)
+        val result = gestureEventDecoder.gestureToMediaEvent(Gesture.DOWN)
         Assert.assertEquals(MediaEventType.LOWER_VOLUME,result)
     }
 
     @Test
     fun decodeDefaultNear(){
-        val result = gestureEventDecoder.gestureToEvent(Gesture.NEAR)
+        val result = gestureEventDecoder.gestureToMediaEvent(Gesture.NEAR)
         Assert.assertEquals(MediaEventType.PLAY,result)
     }
 
     @Test
     fun decodeDefaultFar(){
-        val result = gestureEventDecoder.gestureToEvent(Gesture.FAR)
+        val result = gestureEventDecoder.gestureToMediaEvent(Gesture.FAR)
         Assert.assertEquals(MediaEventType.PAUSE,result)
     }
 
     @Test
     fun decodeDefaultNone(){
-        val result = gestureEventDecoder.gestureToEvent(Gesture.NONE)
+        val result = gestureEventDecoder.gestureToMediaEvent(Gesture.NONE)
         Assert.assertEquals(MediaEventType.NONE,result)
     }
 
     @Test
     fun decodeDefaultUnknown(){
-        var result = gestureEventDecoder.gestureToEvent(Gesture.UNKNOWERROR)
+        var result = gestureEventDecoder.gestureToMediaEvent(Gesture.UNKNOWERROR)
         Assert.assertEquals(MediaEventType.NONE,result)
 
-        result = gestureEventDecoder.gestureToEvent(Gesture.GESTURE1)
+        result = gestureEventDecoder.gestureToMediaEvent(Gesture.GESTURE1)
         Assert.assertEquals(MediaEventType.NONE,result)
 
-        result = gestureEventDecoder.gestureToEvent(Gesture.GESTURE2)
+        result = gestureEventDecoder.gestureToMediaEvent(Gesture.GESTURE2)
         Assert.assertEquals(MediaEventType.NONE,result)
 
-        result = gestureEventDecoder.gestureToEvent(Gesture.GESTURE3)
+        result = gestureEventDecoder.gestureToMediaEvent(Gesture.GESTURE3)
         Assert.assertEquals(MediaEventType.NONE,result)
     }
 }
