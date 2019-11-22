@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // Note that the Toolbar defined in the layout has the id "my_toolbar"
-        gestureDecoder = GestureEventDecoder(applicationContext)
+        gestureDecoder = GestureEventDecoder.getInstance(applicationContext)
 
         setChosenTheme()
         setUpToolbar()
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
 
         SerialCommunicationService.instance.setDataOnReceiveListener {
             runOnUiThread {
-                val event = gestureDecoder.gestureToEvent(it.gesture)
+                val event = gestureDecoder.gestureToMediaEvent(it.gesture)
                 Toast.makeText(applicationContext,"Got gesture: ${it.gesture.toString} -> ${event.name}", Toast.LENGTH_SHORT).show()
                 mediaControls.executeEvent(event, this)
             }
