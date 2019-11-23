@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import com.example.mediabender.R
@@ -25,6 +26,7 @@ class GestureMappingActivity : AppCompatActivity() {
     private lateinit var spinner_far: Spinner
     private lateinit var spinner_near: Spinner
     private lateinit var b_save_gestures: Button
+    private lateinit var b_default_gestures: Button
     private lateinit var gestureView: View
     private lateinit var upTextView: TextView
     private lateinit var downTextView: TextView
@@ -83,6 +85,7 @@ class GestureMappingActivity : AppCompatActivity() {
         titleLabel = findViewById(R.id.gesturesTitleTV)
 
         b_save_gestures = findViewById(R.id.b_save_gestures)
+        b_default_gestures = findViewById(R.id.b_default_gestures)
 
         b_save_gestures.setOnClickListener {
 
@@ -98,6 +101,18 @@ class GestureMappingActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+        }
+
+        b_default_gestures.setOnClickListener {
+            with(gestureEventDecoder) {
+                editGestureMap(Gesture.UP,MediaEventType.RAISE_VOLUME)
+                editGestureMap(Gesture.DOWN,MediaEventType.LOWER_VOLUME)
+                editGestureMap(Gesture.RIGHT,MediaEventType.SKIP_SONG)
+                editGestureMap(Gesture.LEFT,MediaEventType.PREVIOUS_SONG)
+                editGestureMap(Gesture.FAR,MediaEventType.PAUSE)
+                editGestureMap(Gesture.NEAR,MediaEventType.PLAY)
+            }
+            refreshSpinners()
         }
 
         spinner_up = findViewById(R.id.spinner_up)
@@ -140,12 +155,7 @@ class GestureMappingActivity : AppCompatActivity() {
         }
 
         // setting the starting value of the spinner based on user shared preferences
-        spinner_up.setSelection(getSpinnerStartingPosition(Gesture.UP))
-        spinner_down.setSelection(getSpinnerStartingPosition(Gesture.DOWN))
-        spinner_left.setSelection(getSpinnerStartingPosition(Gesture.LEFT))
-        spinner_right.setSelection(getSpinnerStartingPosition(Gesture.RIGHT))
-        spinner_far.setSelection(getSpinnerStartingPosition(Gesture.FAR))
-        spinner_near.setSelection(getSpinnerStartingPosition(Gesture.NEAR))
+        refreshSpinners()
 
         // defining then assigning the onItemSelectedListener to all spinners
         var myOnItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -188,6 +198,19 @@ class GestureMappingActivity : AppCompatActivity() {
         spinner_left.onItemSelectedListener = myOnItemSelectedListener
         spinner_right.onItemSelectedListener = myOnItemSelectedListener
         spinner_near.onItemSelectedListener = myOnItemSelectedListener
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                YesNoDialog(
+                    "You are about to exit with unsaved changes. Are you sure?",
+                    {finish()}, // on "yes" press, want to leave without doing anything
+                    {}          // on "no" press, want to return to the activity
+                ).show(supportFragmentManager,"GestureMappingActivity: onBackPressed")
+            }
+        }
+        return true
     }
 
     private fun loadAppropriateTheme(){
@@ -247,6 +270,16 @@ class GestureMappingActivity : AppCompatActivity() {
             }
         )
         return temp
+    }
+
+    // refresh the spinner views with the current gesture map
+    private fun refreshSpinners() {
+        spinner_up.setSelection(getSpinnerStartingPosition(Gesture.UP))
+        spinner_down.setSelection(getSpinnerStartingPosition(Gesture.DOWN))
+        spinner_left.setSelection(getSpinnerStartingPosition(Gesture.LEFT))
+        spinner_right.setSelection(getSpinnerStartingPosition(Gesture.RIGHT))
+        spinner_far.setSelection(getSpinnerStartingPosition(Gesture.FAR))
+        spinner_near.setSelection(getSpinnerStartingPosition(Gesture.NEAR))
     }
 
     private fun setUpToolbar(){

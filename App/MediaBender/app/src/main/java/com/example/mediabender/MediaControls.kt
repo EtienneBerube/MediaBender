@@ -11,6 +11,7 @@ import android.media.session.MediaSession
 import android.media.session.MediaSessionManager
 import android.view.KeyEvent
 import androidx.core.app.ComponentActivity
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.example.mediabender.dialogs.MediaEventFeedbackDialog
 import com.example.mediabender.models.MediaEventType
@@ -33,15 +34,13 @@ class MediaControls(context: Context) {
         val mediaFeedbackDialog = MediaEventFeedbackDialog(event)
         (activity as? FragmentActivity)?.let {
             val fragmentManager = it.supportFragmentManager
-            val fragmentTransition = fragmentManager.beginTransaction()
 
             //Removes if exists
-            val prev = fragmentManager.findFragmentByTag("media_feedback")
-            if (prev != null) {
-                fragmentTransition.remove(prev)
-            }
-            fragmentTransition.addToBackStack(null)
-            mediaFeedbackDialog.show(fragmentTransition, "media_feedback")
+            val prev = fragmentManager.findFragmentByTag("media_feedback") as DialogFragment?
+
+            prev?.dialog?.dismiss()
+
+            mediaFeedbackDialog.show(fragmentManager, "media_feedback")
         }
     }
 
