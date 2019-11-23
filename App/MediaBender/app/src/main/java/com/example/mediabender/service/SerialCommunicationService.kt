@@ -137,6 +137,7 @@ class SerialCommunicationService {
                 serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
                 serialPort.syncRead(ByteArray(1), 0)
                 serialPort.read(dataReceivedCallBack)
+                sendRequest(ServiceRequest(Request.SENSIBILITY,Sensibility.LOW))//TODO: send the saved sensibility
                 appendLog(context, "Serial Connection Opened!\n")
 
             } else {
