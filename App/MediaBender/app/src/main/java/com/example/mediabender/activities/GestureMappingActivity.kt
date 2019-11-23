@@ -127,11 +127,16 @@ class GestureMappingActivity : AppCompatActivity() {
         b_default_gestures = findViewById(R.id.b_default_gestures)
         b_default_gestures.setOnClickListener {
             with(gestureEventDecoder) {
-                editMap(Gesture.UP,MediaEventType.RAISE_VOLUME)
-                editMap(Gesture.DOWN,MediaEventType.LOWER_VOLUME)
-                editMap(Gesture.RIGHT,MediaEventType.SKIP_SONG)
-                editMap(Gesture.LEFT,MediaEventType.PREVIOUS_SONG)
-                editMap(Gesture.NEAR,MediaEventType.TOGGLE_PLAYSTATE)
+                editMap(Gesture.UP, MediaEventType.RAISE_VOLUME)
+                editMap(Gesture.DOWN, MediaEventType.LOWER_VOLUME)
+                editMap(Gesture.RIGHT, MediaEventType.SKIP_SONG)
+                editMap(Gesture.LEFT, MediaEventType.PREVIOUS_SONG)
+                editMap(Gesture.NEAR, MediaEventType.TOGGLE_PLAYSTATE)
+
+                editMap(Gesture.UP, PhoneEventType.RAISE_VOLUME)
+                editMap(Gesture.DOWN, PhoneEventType.LOWER_VOLUME)
+                editMap(Gesture.RIGHT, PhoneEventType.ACCEPT_CALL)
+                editMap(Gesture.LEFT, PhoneEventType.DECLINE_CALL)
             }
             refreshSpinners()
         }
@@ -165,11 +170,11 @@ class GestureMappingActivity : AppCompatActivity() {
         // creating an array adapter for the spinners
         ArrayAdapter<String>(
             this,
-            android.R.layout.simple_spinner_item,
+            R.layout.my_spinner_item,
             gestures
         ).also { adapter ->
             // specifying the layout for the list when it appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            adapter.setDropDownViewResource(R.layout.my_spinner_drop_down)
 
             // applying the adapter to the spinners
             spinner_togglePlaystate.adapter = adapter
@@ -197,6 +202,11 @@ class GestureMappingActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
+                (parent?.getChildAt(0) as TextView).setTextColor( when(darkThemeChosen) {
+                    true -> getColor(R.color.colorPrimaryWhite)
+                    false -> getColor(R.color.colorPrimaryDark)
+                })
+
                 // based on which spinner, fetch the media control chosen
                 val event: MediaEventType? = when (parent?.id) {
                     R.id.spinner_togglePlaystate -> MediaEventType.TOGGLE_PLAYSTATE
