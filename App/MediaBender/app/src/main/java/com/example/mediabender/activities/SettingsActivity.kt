@@ -2,9 +2,9 @@ package com.example.mediabender.activities
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import android.os.Bundle
+import android.content.pm.ApplicationInfo
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -16,7 +16,13 @@ import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaPlayer
 import com.example.mediabender.models.PlayerAccount
+import com.example.mediabender.service.Request
+import com.example.mediabender.service.Sensibility
+import com.example.mediabender.service.SerialCommunicationService
+import com.example.mediabender.service.ServiceRequest
 import kotlinx.android.synthetic.main.activity_settings.*
+import nl.dionsegijn.steppertouch.OnStepCallback
+import nl.dionsegijn.steppertouch.StepperTouch
 
 
 class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {
@@ -42,10 +48,10 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         supportActionBar?.elevation = 0f
 
         playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(
-            getSharedPreferences(
-                "Player Accounts",
-                Context.MODE_PRIVATE
-            )
+                getSharedPreferences(
+                        "Player Accounts",
+                        Context.MODE_PRIVATE
+                )
         )
 
         setupSettings()
@@ -102,9 +108,9 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
         spotifyViewHolder.connectedTextView = findViewById(R.id.spotify_connection_textview)
         spotifyViewHolder.setConnectedTextWithEmail(
-            playerSharedPreferenceHelper.getPlayerAccount(
-                MediaPlayer.SPOTIFY
-            )
+                playerSharedPreferenceHelper.getPlayerAccount(
+                        MediaPlayer.SPOTIFY
+                )
         )
 
         if(MediaPlayer.SPOTIFY.packageName !in installedPlayers.map { player -> player.packageName }){
@@ -122,9 +128,9 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
         googlePlayViewHolder.connectedTextView = findViewById(R.id.google_play_connection_textview)
         googlePlayViewHolder.setConnectedTextWithEmail(
-            playerSharedPreferenceHelper.getPlayerAccount(
-                MediaPlayer.GOOGLE_PLAY
-            )
+                playerSharedPreferenceHelper.getPlayerAccount(
+                        MediaPlayer.GOOGLE_PLAY
+                )
         )
 
         if(MediaPlayer.GOOGLE_PLAY.packageName !in installedPlayers.map { player -> player.packageName }){
@@ -142,9 +148,9 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
         appleMusicViewHolder.connectedTextView = findViewById(R.id.apple_music_connection_textview)
         appleMusicViewHolder.setConnectedTextWithEmail(
-            playerSharedPreferenceHelper.getPlayerAccount(
-                MediaPlayer.APPLE_MUSIC
-            )
+                playerSharedPreferenceHelper.getPlayerAccount(
+                        MediaPlayer.APPLE_MUSIC
+                )
         )
 
         if(MediaPlayer.APPLE_MUSIC.packageName !in installedPlayers.map { player -> player.packageName }){
@@ -159,27 +165,67 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         findViewById<Button>(R.id.settings_test_connection_button).setOnClickListener { testSensorConnection() }
         findViewById<Button>(R.id.settings_gesture_button).setOnClickListener { remapGesture() }
 
+        //find sensitivity stepper element
+        val stepperTouch = findViewById<StepperTouch>(R.id.StepperTouch)
+
         //For the theme drop down menu
         themeSpinner = findViewById(R.id.settings_theme_spinner)
 
         themeSpinner.adapter = createArrayAdapterForSpinner()
 
         themeSpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
+                object : AdapterView.OnItemSelectedListener {
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
 
+                    }
+
+                    override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                    ) {
+                        changeTheme(parent?.getItemAtPosition(position).toString())
+                    }
                 }
 
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    changeTheme(parent?.getItemAtPosition(position).toString())
+
+        //define minimum value of sensitivity stepper to 0
+        stepperTouch.minValue = 0
+        //allow side taps
+        stepperTouch.sideTapEnabled = true
+        //set maximum value of sensitivity stepper to 4
+        stepperTouch.maxValue = 2
+
+        //add callback for the sensitivity stepper
+        stepperTouch.addStepCallback(
+                object: OnStepCallback{
+                    override fun onStep(value: Int, positive: Boolean) {
+
+                        //switch statement to initiate action when the stepper changes the value
+                        //add code to each case to tell arduino to switch sensitivity
+                        when (value) {
+                            0 -> {
+                                if(SerialCommunicationService.instance.isConnected){
+                                    SerialCommunicationService.instance.sendRequest(ServiceRequest(Request.SENSIBILITY,Sensibility.LOW))
+                                }
+                            }
+                            1 -> {
+                                if(SerialCommunicationService.instance.isConnected){
+                                    SerialCommunicationService.instance.sendRequest(ServiceRequest(Request.SENSIBILITY,Sensibility.MEDIUM))
+                                }
+                            }
+                            2 -> {
+                                if(SerialCommunicationService.instance.isConnected){
+                                    SerialCommunicationService.instance.sendRequest(ServiceRequest(Request.SENSIBILITY,Sensibility.HIGH))
+                                }
+                            }
+                        }
+                    }
                 }
-            }
+        )
+
 
 
     }
@@ -187,9 +233,9 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private fun testSensorConnection() {
         //TODO implement later
         val toast = Toast.makeText(
-            applicationContext,
-            "Testing connection not implemented yet",
-            Toast.LENGTH_SHORT
+                applicationContext,
+                "Testing connection not implemented yet",
+                Toast.LENGTH_SHORT
         )
         toast.show()
     }
@@ -197,27 +243,27 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private fun changeTheme(theme: String) {
 
         val themeHelper =
-            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+                ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
         themeHelper.saveTheme(theme)
 
         darkThemeChosen = (theme == "Dark")
         loadAppropriateTheme()
 
         Toast.makeText(
-            applicationContext,
-            "$theme saved",
-            Toast.LENGTH_SHORT
+                applicationContext,
+                "$theme saved",
+                Toast.LENGTH_SHORT
         ).show()
     }
 
-    private fun remapGesture(){
-        val intent = Intent(this,GestureMappingActivity::class.java)
+    private fun remapGesture() {
+        val intent = Intent(this, GestureMappingActivity::class.java)
         startActivity(intent)
     }
 
     fun setRunningIndicator(playerPackage: MediaPlayer, active: Boolean) {
         val resource =
-            if (active) R.drawable.active_circle_account else R.drawable.inactive_circle_account
+                if (active) R.drawable.active_circle_account else R.drawable.inactive_circle_account
 
         when (playerPackage) {
             MediaPlayer.SPOTIFY -> {
@@ -269,7 +315,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
     private fun loadAppropriateTheme() {
         val currentMode =
-            settingsActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                settingsActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
 
         if (currentMode == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) loadDarkTheme()
@@ -279,24 +325,24 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     // To make the drop down menu for Themes to show the right saved theme
     private fun createArrayAdapterForSpinner(): ArrayAdapter<CharSequence> {
         val themeHelper =
-            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+                ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
         val savedTheme = themeHelper.getTheme()
 
         when (savedTheme) {
             "Dark" -> {
                 darkThemeChosen = true
                 return ArrayAdapter.createFromResource(
-                    this,
-                    R.array.themesDarkSaved,
-                    R.layout.support_simple_spinner_dropdown_item
+                        this,
+                        R.array.themesDarkSaved,
+                        R.layout.support_simple_spinner_dropdown_item
                 )
             }
             else -> {
                 darkThemeChosen = false
                 return ArrayAdapter.createFromResource(
-                    this,
-                    R.array.themesLightSaved,
-                    R.layout.support_simple_spinner_dropdown_item
+                        this,
+                        R.array.themesLightSaved,
+                        R.layout.support_simple_spinner_dropdown_item
                 )
             }
 
@@ -308,6 +354,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         this.installedPlayers = packageManager.getInstalledApplications(0).filter { it.packageName in MediaPlayer.values().map { player -> player.packageName } }
         Log.d("Installed apps","Got installed apps")
     }
+
 
 
 }

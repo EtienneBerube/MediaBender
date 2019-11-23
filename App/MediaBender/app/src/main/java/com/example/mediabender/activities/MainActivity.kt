@@ -18,7 +18,10 @@ import com.example.mediabender.activities.SettingsActivity
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
+import com.example.mediabender.service.Request
+import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
+import com.example.mediabender.service.ServiceRequest
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -86,25 +89,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-
-        SerialCommunicationService.instance.removeDataOnReceiveListener()
+        SerialCommunicationService.instance.isAppInBackground = true
     }
     override fun onResume() {
         super.onResume()
-
-        SerialCommunicationService.instance.setDataOnReceiveListener {
-            runOnUiThread {
-                val event = gestureDecoder.gestureToMediaEvent(it.gesture)
-                Toast.makeText(applicationContext,"Got gesture: ${it.gesture.toString} -> ${event.name}", Toast.LENGTH_SHORT).show()
-                mediaControls.executeEvent(event, this)
-            }
-        }
+        SerialCommunicationService.instance.isAppInBackground = false
 
     }
 
     private fun initSerialCommunication() {
         SerialCommunicationService.instance.setService(this)
         SerialCommunicationService.instance.requestUSBpermission(applicationContext)
+        SerialCommunicationService.instance.setDataOnReceiveListener {
+            runOnUiThread {
+                val event = gestureDecoder.gestureToMediaEvent(it.gesture)
+                mediaControls.executeEvent(event, this)
+            }
+        }
     }
 
     // cannot initialize the MediaControls object before the onCreate because it calls
@@ -164,10 +165,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun playPauseButtPressed() {
         if (musicPlaying) {
-
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
-
-            //displayToast("Pause")
             mediaControls.executeEvent(MediaEventType.PAUSE)
             musicPlaying = false
         } else {
