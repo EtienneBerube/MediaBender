@@ -62,7 +62,7 @@ Include Wire.h and SparkFun_APDS-9960.h
 #define FLAG_SYSTEMINITEXCEPTION 0x01 //X0000001
 #define FLAG_SENSORINITEXCEPTION 0x02 //X0000010
 #define FLAG_GESTUREUNAVAILABLE  0x04 //X0000100
-#define FLAG_SETSENSIBILITYFAIL  0x08 //X0001000
+#define FLAG_FLAG1               0x08 //X0001000
 #define FLAG_FLAG2               0x10 //X0010000
 #define FLAG_FLAG3               0x20 //X0100000
 #define FLAG_FLAG4               0x40 //X1000000
@@ -207,7 +207,6 @@ void handleRequest(){
     break;
     case REQUEST_SENSIBILITY:
     setSensibility(request);
-    Serial.write(message_request);
     break;
     case REQUEST_REQUEST1:
     case REQUEST_REQUEST2:
@@ -232,36 +231,19 @@ void flagRequest(){
 void setSensibility(byte sensibility){
   switch(sensibility&SENSIBILITIES){
     case SENSIBILITY_LOW:
-    if(!apds.setGestureGain(0)){
-      message_request = message_request|FLAG_SETSENSIBILITYFAIL;
-    }else{
-      message_request = (message_request&(~FLAG_SETSENSIBILITYFAIL));
-    }
+    apds.setGestureGain(0);
     break;
     case SENSIBILITY_MEDIUM:
-    if(!apds.setGestureGain(1)){
-      message_request = message_request|FLAG_SETSENSIBILITYFAIL;
-    }else{
-      message_request = (message_request&(~FLAG_SETSENSIBILITYFAIL));
-    }
+    apds.setGestureGain(1);
     break;
     case SENSIBILITY_HIGH:
-    if(!apds.setGestureGain(2)){
-      message_request = message_request|FLAG_SETSENSIBILITYFAIL;
-    }else{
-      message_request = (message_request&(~FLAG_SETSENSIBILITYFAIL));
-    }
+    apds.setGestureGain(2);
     break;
     case SENSIBILITY_MAX:
-    if(!apds.setGestureGain(3)){
-      message_request = message_request|FLAG_SETSENSIBILITYFAIL;
-    }else{
-      message_request = (message_request&(~FLAG_SETSENSIBILITYFAIL));
-    }
+    apds.setGestureGain(3);
     break;
     default:
     apds.setGestureGain(0);
-    message_request = message_request|FLAG_SETSENSIBILITYFAIL;
     break;
   }
 }

@@ -30,7 +30,6 @@ class SerialCommunicationService {
     var isSensorInitException = false
     var isGestureAvailable = false
     var isAppInBackground = false
-    var isSensibilitySetException = false
     private lateinit var gestureDecoder:GestureEventDecoder
     private lateinit var mediaControls:MediaControls
 
@@ -180,7 +179,6 @@ class SerialCommunicationService {
             isGestureAvailable = message.isGestureAvailable
             isSystemInitException = message.isSystemInitException
             isSensorInitException = message.isSensorInitException
-            isSensibilitySetException = message.isSensibilitySetException
             //TODO: Exception algorithm
         }else{
             //Null safety addition
