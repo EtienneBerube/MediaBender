@@ -87,20 +87,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <!--Need To Change Colour-->
-<!--                <Spinner-->
-<!--                    android:id="@+id/settings_theme_spinner"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="14dp"-->
-<!--                    android:layout_marginEnd="12dp"-->
-<!--                    android:entries="@array/themesDarkSaved"-->
-<!--                    android:minWidth="50dp"-->
-<!--                    android:spinnerMode="dropdown"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintHorizontal_bias="1.0"-->
-<!--                    app:layout_constraintStart_toEndOf="@+id/theme"-->
-<!--                    app:layout_constraintTop_toTopOf="parent" />-->
 
                 <com.shrikanthravi.library.NightModeButton
                     android:id="@+id/nightModeButton"
@@ -132,11 +118,9 @@
 
                 <Button
                     android:id="@+id/settings_test_connection_button"
-
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_marginStart="12dp"
-
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/themed_button"
@@ -147,6 +131,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/settings_gesture_button" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
