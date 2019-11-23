@@ -170,7 +170,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/spotify_card"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="75dp"
             android:layout_margin="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
@@ -207,7 +207,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:text="Not connected"
+                    android:text="Click to open Spotify"
                     android:textColor="#FFFFFF"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/spotify_title" />
@@ -230,7 +230,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/google_play_card"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="75dp"
             android:layout_margin="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="24dp"
@@ -266,7 +266,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:text="Not connected"
+                    android:text="Click to open Gogole Play Music"
                     android:textColor="#FFFFFF"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/google_play_title" />
@@ -289,7 +289,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/apple_music_card"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="75dp"
             android:layout_margin="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="24dp"
@@ -327,7 +327,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:text="Not connected"
+                    android:text="Click to open Apple Music"
                     android:textColor="#FFFFFF"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/apple_music_title" />
