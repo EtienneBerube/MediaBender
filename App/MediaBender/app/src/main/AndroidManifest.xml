@@ -70,11 +70,11 @@
                 android:resource="@xml/device_filter" />
         </activity>
 
-        <receiver  android:name=".CallReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />.
-            </intent-filter>
-        </receiver>
+<!--        <receiver  android:name=".CallReceiver">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.PHONE_STATE" />.-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
 
     </application>
 

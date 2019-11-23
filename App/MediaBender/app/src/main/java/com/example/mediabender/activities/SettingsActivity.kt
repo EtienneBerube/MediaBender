@@ -16,7 +16,9 @@ import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaPlayer
 import com.example.mediabender.models.PlayerAccount
+import com.shrikanthravi.library.NightModeButton
 import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.android.synthetic.main.activity_settings.view.*
 
 
 class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {
@@ -26,10 +28,11 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private var googlePlayViewHolder = PlayerSettingsCardViewHolder()
     private lateinit var settingsLabel: TextView
     private lateinit var accountsLabel: TextView
-    private lateinit var themeSpinner: Spinner
+    //    private lateinit var themeSpinner: Spinner
     private lateinit var settingsActivity: View
+    private lateinit var nightModeButton: NightModeButton
     private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
-    private var darkThemeChosen = false
+    private var darkThemeChosen = true
     private lateinit var installedPlayers: List<ApplicationInfo>
 
 
@@ -95,7 +98,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private fun setupSpotify() {
         spotifyViewHolder.cardView = findViewById(R.id.spotify_card)
         spotifyViewHolder.cardView.setOnClickListener {
-             packageManager.getLaunchIntentForPackage(MediaPlayer.SPOTIFY.packageName)?.let { startActivity(it) }
+            packageManager.getLaunchIntentForPackage(MediaPlayer.SPOTIFY.packageName)
+                ?.let { startActivity(it) }
         }
 
         spotifyViewHolder.activeCircle = findViewById(R.id.spotify_active_circle)
@@ -107,7 +111,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
             )
         )
 
-        if(MediaPlayer.SPOTIFY.packageName !in installedPlayers.map { player -> player.packageName }){
+        if (MediaPlayer.SPOTIFY.packageName !in installedPlayers.map { player -> player.packageName }) {
             spotifyViewHolder.cardView.visibility = View.GONE
         }
     }
@@ -115,7 +119,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private fun setupGooglePlayMusic() {
         googlePlayViewHolder.cardView = findViewById(R.id.google_play_card)
         googlePlayViewHolder.cardView.setOnClickListener {
-            packageManager.getLaunchIntentForPackage(MediaPlayer.GOOGLE_PLAY.packageName)?.let { startActivity(it) }
+            packageManager.getLaunchIntentForPackage(MediaPlayer.GOOGLE_PLAY.packageName)
+                ?.let { startActivity(it) }
         }
 
         googlePlayViewHolder.activeCircle = findViewById(R.id.google_play_active_circle)
@@ -127,7 +132,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
             )
         )
 
-        if(MediaPlayer.GOOGLE_PLAY.packageName !in installedPlayers.map { player -> player.packageName }){
+        if (MediaPlayer.GOOGLE_PLAY.packageName !in installedPlayers.map { player -> player.packageName }) {
             googlePlayViewHolder.cardView.visibility = View.GONE
         }
     }
@@ -135,7 +140,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private fun setupApplePlayMusic() {
         appleMusicViewHolder.cardView = findViewById(R.id.apple_music_card)
         appleMusicViewHolder.cardView.setOnClickListener {
-            packageManager.getLaunchIntentForPackage(MediaPlayer.APPLE_MUSIC.packageName)?.let { startActivity(it) }
+            packageManager.getLaunchIntentForPackage(MediaPlayer.APPLE_MUSIC.packageName)
+                ?.let { startActivity(it) }
         }
 
         appleMusicViewHolder.activeCircle = findViewById(R.id.apple_music_active_circle)
@@ -147,7 +153,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
             )
         )
 
-        if(MediaPlayer.APPLE_MUSIC.packageName !in installedPlayers.map { player -> player.packageName }){
+        if (MediaPlayer.APPLE_MUSIC.packageName !in installedPlayers.map { player -> player.packageName }) {
             appleMusicViewHolder.cardView.visibility = View.GONE
         }
     }
@@ -156,31 +162,33 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         settingsLabel = findViewById(R.id.settingsTitle)
         settingsActivity = findViewById(R.id.settings_parent_scroll)
         accountsLabel = findViewById(R.id.accountsTitle)
+        nightModeButton = findViewById(R.id.nightModeButton)
+        nightModeButton.setMode(darkThemeChosen)
         findViewById<Button>(R.id.settings_test_connection_button).setOnClickListener { testSensorConnection() }
         findViewById<Button>(R.id.settings_gesture_button).setOnClickListener { remapGesture() }
 
         //For the theme drop down menu
-        themeSpinner = findViewById(R.id.settings_theme_spinner)
-
-        themeSpinner.adapter = createArrayAdapterForSpinner()
-
-        themeSpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                }
-
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    changeTheme(parent?.getItemAtPosition(position).toString())
-                }
-            }
-
+//        themeSpinner = findViewById(R.id.settings_theme_spinner)
+//
+//        themeSpinner.adapter = createArrayAdapterForSpinner()
+//
+//        themeSpinner.onItemSelectedListener =
+//            object : AdapterView.OnItemSelectedListener {
+//
+//                override fun onNothingSelected(parent: AdapterView<*>?) {
+//
+//                }
+//
+//                override fun onItemSelected(
+//                    parent: AdapterView<*>?,
+//                    view: View?,
+//                    position: Int,
+//                    id: Long
+//                ) {
+//                    changeTheme(parent?.getItemAtPosition(position).toString())
+//                }
+//            }
+        nightMode()
 
     }
 
@@ -210,8 +218,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         ).show()
     }
 
-    private fun remapGesture(){
-        val intent = Intent(this,GestureMappingActivity::class.java)
+    private fun remapGesture() {
+        val intent = Intent(this, GestureMappingActivity::class.java)
         startActivity(intent)
     }
 
@@ -277,38 +285,58 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     }
 
     // To make the drop down menu for Themes to show the right saved theme
-    private fun createArrayAdapterForSpinner(): ArrayAdapter<CharSequence> {
-        val themeHelper =
-            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
-        val savedTheme = themeHelper.getTheme()
+//    private fun createArrayAdapterForSpinner(): ArrayAdapter<CharSequence> {
+//        val themeHelper =
+//            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+//        val savedTheme = themeHelper.getTheme()
+//
+//        when (savedTheme) {
+//            "Dark" -> {
+//                darkThemeChosen = true
+//                return ArrayAdapter.createFromResource(
+//                    this,
+//                    R.array.themesDarkSaved,
+//                    R.layout.support_simple_spinner_dropdown_item
+//                )
+//            }
+//            else -> {
+//                darkThemeChosen = false
+//                return ArrayAdapter.createFromResource(
+//                    this,
+//                    R.array.themesLightSaved,
+//                    R.layout.support_simple_spinner_dropdown_item
+//                )
+//            }
+//
+//        }
+//
+//    }
 
-        when (savedTheme) {
-            "Dark" -> {
-                darkThemeChosen = true
-                return ArrayAdapter.createFromResource(
-                    this,
-                    R.array.themesDarkSaved,
-                    R.layout.support_simple_spinner_dropdown_item
-                )
-            }
-            else -> {
-                darkThemeChosen = false
-                return ArrayAdapter.createFromResource(
-                    this,
-                    R.array.themesLightSaved,
-                    R.layout.support_simple_spinner_dropdown_item
-                )
-            }
+    fun getAllAppsOnPhone() {
+        this.installedPlayers = packageManager.getInstalledApplications(0)
+            .filter { it.packageName in MediaPlayer.values().map { player -> player.packageName } }
+        Log.d("Installed apps", "Got installed apps")
+    }
 
+    fun nightMode() {
+
+
+        nightModeButton.setOnSwitchListener {
+            NightModeButton.OnSwitchListener() {
+                nightModeButton.setMode(darkThemeChosen)
+
+//                nightModeButton.isNight = true
+                if (darkThemeChosen) {
+
+                    Toast.makeText(getApplicationContext(), "Night Mode On", Toast.LENGTH_SHORT)
+                        .show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Night Mode Off", Toast.LENGTH_SHORT)
+                        .show();
+                }
+
+            }
         }
-
     }
-
-    fun getAllAppsOnPhone(){
-        this.installedPlayers = packageManager.getInstalledApplications(0).filter { it.packageName in MediaPlayer.values().map { player -> player.packageName } }
-        Log.d("Installed apps","Got installed apps")
-    }
-
-
 }
 

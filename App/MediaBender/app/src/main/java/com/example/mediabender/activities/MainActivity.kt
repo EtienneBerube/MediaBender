@@ -24,6 +24,7 @@ import io.gresse.hugo.vumeterlibrary.VuMeterView
 import kotlinx.android.synthetic.main.activity_main.*
 
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mediaControls: MediaControls
@@ -220,6 +221,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = supportActionBar
         //Toolbar colour
         toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
+        albumArt.setImageResource(R.drawable.album_test) // TODO : Check if this works
         indicator.color = getColor(R.color.animate_dark_mode)
         menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
@@ -233,6 +235,7 @@ class MainActivity : AppCompatActivity() {
         if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_white)
         else playButton.setImageResource(R.drawable.icons_play_arrow_white)
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
+        albumArt.setImageDrawable(getDrawable(R.drawable.album_test_light))
         skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_black)
         backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_black)
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryDark))
@@ -289,11 +292,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun regulateAnimation(){
-        if (musicPlaying){
-            indicator.resume(true)
-        }else {
-            indicator.stop(true)
-        }
-    }
+
 }

@@ -37,9 +37,8 @@
             android:layout_height="300sp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="55dp"
-            android:elevation="4dp"
-            android:layout_marginTop="65dp"
-            android:src="@drawable/placeholder_song" />
+            android:elevation="15dp"
+            android:src="@drawable/album_test" />
 
         <!--TextView for the Title of the song playing-->
         <TextView

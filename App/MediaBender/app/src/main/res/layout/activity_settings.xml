@@ -83,22 +83,32 @@
                     android:fontFamily="sans-serif-medium"
                     android:text="Theme"
                     android:textColor="#FFFFFF"
-                    android:textSize="18sp"
+                    android:textSize="22sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <!--Need To Change Colour-->
-                <Spinner
-                    android:id="@+id/settings_theme_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginEnd="12dp"
-                    android:entries="@array/themesDarkSaved"
-                    android:minWidth="50dp"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
+<!--                <Spinner-->
+<!--                    android:id="@+id/settings_theme_spinner"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="14dp"-->
+<!--                    android:layout_marginEnd="12dp"-->
+<!--                    android:entries="@array/themesDarkSaved"-->
+<!--                    android:minWidth="50dp"-->
+<!--                    android:spinnerMode="dropdown"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintHorizontal_bias="1.0"-->
+<!--                    app:layout_constraintStart_toEndOf="@+id/theme"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+
+                <com.shrikanthravi.library.NightModeButton
+                    android:id="@+id/nightModeButton"
+                    android:layout_width="75dp"
+                    android:layout_height="45dp"
+
+                    android:layout_marginStart="208dp"
+                    android:layout_marginTop="12dp"
                     app:layout_constraintStart_toEndOf="@+id/theme"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -118,7 +128,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/settings_theme_spinner" />
+                    app:layout_constraintTop_toBottomOf="@+id/nightModeButton" />
 
                 <Button
                     android:id="@+id/settings_test_connection_button"
