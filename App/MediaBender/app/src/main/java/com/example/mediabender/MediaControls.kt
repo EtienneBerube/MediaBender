@@ -32,7 +32,7 @@ class MediaControls(context: Context) {
 
         //Shows command
         try {
-            val mediaFeedbackDialog = MediaEventFeedbackDialog(event)
+            val mediaFeedbackDialog = MediaEventFeedbackDialog(event, isMusicPlaying())
             (activity as? FragmentActivity)?.let {
                 val fragmentManager = it.supportFragmentManager
                 val fragmentTransition = fragmentManager.beginTransaction()
@@ -56,44 +56,43 @@ class MediaControls(context: Context) {
             MediaEventType.LOWER_VOLUME -> volumeDown()
             MediaEventType.SKIP_SONG -> next()
             MediaEventType.PREVIOUS_SONG -> previous()
-            MediaEventType.PLAY -> play()
-            MediaEventType.PAUSE -> pause()
+            MediaEventType.TOGGLE_PLAYSTATE -> togglePlaystate()
+            MediaEventType.NONE -> {} // do nothing
         }
 
     }
 
-    fun play() {
+    private fun play() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY)
         )
     }
-
-    fun pause() {
+    private fun pause() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
         )
     }
-
-    fun next() {
+    private fun togglePlaystate() {
+        if (audioManager.isMusicActive) pause()
+        else play()
+    }
+    private fun next() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
         )
     }
-
-    fun previous() {
+    private fun previous() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
         )
     }
-
-    fun volumeUp() {
+    private fun volumeUp() {
         val source = if (isInCall) AudioManager.STREAM_VOICE_CALL else AudioManager.STREAM_MUSIC
 
         // flag 0 to do nothing
         audioManager.adjustStreamVolume(source, AudioManager.ADJUST_RAISE, 0)
     }
-
-    fun volumeDown() {
+    private fun volumeDown() {
 
         val source = if (isInCall) AudioManager.STREAM_VOICE_CALL else AudioManager.STREAM_MUSIC
 

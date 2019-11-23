@@ -164,17 +164,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun playPauseButtPressed() {
-        if (musicPlaying) {
-            playButton.setImageResource(R.drawable.icons_play_arrow_white)
-            mediaControls.executeEvent(MediaEventType.PAUSE)
-            musicPlaying = false
-        } else {
-            playButton.setImageResource(R.drawable.icons_pause_white)
-
-
-            mediaControls.executeEvent(MediaEventType.PLAY)
-            musicPlaying = true
-        }
+        playButton.setImageResource( when(musicPlaying) {
+            true -> R.drawable.icons_play_arrow_white
+            false -> R.drawable.icons_pause_white
+        })
+        musicPlaying = !musicPlaying
+        mediaControls.executeEvent(MediaEventType.TOGGLE_PLAYSTATE)
     }
 
 
@@ -209,7 +204,7 @@ class MainActivity : AppCompatActivity() {
         //Toolbar colour
         toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
 
-        menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
+        menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
         artistNameMainTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
@@ -227,7 +222,7 @@ class MainActivity : AppCompatActivity() {
         artistNameMainTextView?.setTextColor(getColor(R.color.colorPrimaryDark))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         supportActionBar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryWhite))
-        menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
+        menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
     }
 
