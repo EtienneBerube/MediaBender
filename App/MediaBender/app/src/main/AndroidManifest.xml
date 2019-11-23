@@ -26,14 +26,17 @@
             android:name=".activities.SettingsActivity"
             android:configChanges="uiMode"
             android:launchMode="singleTask"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            ></activity>
 
         <!--Splash screen-->
         <activity
             android:name=".activities.SplashScreen"
             android:configChanges="uiMode"
             android:noHistory="true"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,14 +47,17 @@
         <!--Gesture Map Activity-->
         <activity
             android:name=".activities.GestureMappingActivity"
-            android:configChanges="uiMode"
-            android:parentActivityName=".activities.SettingsActivity"></activity>
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:parentActivityName=".activities.SettingsActivity"
+            android:screenOrientation="portrait"></activity>
 
         <!--Main activity-->
         <activity
             android:name=".MainActivity"
             android:configChanges="uiMode"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
