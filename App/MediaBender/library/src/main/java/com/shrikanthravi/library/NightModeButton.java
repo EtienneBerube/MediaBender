@@ -6,16 +6,13 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
-
 import androidx.cardview.widget.CardView;
-
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import java.util.ConcurrentModificationException;
 
 
 public class NightModeButton extends RelativeLayout {
@@ -44,10 +41,8 @@ public class NightModeButton extends RelativeLayout {
 
     boolean isNight;
 
-    public void setMode(Boolean mode) {
+    public void setModeFirstTime(Boolean mode) {
         this.isNight = mode;
-//        setButtonFirstAppearance(mContext);
-//        changeButtonAppearance(mContext);
         loadCorrectAppearance(mContext);
     }
 
@@ -59,8 +54,6 @@ public class NightModeButton extends RelativeLayout {
         View rootView = mLayoutInflater.inflate(R.layout.night_mode_button_layout, this, true);
         switchRL = rootView.findViewById(R.id.switchRL);
         switchIV = rootView.findViewById(R.id.switchIV);
-
-        setButtonFirstAppearance(context);
 
         switchRL.setOnClickListener(new OnClickListener() {
             @Override
@@ -177,11 +170,11 @@ public class NightModeButton extends RelativeLayout {
 
             ObjectAnimator
                     .ofFloat(switchIV, "rotation", 0, 360)
-                    .setDuration(400)
+                    .setDuration(100)
                     .start();
             ObjectAnimator
                     .ofFloat(switchIV, "translationX", 0, switchRL.getWidth() / 2)
-                    .setDuration(400)
+                    .setDuration(100)
                     .start();
             android.os.Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -189,9 +182,9 @@ public class NightModeButton extends RelativeLayout {
                 public void run() {
                     switchIV.setImageDrawable(context.getDrawable(R.drawable.day_icon));
                 }
-            }, 350);
+            }, 150);
             ValueAnimator valueAnimator = ValueAnimator.ofArgb(Color.parseColor("#353535"), Color.parseColor("#dadada"));
-            valueAnimator.setDuration(400);
+            valueAnimator.setDuration(100);
             valueAnimator.start();
             valueAnimator.addListener(new Animator.AnimatorListener() {
                 @Override
@@ -201,7 +194,7 @@ public class NightModeButton extends RelativeLayout {
 
                 @Override
                 public void onAnimationEnd(Animator animator) {
-                    //inAnimation = false;
+                    inAnimation = false;
                 }
 
                 @Override
@@ -221,22 +214,22 @@ public class NightModeButton extends RelativeLayout {
                 }
             });
 
-//            nightModeButtonClicked(isNight);
 
         } else {
 
-//            if (!inAnimation) {
-//                isNight = true;
             ObjectAnimator
-                    .ofFloat(switchIV, "rotation", 360, 0)
+                    .ofFloat(switchIV, "translationX", 0, switchRL.getWidth())
                     .setDuration(400)
                     .start();
-            ObjectAnimator
-                    .ofFloat(switchIV, "translationX", switchRL.getWidth() / 2, 0)
-                    .setDuration(400)
-                    .start();
+            android.os.Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    switchIV.setImageDrawable(context.getDrawable(R.drawable.night_icon));
+                }
+            }, 150);
             ValueAnimator valueAnimator = ValueAnimator.ofArgb(Color.parseColor("#dadada"), Color.parseColor("#353535"));
-            valueAnimator.setDuration(400);
+            valueAnimator.setDuration(100);
             valueAnimator.start();
             valueAnimator.addListener(new Animator.AnimatorListener() {
                 @Override
@@ -265,20 +258,6 @@ public class NightModeButton extends RelativeLayout {
                     switchRL.setCardBackgroundColor((int) animation.getAnimatedValue());
                 }
             });
-            switchIV.setImageDrawable(context.getDrawable(R.drawable.night_icon));
-
-//                nightModeButtonClicked(isNight);
-//            }
-        }
-    }
-
-    private void setButtonFirstAppearance(Context context) {
-        if (isNight) {
-            switchIV.setImageDrawable(context.getDrawable(R.drawable.night_icon));
-            switchRL.setCardBackgroundColor(Color.parseColor("#353535"));
-        } else {
-            switchIV.setImageDrawable(context.getDrawable(R.drawable.day_icon));
-            switchRL.setCardBackgroundColor(Color.parseColor("#dadada"));
         }
     }
 

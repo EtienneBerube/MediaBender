@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -28,7 +29,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private var googlePlayViewHolder = PlayerSettingsCardViewHolder()
     private lateinit var settingsLabel: TextView
     private lateinit var accountsLabel: TextView
-    //    private lateinit var themeSpinner: Spinner
     private lateinit var settingsActivity: View
     private lateinit var nightModeButton: NightModeButton
     private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
@@ -76,7 +76,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
     override fun onRestart() {
         super.onRestart()
-        nightModeButton.setMode(darkThemeChosen)
         loadAppropriateTheme()
     }
 
@@ -164,32 +163,11 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         accountsLabel = findViewById(R.id.accountsTitle)
 
         nightModeButton = findViewById(R.id.nightModeButton)
-        nightModeButton.setMode(darkThemeChosen)
+        nightModeButton.setModeFirstTime(darkThemeChosen)
 
         findViewById<Button>(R.id.settings_test_connection_button).setOnClickListener { testSensorConnection() }
         findViewById<Button>(R.id.settings_gesture_button).setOnClickListener { remapGesture() }
 
-        //For the theme drop down menu
-//        themeSpinner = findViewById(R.id.settings_theme_spinner)
-//
-//        themeSpinner.adapter = createArrayAdapterForSpinner()
-//
-//        themeSpinner.onItemSelectedListener =
-//            object : AdapterView.OnItemSelectedListener {
-//
-//                override fun onNothingSelected(parent: AdapterView<*>?) {
-//
-//                }
-//
-//                override fun onItemSelected(
-//                    parent: AdapterView<*>?,
-//                    view: View?,
-//                    position: Int,
-//                    id: Long
-//                ) {
-//                    changeTheme(parent?.getItemAtPosition(position).toString())
-//                }
-//            }
         nightMode()
 
     }
@@ -204,21 +182,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         toast.show()
     }
 
-//    private fun changeTheme(theme: String) {
-//
-//        val themeHelper =
-//            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
-//        themeHelper.saveTheme(theme)
-//
-//        darkThemeChosen = (theme == "Dark")
-//        loadAppropriateTheme()
-//
-//        Toast.makeText(
-//            applicationContext,
-//            "$theme saved",
-//            Toast.LENGTH_SHORT
-//        ).show()
-//    }
 
     private fun remapGesture() {
         val intent = Intent(this, GestureMappingActivity::class.java)
@@ -263,6 +226,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         settings_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_black)
         settingsLabel.setTextColor(getColor(R.color.colorPrimaryDark))
         accountsLabel.setTextColor(getColor(R.color.colorPrimaryDark))
+        settings_card.setCardBackgroundColor(getColor(R.color.whiteForStatusBar))
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
         settingsActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
 
@@ -273,6 +237,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         settings_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_white)
         settingsLabel.setTextColor(getColor(R.color.colorPrimaryWhite))
         accountsLabel.setTextColor(getColor(R.color.colorPrimaryWhite))
+        settings_card.setCardBackgroundColor(getColor(R.color.darkForCard))
         window.statusBarColor = getColor(R.color.colorPrimaryDark)
         settingsActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
     }
@@ -317,18 +282,29 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
             if (darkThemeChosen) {
 
-                Toast.makeText(getApplicationContext(), "Night Mode On", Toast.LENGTH_SHORT)
+                Toast.makeText(getApplicationContext(), "Light Mode Saved", Toast.LENGTH_SHORT)
                     .show();
                 darkThemeChosen = false
+
+                if (settingsActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                    Handler().postDelayed({
+
+                        Toast.makeText(
+                            getApplicationContext(),
+                            "Dark Theme will remain because Low Power Mode is Enabled to save energy",
+                            Toast.LENGTH_LONG
+                        ).show();
+
+                    }, 1000)
+                }
                 saveTheme(darkThemeChosen)
-//                    nightModeButton.setMode(darkThemeChosen)
+
             } else {
 
-                Toast.makeText(getApplicationContext(), "Night Mode Off", Toast.LENGTH_SHORT)
+                Toast.makeText(getApplicationContext(), "Dark Mode Saved", Toast.LENGTH_SHORT)
                     .show();
                 darkThemeChosen = true
                 saveTheme(darkThemeChosen)
-//                    nightModeButton.setMode(darkThemeChosen)
             }
             loadAppropriateTheme()
 

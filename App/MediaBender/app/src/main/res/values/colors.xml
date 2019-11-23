@@ -9,6 +9,7 @@
     <color name="logo_pink">#860058</color>
     <color name="animate_dark_mode">#572017</color>
     <color name="whiteForStatusBar">#808080</color>
+    <color name="darkForCard">#474747</color>
     <color name="darkForToolbar">#242424</color>
     <color name="darkForMainActivity">#242424</color>
 </resources>
