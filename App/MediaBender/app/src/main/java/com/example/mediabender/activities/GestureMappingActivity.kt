@@ -138,6 +138,7 @@ class GestureMappingActivity : AppCompatActivity() {
                 editMap(Gesture.RIGHT, PhoneEventType.ACCEPT_CALL)
                 editMap(Gesture.LEFT, PhoneEventType.DECLINE_CALL)
             }
+            mappingChanged = true
             refreshSpinners()
         }
 
