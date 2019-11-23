@@ -50,7 +50,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 Context.MODE_PRIVATE
             )
         )
-
+        getThemeSaved()
         setupSettings()
         setUpToolBar()
         loadAppropriateTheme()
@@ -76,7 +76,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
     override fun onRestart() {
         super.onRestart()
-
+        nightModeButton.setMode(darkThemeChosen)
         loadAppropriateTheme()
     }
 
@@ -162,8 +162,10 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         settingsLabel = findViewById(R.id.settingsTitle)
         settingsActivity = findViewById(R.id.settings_parent_scroll)
         accountsLabel = findViewById(R.id.accountsTitle)
+
         nightModeButton = findViewById(R.id.nightModeButton)
         nightModeButton.setMode(darkThemeChosen)
+
         findViewById<Button>(R.id.settings_test_connection_button).setOnClickListener { testSensorConnection() }
         findViewById<Button>(R.id.settings_gesture_button).setOnClickListener { remapGesture() }
 
@@ -202,21 +204,21 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         toast.show()
     }
 
-    private fun changeTheme(theme: String) {
-
-        val themeHelper =
-            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
-        themeHelper.saveTheme(theme)
-
-        darkThemeChosen = (theme == "Dark")
-        loadAppropriateTheme()
-
-        Toast.makeText(
-            applicationContext,
-            "$theme saved",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
+//    private fun changeTheme(theme: String) {
+//
+//        val themeHelper =
+//            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+//        themeHelper.saveTheme(theme)
+//
+//        darkThemeChosen = (theme == "Dark")
+//        loadAppropriateTheme()
+//
+//        Toast.makeText(
+//            applicationContext,
+//            "$theme saved",
+//            Toast.LENGTH_SHORT
+//        ).show()
+//    }
 
     private fun remapGesture() {
         val intent = Intent(this, GestureMappingActivity::class.java)
@@ -285,32 +287,22 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     }
 
     // To make the drop down menu for Themes to show the right saved theme
-//    private fun createArrayAdapterForSpinner(): ArrayAdapter<CharSequence> {
-//        val themeHelper =
-//            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
-//        val savedTheme = themeHelper.getTheme()
-//
-//        when (savedTheme) {
-//            "Dark" -> {
-//                darkThemeChosen = true
-//                return ArrayAdapter.createFromResource(
-//                    this,
-//                    R.array.themesDarkSaved,
-//                    R.layout.support_simple_spinner_dropdown_item
-//                )
-//            }
-//            else -> {
-//                darkThemeChosen = false
-//                return ArrayAdapter.createFromResource(
-//                    this,
-//                    R.array.themesLightSaved,
-//                    R.layout.support_simple_spinner_dropdown_item
-//                )
-//            }
-//
-//        }
-//
-//    }
+    private fun getThemeSaved() {
+        val themeHelper =
+            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+        val savedTheme = themeHelper.getTheme()
+
+        when (savedTheme) {
+            "Dark" -> {
+                darkThemeChosen = true
+
+            }
+            else -> {
+                darkThemeChosen = false
+
+            }
+        }
+    }
 
     fun getAllAppsOnPhone() {
         this.installedPlayers = packageManager.getInstalledApplications(0)
@@ -322,19 +314,36 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
 
         nightModeButton.setOnSwitchListener {
-            NightModeButton.OnSwitchListener() {
-                nightModeButton.setMode(darkThemeChosen)
 
-//                nightModeButton.isNight = true
-                if (darkThemeChosen) {
+            if (darkThemeChosen) {
 
-                    Toast.makeText(getApplicationContext(), "Night Mode On", Toast.LENGTH_SHORT)
-                        .show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Night Mode Off", Toast.LENGTH_SHORT)
-                        .show();
-                }
+                Toast.makeText(getApplicationContext(), "Night Mode On", Toast.LENGTH_SHORT)
+                    .show();
+                darkThemeChosen = false
+                saveTheme(darkThemeChosen)
+//                    nightModeButton.setMode(darkThemeChosen)
+            } else {
 
+                Toast.makeText(getApplicationContext(), "Night Mode Off", Toast.LENGTH_SHORT)
+                    .show();
+                darkThemeChosen = true
+                saveTheme(darkThemeChosen)
+//                    nightModeButton.setMode(darkThemeChosen)
+            }
+            loadAppropriateTheme()
+
+        }
+    }
+
+    private fun saveTheme(darkModeSaved: Boolean) {
+        val themeSharedPreferenceHelper =
+            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+        when (darkModeSaved) {
+            true -> {
+                themeSharedPreferenceHelper.saveTheme("Dark")
+            }
+            false -> {
+                themeSharedPreferenceHelper.saveTheme("Light")
             }
         }
     }
