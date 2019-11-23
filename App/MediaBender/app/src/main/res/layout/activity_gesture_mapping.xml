@@ -162,7 +162,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_event_pause" />
+                app:layout_constraintTop_toBottomOf="@+id/spinner_togglePlaystate" />
 
             <TextView
                 android:id="@+id/tv_event_next"
@@ -173,30 +173,10 @@
                 android:text="Next"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_event_pause" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_event_togglePlaystate" />
 
             <Spinner
-                android:id="@+id/spinner_pause"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_event_play" />
-
-            <TextView
-                android:id="@+id/tv_event_pause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
-                android:text="Pause"
-                android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_event_play" />
-
-            <Spinner
-                android:id="@+id/spinner_play"
+                android:id="@+id/spinner_togglePlaystate"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -205,12 +185,12 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_event_play"
+                android:id="@+id/tv_event_togglePlaystate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="12dp"
-                android:text="Play"
+                android:text="Play/Pause"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

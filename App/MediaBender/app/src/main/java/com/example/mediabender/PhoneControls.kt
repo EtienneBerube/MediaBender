@@ -46,7 +46,7 @@ class PhoneControls(context: Context) {
     }
 
     fun executeEvent(event: MediaEventType) {
-        when (event) {
+/*        when (event) {
             MediaEventType.RAISE_VOLUME -> volumeUp()
             MediaEventType.LOWER_VOLUME -> volumeDown()
             MediaEventType.SKIP_SONG -> next()
@@ -54,7 +54,7 @@ class PhoneControls(context: Context) {
             MediaEventType.PLAY -> play()
             MediaEventType.PAUSE -> pause()
         }
-
+*/
     }
 
     fun play() {

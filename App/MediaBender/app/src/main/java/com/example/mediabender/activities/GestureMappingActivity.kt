@@ -22,8 +22,7 @@ class GestureMappingActivity : AppCompatActivity() {
     private lateinit var standardEventsTextView : TextView
     private lateinit var phoneEventsTextView: TextView
 
-    private lateinit var spinner_play: Spinner
-    private lateinit var spinner_pause: Spinner
+    private lateinit var spinner_togglePlaystate: Spinner
     private lateinit var spinner_next: Spinner
     private lateinit var spinner_previous: Spinner
     private lateinit var spinner_volUp: Spinner
@@ -37,8 +36,7 @@ class GestureMappingActivity : AppCompatActivity() {
     private lateinit var b_default_gestures: Button
 
     private lateinit var gestureView: View
-    private lateinit var playTextView: TextView
-    private lateinit var pauseTextView: TextView
+    private lateinit var togglePlaystateTextView: TextView
     private lateinit var nextTextView: TextView
     private lateinit var previousTextView: TextView
     private lateinit var volUpTextView: TextView
@@ -96,8 +94,7 @@ class GestureMappingActivity : AppCompatActivity() {
 
     private fun setupUI() {
 
-        playTextView = findViewById(R.id.tv_event_play)
-        pauseTextView = findViewById(R.id.tv_event_pause)
+        togglePlaystateTextView = findViewById(R.id.tv_event_togglePlaystate)
         nextTextView = findViewById(R.id.tv_event_next)
         previousTextView = findViewById(R.id.tv_event_previous)
         volUpTextView = findViewById(R.id.tv_event_volUp)
@@ -116,7 +113,7 @@ class GestureMappingActivity : AppCompatActivity() {
             // before saving, need to make sure that user entered mapping is valid
             if (gestureEventDecoder.mapsAreValid()) {
                 saveGestures()
-                Toast.makeText(applicationContext, "Saved.", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "Saved.", Toast.LENGTH_SHORT).show()
                 finish()
             } else {
                 Toast.makeText(
@@ -134,14 +131,12 @@ class GestureMappingActivity : AppCompatActivity() {
                 editMap(Gesture.DOWN,MediaEventType.LOWER_VOLUME)
                 editMap(Gesture.RIGHT,MediaEventType.SKIP_SONG)
                 editMap(Gesture.LEFT,MediaEventType.PREVIOUS_SONG)
-                editMap(Gesture.FAR,MediaEventType.PAUSE)
-                editMap(Gesture.NEAR,MediaEventType.PLAY)
+                editMap(Gesture.NEAR,MediaEventType.TOGGLE_PLAYSTATE)
             }
             refreshSpinners()
         }
 
-        spinner_play = findViewById(R.id.spinner_play)
-        spinner_pause = findViewById(R.id.spinner_pause)
+        spinner_togglePlaystate = findViewById(R.id.spinner_togglePlaystate)
         spinner_next = findViewById(R.id.spinner_next)
         spinner_previous = findViewById(R.id.spinner_previous)
         spinner_volUp = findViewById(R.id.spinner_volUp)
@@ -177,8 +172,7 @@ class GestureMappingActivity : AppCompatActivity() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
             // applying the adapter to the spinners
-            spinner_play.adapter = adapter
-            spinner_pause.adapter = adapter
+            spinner_togglePlaystate.adapter = adapter
             spinner_next.adapter = adapter
             spinner_previous.adapter = adapter
             spinner_volUp.adapter = adapter
@@ -205,8 +199,7 @@ class GestureMappingActivity : AppCompatActivity() {
             ) {
                 // based on which spinner, fetch the media control chosen
                 val event: MediaEventType? = when (parent?.id) {
-                    R.id.spinner_play -> MediaEventType.PLAY
-                    R.id.spinner_pause -> MediaEventType.PAUSE
+                    R.id.spinner_togglePlaystate -> MediaEventType.TOGGLE_PLAYSTATE
                     R.id.spinner_next -> MediaEventType.SKIP_SONG
                     R.id.spinner_previous -> MediaEventType.PREVIOUS_SONG
                     R.id.spinner_volUp -> MediaEventType.RAISE_VOLUME
@@ -247,8 +240,7 @@ class GestureMappingActivity : AppCompatActivity() {
 
             }
         }
-        spinner_play.onItemSelectedListener = myOnItemSelectedListener
-        spinner_pause.onItemSelectedListener = myOnItemSelectedListener
+        spinner_togglePlaystate.onItemSelectedListener = myOnItemSelectedListener
         spinner_volUp.onItemSelectedListener = myOnItemSelectedListener
         spinner_next.onItemSelectedListener = myOnItemSelectedListener
         spinner_previous.onItemSelectedListener = myOnItemSelectedListener
@@ -285,9 +277,8 @@ class GestureMappingActivity : AppCompatActivity() {
     }
 
     private fun loadDarkTheme(){
-        playTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        togglePlaystateTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         standardEventsTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        pauseTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         nextTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         previousTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         volUpTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
@@ -310,8 +301,7 @@ class GestureMappingActivity : AppCompatActivity() {
 
     private fun loadWhiteTheme(){
         standardEventsTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        playTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        pauseTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        togglePlaystateTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         nextTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         gestureView.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         previousTextView.setTextColor(getColor(R.color.colorPrimaryDark))
@@ -369,8 +359,7 @@ class GestureMappingActivity : AppCompatActivity() {
 
     // refresh the spinner views with the current gesture map
     private fun refreshSpinners() {
-        spinner_play.setSelection(getSpinnerStartingPosition(MediaEventType.PLAY))
-        spinner_pause.setSelection(getSpinnerStartingPosition(MediaEventType.PAUSE))
+        spinner_togglePlaystate.setSelection(getSpinnerStartingPosition(MediaEventType.TOGGLE_PLAYSTATE))
         spinner_next.setSelection(getSpinnerStartingPosition(MediaEventType.SKIP_SONG))
         spinner_previous.setSelection(getSpinnerStartingPosition(MediaEventType.PREVIOUS_SONG))
         spinner_volUp.setSelection(getSpinnerStartingPosition(MediaEventType.RAISE_VOLUME))
