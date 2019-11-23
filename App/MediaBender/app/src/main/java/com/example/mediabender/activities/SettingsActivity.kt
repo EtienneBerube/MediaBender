@@ -282,12 +282,9 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
             if (darkThemeChosen) {
 
-                Toast.makeText(getApplicationContext(), "Light Mode Saved", Toast.LENGTH_SHORT)
-                    .show();
                 darkThemeChosen = false
 
                 if (settingsActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
-                    Handler().postDelayed({
 
                         Toast.makeText(
                             getApplicationContext(),
@@ -295,14 +292,11 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                             Toast.LENGTH_LONG
                         ).show();
 
-                    }, 1000)
                 }
                 saveTheme(darkThemeChosen)
 
             } else {
 
-                Toast.makeText(getApplicationContext(), "Dark Mode Saved", Toast.LENGTH_SHORT)
-                    .show();
                 darkThemeChosen = true
                 saveTheme(darkThemeChosen)
             }
