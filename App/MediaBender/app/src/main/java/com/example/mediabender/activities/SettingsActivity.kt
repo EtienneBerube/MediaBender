@@ -14,10 +14,6 @@ import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaPlayer
 import com.example.mediabender.models.PlayerAccount
-import com.example.mediabender.service.Request
-import com.example.mediabender.service.Sensibility
-import com.example.mediabender.service.SerialCommunicationService
-import com.example.mediabender.service.ServiceRequest
 import kotlinx.android.synthetic.main.activity_settings.*
 import nl.dionsegijn.steppertouch.OnStepCallback
 import nl.dionsegijn.steppertouch.StepperTouch
@@ -192,7 +188,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         //allow side taps
         stepperTouch.sideTapEnabled = true
         //set maximum value of sensitivity stepper to 4
-        stepperTouch.maxValue = 2
+        stepperTouch.maxValue = 4
 
         //add callback for the sensitivity stepper
         stepperTouch.addStepCallback(
@@ -202,30 +198,10 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                         //switch statement to initiate action when the stepper changes the value
                         //add code to each case to tell arduino to switch sensitivity
                         when (value) {
-                            0 -> {
-                                if(SerialCommunicationService.instance.isConnected){
-                                    SerialCommunicationService.instance.sendRequest(ServiceRequest(Request.SENSIBILITY,Sensibility.LOW))
-                                }else{
-                                    Toast.makeText(applicationContext, "Connect the sensor first", Toast.LENGTH_SHORT).show()
-                                }
-                                Toast.makeText(applicationContext, "Low sensitivity", Toast.LENGTH_SHORT).show()
-                            }
-                            1 -> {
-                                if(SerialCommunicationService.instance.isConnected){
-                                    SerialCommunicationService.instance.sendRequest(ServiceRequest(Request.SENSIBILITY,Sensibility.MEDIUM))
-                                }else{
-                                    Toast.makeText(applicationContext, "Connect the sensor first", Toast.LENGTH_SHORT).show()
-                                }
-                                Toast.makeText(applicationContext, "Medium sensitivity", Toast.LENGTH_SHORT).show()
-                            }
-                            2 -> {
-                                if(SerialCommunicationService.instance.isConnected){
-                                    SerialCommunicationService.instance.sendRequest(ServiceRequest(Request.SENSIBILITY,Sensibility.HIGH))
-                                }else{
-                                    Toast.makeText(applicationContext, "Connect the sensor first", Toast.LENGTH_SHORT).show()
-                                }
-                                Toast.makeText(applicationContext, "High sensitivity", Toast.LENGTH_SHORT).show()
-                            }
+                            1 -> Toast.makeText(applicationContext, "Very Low sensitivity", Toast.LENGTH_SHORT).show()
+                            2 -> Toast.makeText(applicationContext, "Low sensitivity", Toast.LENGTH_SHORT).show()
+                            3 -> Toast.makeText(applicationContext, "Medium sensitivity", Toast.LENGTH_SHORT).show()
+                            4 -> Toast.makeText(applicationContext, "High sensitivity", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

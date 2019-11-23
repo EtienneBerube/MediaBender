@@ -18,10 +18,7 @@ import com.example.mediabender.activities.SettingsActivity
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
-import com.example.mediabender.service.Request
-import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
-import com.example.mediabender.service.ServiceRequest
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -103,6 +100,7 @@ class MainActivity : AppCompatActivity() {
         SerialCommunicationService.instance.setDataOnReceiveListener {
             runOnUiThread {
                 val event = gestureDecoder.gestureToEvent(it.gesture)
+                //Toast.makeText(applicationContext,"Got gesture: ${it.gesture.toString} -> ${event.name}", Toast.LENGTH_SHORT).show()
                 mediaControls.executeEvent(event, this)
             }
         }
@@ -165,7 +163,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun playPauseButtPressed() {
         if (musicPlaying) {
+
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
+
+            //displayToast("Pause")
             mediaControls.executeEvent(MediaEventType.PAUSE)
             musicPlaying = false
         } else {
