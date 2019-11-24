@@ -167,6 +167,8 @@ class MainActivity : AppCompatActivity() {
 
         skipPlayingButton.setOnClickListener {
             mediaControls.executeEvent(MediaEventType.SKIP_SONG)
+            vumeter.blockNumber = 15    // because we know always playing after skip
+            indicator.resume(true)
         }
 
         backPlayingButton.setOnClickListener {

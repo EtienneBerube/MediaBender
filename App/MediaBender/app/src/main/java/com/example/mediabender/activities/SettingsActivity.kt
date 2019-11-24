@@ -27,7 +27,7 @@ import nl.dionsegijn.steppertouch.OnStepCallback
 import nl.dionsegijn.steppertouch.StepperTouch
 
 
-class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {
+class SettingsActivity : AppCompatActivity() {
 
     private var spotifyViewHolder = PlayerSettingsCardViewHolder()
     private var appleMusicViewHolder = PlayerSettingsCardViewHolder()
@@ -50,12 +50,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         // Note that the Toolbar defined in the layout has the id "my_toolbar"
         setSupportActionBar(findViewById(R.id.settings_toolbar))
         supportActionBar?.elevation = 0f
-
-//        playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(
-//            getSharedPreferences(
-//                "Player Accounts",
-//                Context.MODE_PRIVATE
-//            )
 
         getThemeSaved()
         setupSettings()
@@ -86,36 +80,12 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         loadAppropriateTheme()
     }
 
-    override fun acceptConnectionOnDismiss(name: MediaPlayer, playerAccount: PlayerAccount) {
-//        playerSharedPreferenceHelper.savePlayerAccount(playerAccount, name)
-//        when (name) {
-//            MediaPlayer.SPOTIFY -> {
-//                setupSpotify()
-//            }
-//            MediaPlayer.APPLE_MUSIC -> {
-//                setupApplePlayMusic()
-//            }
-//            MediaPlayer.GOOGLE_PLAY -> {
-//                setupGooglePlayMusic()
-//            }
-//        }
-    }
-
     private fun setupSpotify() {
         spotifyViewHolder.cardView = findViewById(R.id.spotify_card)
         spotifyViewHolder.cardView.setOnClickListener {
             packageManager.getLaunchIntentForPackage(MediaPlayer.SPOTIFY.packageName)
                 ?.let { startActivity(it) }
         }
-
-//        spotifyViewHolder.activeCircle = findViewById(R.id.spotify_active_circle)
-
-        spotifyViewHolder.connectedTextView = findViewById(R.id.spotify_connection_textview)
-//        spotifyViewHolder.setConnectedTextWithEmail(
-//            playerSharedPreferenceHelper.getPlayerAccount(
-//                MediaPlayer.SPOTIFY
-//            )
-//        )
 
         if (MediaPlayer.SPOTIFY.packageName !in installedPlayers.map { player -> player.packageName }) {
             spotifyViewHolder.cardView.visibility = View.GONE
@@ -129,15 +99,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 ?.let { startActivity(it) }
         }
 
-//        googlePlayViewHolder.activeCircle = findViewById(R.id.google_play_active_circle)
-
-        googlePlayViewHolder.connectedTextView = findViewById(R.id.google_play_connection_textview)
-//        googlePlayViewHolder.setConnectedTextWithEmail(
-//            playerSharedPreferenceHelper.getPlayerAccount(
-//                MediaPlayer.GOOGLE_PLAY
-//            )
-//        )
-
         if (MediaPlayer.GOOGLE_PLAY.packageName !in installedPlayers.map { player -> player.packageName }) {
             googlePlayViewHolder.cardView.visibility = View.GONE
         }
@@ -149,15 +110,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
             packageManager.getLaunchIntentForPackage(MediaPlayer.APPLE_MUSIC.packageName)
                 ?.let { startActivity(it) }
         }
-
-//        appleMusicViewHolder.activeCircle = findViewById(R.id.apple_music_active_circle)
-
-        appleMusicViewHolder.connectedTextView = findViewById(R.id.apple_music_connection_textview)
-//        appleMusicViewHolder.setConnectedTextWithEmail(
-//            playerSharedPreferenceHelper.getPlayerAccount(
-//                MediaPlayer.APPLE_MUSIC
-//            )
-//        )
 
         if (MediaPlayer.APPLE_MUSIC.packageName !in installedPlayers.map { player -> player.packageName }) {
             appleMusicViewHolder.cardView.visibility = View.GONE
@@ -181,37 +133,27 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     }
 
     private fun testSensorConnection() {
-        //TODO implement later
-        val toast = Toast.makeText(
-            applicationContext,
-            "Testing connection not implemented yet",
-            Toast.LENGTH_SHORT
-        )
-        toast.show()
+        if(SerialCommunicationService.instance.testUSBConnection()){
+            val toast = Toast.makeText(
+                applicationContext,
+                "The sensor is connected",
+                Toast.LENGTH_SHORT
+            )
+            toast.show()
+        }else{
+            val toast = Toast.makeText(
+                applicationContext,
+                "The sensor is not connected",
+                Toast.LENGTH_SHORT
+            )
+            toast.show()
+        }
     }
 
 
     private fun remapGesture() {
         val intent = Intent(this, GestureMappingActivity::class.java)
         startActivity(intent)
-    }
-
-    fun setRunningIndicator(playerPackage: MediaPlayer, active: Boolean) {
-//        val resource =
-//            if (active) R.drawable.active_circle_account else R.drawable.inactive_circle_account
-//
-//        when (playerPackage) {
-//            MediaPlayer.SPOTIFY -> {
-//                spotifyViewHolder.activeCircle.setImageResource(resource)
-//            }
-//            MediaPlayer.APPLE_MUSIC -> {
-//                appleMusicViewHolder.activeCircle.setImageResource(resource)
-//            }
-//            MediaPlayer.GOOGLE_PLAY -> {
-//                googlePlayViewHolder.activeCircle.setImageResource(resource)
-//            }
-//        }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -284,7 +226,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     }
 
     fun nightMode() {
-
 
         nightModeButton.setOnSwitchListener {
 
