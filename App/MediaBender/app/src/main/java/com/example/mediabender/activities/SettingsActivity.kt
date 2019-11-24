@@ -11,7 +11,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mediabender.R
 import com.example.mediabender.dialogs.PlayerConnectionDialog
-import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
+//import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
 import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaPlayer
@@ -28,7 +28,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private lateinit var accountsLabel: TextView
     private lateinit var themeSpinner: Spinner
     private lateinit var settingsActivity: View
-    private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
+//    private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
     private var darkThemeChosen = false
     private var ledState = true
     private lateinit var installedPlayers: List<ApplicationInfo>
@@ -43,12 +43,12 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         setSupportActionBar(findViewById(R.id.settings_toolbar))
         supportActionBar?.elevation = 0f
 
-        playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(
-            getSharedPreferences(
-                "Player Accounts",
-                Context.MODE_PRIVATE
-            )
-        )
+//        playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(
+//            getSharedPreferences(
+//                "Player Accounts",
+//                Context.MODE_PRIVATE
+//            )
+//        )
 
         setupSettings()
         setUpToolBar()
@@ -80,18 +80,18 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     }
 
     override fun acceptConnectionOnDismiss(name: MediaPlayer, playerAccount: PlayerAccount) {
-        playerSharedPreferenceHelper.savePlayerAccount(playerAccount, name)
-        when (name) {
-            MediaPlayer.SPOTIFY -> {
-                setupSpotify()
-            }
-            MediaPlayer.APPLE_MUSIC -> {
-                setupApplePlayMusic()
-            }
-            MediaPlayer.GOOGLE_PLAY -> {
-                setupGooglePlayMusic()
-            }
-        }
+//        playerSharedPreferenceHelper.savePlayerAccount(playerAccount, name)
+//        when (name) {
+//            MediaPlayer.SPOTIFY -> {
+//                setupSpotify()
+//            }
+//            MediaPlayer.APPLE_MUSIC -> {
+//                setupApplePlayMusic()
+//            }
+//            MediaPlayer.GOOGLE_PLAY -> {
+//                setupGooglePlayMusic()
+//            }
+//        }
     }
 
     private fun setupSpotify() {
@@ -104,11 +104,11 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 //        spotifyViewHolder.activeCircle = findViewById(R.id.spotify_active_circle)
 
         spotifyViewHolder.connectedTextView = findViewById(R.id.spotify_connection_textview)
-        spotifyViewHolder.setConnectedTextWithEmail(
-            playerSharedPreferenceHelper.getPlayerAccount(
-                MediaPlayer.SPOTIFY
-            )
-        )
+//        spotifyViewHolder.setConnectedTextWithEmail(
+//            playerSharedPreferenceHelper.getPlayerAccount(
+//                MediaPlayer.SPOTIFY
+//            )
+//        )
 
         if(MediaPlayer.SPOTIFY.packageName !in installedPlayers.map { player -> player.packageName }){
             spotifyViewHolder.cardView.visibility = View.GONE
@@ -125,11 +125,11 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 //        googlePlayViewHolder.activeCircle = findViewById(R.id.google_play_active_circle)
 
         googlePlayViewHolder.connectedTextView = findViewById(R.id.google_play_connection_textview)
-        googlePlayViewHolder.setConnectedTextWithEmail(
-            playerSharedPreferenceHelper.getPlayerAccount(
-                MediaPlayer.GOOGLE_PLAY
-            )
-        )
+//        googlePlayViewHolder.setConnectedTextWithEmail(
+//            playerSharedPreferenceHelper.getPlayerAccount(
+//                MediaPlayer.GOOGLE_PLAY
+//            )
+//        )
 
         if(MediaPlayer.GOOGLE_PLAY.packageName !in installedPlayers.map { player -> player.packageName }){
             googlePlayViewHolder.cardView.visibility = View.GONE
@@ -146,11 +146,11 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 //        appleMusicViewHolder.activeCircle = findViewById(R.id.apple_music_active_circle)
 
         appleMusicViewHolder.connectedTextView = findViewById(R.id.apple_music_connection_textview)
-        appleMusicViewHolder.setConnectedTextWithEmail(
-            playerSharedPreferenceHelper.getPlayerAccount(
-                MediaPlayer.APPLE_MUSIC
-            )
-        )
+//        appleMusicViewHolder.setConnectedTextWithEmail(
+//            playerSharedPreferenceHelper.getPlayerAccount(
+//                MediaPlayer.APPLE_MUSIC
+//            )
+//        )
 
         if(MediaPlayer.APPLE_MUSIC.packageName !in installedPlayers.map { player -> player.packageName }){
             appleMusicViewHolder.cardView.visibility = View.GONE
