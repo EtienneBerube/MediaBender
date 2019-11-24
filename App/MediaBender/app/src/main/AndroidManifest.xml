@@ -6,6 +6,9 @@
     <uses-permission
         android:name="android.permission.MEDIA_CONTENT_CONTROL"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
@@ -22,14 +25,17 @@
             android:name=".activities.SettingsActivity"
             android:configChanges="uiMode"
             android:launchMode="singleTask"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            ></activity>
 
         <!--Splash screen-->
         <activity
             android:name=".activities.SplashScreen"
             android:configChanges="uiMode"
             android:noHistory="true"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,13 +47,16 @@
         <activity
             android:name=".activities.GestureMappingActivity"
             android:configChanges="uiMode"
-            android:parentActivityName=".activities.SettingsActivity"></activity>
+            android:parentActivityName=".activities.SettingsActivity"
+            android:screenOrientation="portrait"></activity>
 
         <!--Main activity-->
         <activity
             android:name=".MainActivity"
             android:configChanges="uiMode"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -66,6 +75,12 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"
                 android:resource="@xml/device_filter" />
         </activity>
+
+<!--        <receiver  android:name=".CallReceiver">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.PHONE_STATE" />.-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
 
     </application>
 

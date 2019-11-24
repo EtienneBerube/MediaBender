@@ -13,12 +13,15 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-
 import com.example.mediabender.activities.SettingsActivity
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
+import com.example.mediabender.service.Request
+import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
+import io.gresse.hugo.vumeterlibrary.VuMeterView
+import com.example.mediabender.service.ServiceRequest
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -35,14 +38,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var backPlayingButton: ImageButton
     private lateinit var gestureDecoder: GestureEventDecoder
     private lateinit var menu_main: Menu
+    private lateinit var indicator: VuMeterView
     private var darkThemeChosen = false
     private var musicPlaying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        // Note that the Toolbar defined in the layout has the id "my_toolbar"
-        gestureDecoder = GestureEventDecoder(applicationContext)
+
+        gestureDecoder = GestureEventDecoder.getInstance(applicationContext)
 
         setChosenTheme()
         setUpToolbar()
@@ -63,6 +67,8 @@ class MainActivity : AppCompatActivity() {
         setChosenTheme()
         if ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) loadResourcesForDarkTheme()
         else loadResourcesForWhiteTheme()
+        if (musicPlaying) indicator.resume(true) else indicator.stop(false)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -86,25 +92,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-
-        SerialCommunicationService.instance.removeDataOnReceiveListener()
+        SerialCommunicationService.instance.isAppInBackground = true
     }
+
     override fun onResume() {
         super.onResume()
-
-        SerialCommunicationService.instance.setDataOnReceiveListener {
-            runOnUiThread {
-                val event = gestureDecoder.gestureToEvent(it.gesture)
-                Toast.makeText(applicationContext,"Got gesture: ${it.gesture.toString} -> ${event.name}", Toast.LENGTH_SHORT).show()
-                mediaControls.executeEvent(event, this)
-            }
-        }
+        SerialCommunicationService.instance.isAppInBackground = false
 
     }
 
     private fun initSerialCommunication() {
         SerialCommunicationService.instance.setService(this)
         SerialCommunicationService.instance.requestUSBpermission(applicationContext)
+        SerialCommunicationService.instance.setDataOnReceiveListener {
+            runOnUiThread {
+                val event = gestureDecoder.gestureToMediaEvent(it.gesture)
+                mediaControls.executeEvent(event, this)
+            }
+        }
+
     }
 
     // cannot initialize the MediaControls object before the onCreate because it calls
@@ -112,15 +118,32 @@ class MainActivity : AppCompatActivity() {
     private fun initMediaControls() {
         mediaControls = MediaControls(this)
         metadataHelper = MetadataHelper(this)
+
     }
 
     private fun initViews() {
+        vumeter.stop(false)
+
         albumArt = findViewById(R.id.albumArtViewer)
         songTitleTV = findViewById(R.id.songTitleMainTextView)
         songArtistNameTV = findViewById(R.id.artistNameMainTextView)
         mainActivity = findViewById(R.id.mainActivity)
+        indicator = findViewById(R.id.vumeter)
+        skipPlayingButton = findViewById(R.id.fastForwardButtMain)
+        backPlayingButton = findViewById(R.id.fastRewindButtMain)
         musicPlaying = mediaControls.isMusicPlaying()
         playButton = findViewById(R.id.playPauseButtMain)
+
+
+        if (musicPlaying) {
+            indicator.resume(true)
+            vumeter.blockNumber = 15
+        }
+        setImageOfButtonsForFirstTime()
+
+    }
+
+    private fun setImageOfButtonsForFirstTime(){
 
         if (musicPlaying && (mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO || darkThemeChosen) playButton.setImageResource(
             R.drawable.icons_pause_black
@@ -133,8 +156,6 @@ class MainActivity : AppCompatActivity() {
         )
         else playButton.setImageResource(R.drawable.icons_play_arrow_white)
 
-        skipPlayingButton = findViewById(R.id.fastForwardButtMain)
-        backPlayingButton = findViewById(R.id.fastRewindButtMain)
     }
 
     private fun addListenersOnButtons() {
@@ -166,16 +187,17 @@ class MainActivity : AppCompatActivity() {
         if (musicPlaying) {
 
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
-
-            //displayToast("Pause")
-            mediaControls.executeEvent(MediaEventType.PAUSE)
+            indicator.stop(true)
+            mediaControls.executeEvent(MediaEventType.TOGGLE_PLAYSTATE)
             musicPlaying = false
         } else {
             playButton.setImageResource(R.drawable.icons_pause_white)
 
-
-            mediaControls.executeEvent(MediaEventType.PLAY)
+            mediaControls.executeEvent(MediaEventType.TOGGLE_PLAYSTATE)
             musicPlaying = true
+            vumeter.blockNumber = 15
+            indicator.resume(true)
+
         }
     }
 
@@ -210,7 +232,8 @@ class MainActivity : AppCompatActivity() {
         val toolbar = supportActionBar
         //Toolbar colour
         toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
-
+        albumArt.setImageResource(R.drawable.album_default_light)
+        indicator.color = getColor(R.color.animate_dark_mode)
         menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryWhite))
@@ -223,13 +246,15 @@ class MainActivity : AppCompatActivity() {
         if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_white)
         else playButton.setImageResource(R.drawable.icons_play_arrow_white)
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
+        albumArt.setImageDrawable(getDrawable(R.drawable.album_default_dark))
         skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_black)
         backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_black)
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryDark))
+        indicator.color = getColor(R.color.colorAccent)
         artistNameMainTextView?.setTextColor(getColor(R.color.colorPrimaryDark))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         supportActionBar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryWhite))
-        menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
+        menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
     }
 
@@ -241,7 +266,7 @@ class MainActivity : AppCompatActivity() {
         songArtistNameTV.text = artist
     }
 
-    fun changeCoverArt(bitmap: Bitmap?){
+    fun changeCoverArt(bitmap: Bitmap?) {
         bitmap?.let {
             albumArt.setImageBitmap(it)
         } ?: albumArt.setImageDrawable(getDrawable(R.drawable.placeholder_song))
@@ -253,9 +278,10 @@ class MainActivity : AppCompatActivity() {
 
         if (musicPlaying) {
             playButton.setImageResource(R.drawable.icons_pause_white)
-
+            indicator.resume(true)
         } else {
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
+            indicator.stop(true)
         }
     }
 
@@ -276,4 +302,6 @@ class MainActivity : AppCompatActivity() {
             null -> darkThemeChosen = false
         }
     }
+
+
 }

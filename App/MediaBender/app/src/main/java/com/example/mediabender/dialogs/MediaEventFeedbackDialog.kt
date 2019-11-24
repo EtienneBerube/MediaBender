@@ -21,7 +21,7 @@ import com.example.mediabender.R
 import com.example.mediabender.models.MediaEventType
 
 
-class MediaEventFeedbackDialog(private val event: MediaEventType) : DialogFragment() {
+class MediaEventFeedbackDialog(private val event: MediaEventType, private val playing: Boolean = false) : DialogFragment() {
 
     private lateinit var imageView: ImageView
     private lateinit var volumeIndicator: TextView
@@ -81,8 +81,10 @@ class MediaEventFeedbackDialog(private val event: MediaEventType) : DialogFragme
             }
         } else {
             image = when(event){
-                MediaEventType.PLAY -> activity!!.getDrawable(R.drawable.ic_play_arrow)
-                MediaEventType.PAUSE -> activity!!.getDrawable(R.drawable.ic_pause)
+                MediaEventType.TOGGLE_PLAYSTATE -> {
+                    if (playing) activity!!.getDrawable(R.drawable.ic_pause)
+                    else activity!!.getDrawable(R.drawable.ic_play_arrow)
+                }
                 MediaEventType.PREVIOUS_SONG -> activity!!.getDrawable(R.drawable.ic_backward_track)
                 MediaEventType.SKIP_SONG -> activity!!.getDrawable(R.drawable.ic_skip_track)
                 else -> null

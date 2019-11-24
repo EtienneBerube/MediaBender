@@ -56,7 +56,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/settings_card"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="250dp"
             android:layout_margin="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
@@ -72,43 +72,39 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/settings_inner_constraint"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toTopOf="@+id/settings_gesture_button"
+                app:layout_constraintTop_toTopOf="@+id/settings_gesture_button">
 
                 <TextView
                     android:id="@+id/theme"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="22dp"
                     android:fontFamily="sans-serif-medium"
                     android:text="Theme"
                     android:textColor="#FFFFFF"
-                    android:textSize="18sp"
+                    android:textSize="19sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <!--Need To Change Colour-->
-                <Spinner
-                    android:id="@+id/settings_theme_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                <!-- Night Mode Button -->
+
+                <com.shrikanthravi.library.NightModeButton
+                    android:id="@+id/nightModeButton"
+                    android:layout_width="75dp"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="12dp"
                     android:layout_marginEnd="12dp"
-                    android:entries="@array/themesDarkSaved"
-                    android:minWidth="50dp"
-                    android:spinnerMode="dropdown"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@+id/theme"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
                     android:id="@+id/settings_gesture_button"
-
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="43dp"
                     android:layout_marginStart="12dp"
-
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/themed_button"
@@ -118,15 +114,14 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/settings_theme_spinner" />
+                    app:layout_constraintTop_toBottomOf="@+id/StepperTouch" />
 
+                <!--Need To Change Colour-->
                 <Button
                     android:id="@+id/settings_test_connection_button"
-
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="43dp"
                     android:layout_marginStart="12dp"
-
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/themed_button"
@@ -136,13 +131,42 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/settings_gesture_button" />
+
+
+                <!--Gesture Sensitivity-->
+                <TextView
+                    android:id="@+id/sensi_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="28dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Gesture Sensitivity"
+                    android:textColor="#FFFFFF"
+                    android:textSize="19sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/theme" />
+
+                <!-- Slider -->
+                <nl.dionsegijn.steppertouch.StepperTouch
+                    android:id="@+id/StepperTouch"
+                    android:layout_width="150dp"
+                    android:layout_height="43dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nightModeButton"
+                    app:stepperBackgroundColor="@color/redButton" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/spotify_card"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="75dp"
             android:layout_margin="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
@@ -179,7 +203,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:text="Not connected"
+                    android:text="Click to open Spotify"
                     android:textColor="#FFFFFF"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/spotify_title" />
@@ -202,7 +226,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/google_play_card"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="75dp"
             android:layout_margin="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="24dp"
@@ -238,7 +262,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:text="Not connected"
+                    android:text="Click to open Gogole Play Music"
                     android:textColor="#FFFFFF"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/google_play_title" />
@@ -261,7 +285,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/apple_music_card"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="75dp"
             android:layout_margin="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="24dp"
@@ -299,7 +323,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:text="Not connected"
+                    android:text="Click to open Apple Music"
                     android:textColor="#FFFFFF"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/apple_music_title" />
