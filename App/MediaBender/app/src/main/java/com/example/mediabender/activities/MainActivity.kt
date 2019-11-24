@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mediaControls: MediaControls
+    private lateinit var phoneControls: PhoneControls
     private lateinit var metadataHelper: MetadataHelper
     private lateinit var mainActivity: View
     private lateinit var albumArt: ImageView
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         setUpToolbar()
         initSerialCommunication()
         initMediaControls()
+        initPhoneControls()
         initViews()
         addListenersOnButtons()
 
@@ -112,6 +114,10 @@ class MainActivity : AppCompatActivity() {
     private fun initMediaControls() {
         mediaControls = MediaControls(this)
         metadataHelper = MetadataHelper(this)
+    }
+
+    private fun initPhoneControls() {
+        phoneControls = PhoneControls(this)
     }
 
     private fun initViews() {
