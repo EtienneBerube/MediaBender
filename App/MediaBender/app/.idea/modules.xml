@@ -3,7 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../Media Bender.iml" filepath="$PROJECT_DIR$/../Media Bender.iml" />
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/app.iml" filepath="$PROJECT_DIR$/app.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/app.iml" filepath="$PROJECT_DIR$/.idea/app.iml" />
+>>>>>>> origin/sw20-xuebin
     </modules>
   </component>
 </project>
