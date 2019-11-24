@@ -12,6 +12,12 @@
     <uses-permission
         android:name="android.permission.READ_PHONE_STATE"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.MODIFY_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.SEND_SMS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="true"
