@@ -97,6 +97,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        updatePlaybackState(mediaControls.isMusicPlaying())
         SerialCommunicationService.instance.isAppInBackground = false
 
     }
