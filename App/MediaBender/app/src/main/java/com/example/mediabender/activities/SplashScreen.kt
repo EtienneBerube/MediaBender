@@ -9,6 +9,9 @@ import android.os.Bundle
 import android.os.Handler
 import com.example.mediabender.MainActivity
 import com.example.mediabender.R
+import com.example.mediabender.helpers.EncryptionHelper
+import com.example.mediabender.helpers.GestureEventDecoder
+import com.example.mediabender.helpers.NetworkConnectionHelper
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 
@@ -18,6 +21,11 @@ class SplashScreen : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        EncryptionHelper.getInstance(applicationContext)
+        GestureEventDecoder.getInstance(applicationContext)
+        NetworkConnectionHelper.getInstance(applicationContext)
+
         setContentView(R.layout.activity_splash_screen)
         loadAppropriateTheme()
     }

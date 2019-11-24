@@ -231,7 +231,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = supportActionBar
         //Toolbar colour
         toolbar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryDark))
-        albumArt.setImageResource(R.drawable.album_default_light)
+        albumArt.setImageResource(R.drawable.album_default_dark)
         indicator.color = getColor(R.color.animate_dark_mode)
         menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_white))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
@@ -245,7 +245,7 @@ class MainActivity : AppCompatActivity() {
         if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_white)
         else playButton.setImageResource(R.drawable.icons_play_arrow_white)
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
-        albumArt.setImageDrawable(getDrawable(R.drawable.album_default_dark))
+        albumArt.setImageDrawable(getDrawable(R.drawable.album_default_light))
         skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_black)
         backPlayingButton.setImageResource(R.drawable.icons_fast_rewind_black)
         songTitleTV.setTextColor(getColor(R.color.colorPrimaryDark))
