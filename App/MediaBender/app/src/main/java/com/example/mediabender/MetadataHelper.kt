@@ -79,21 +79,36 @@ open class MetadataHelper(context: Context) {
     inner class MyReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (!wasLaunchedFromRecents(intent)) {
+                val previousPlayer = player ?: PLAYER_INVALID
                 setCurrentPlayer(intent.action ?: "")
-                setPlaybackState(intent)
-                setTrack(intent.getStringExtra("track"))
-                setAlbum(intent.getStringExtra("album"))
-                setArtist(intent.getStringExtra("artist"))
+                val intentSaysPlay = getIntentPlaybackState(intent)
 
-                if (intent.action!!.contains("metadatachanged"))
-                    displayAlbumArt()
+                // There is one very odd edge case that must be taken into account here: when music is
+                // playing in player X, and someone clicks play in player Y. The order of the intents
+                // fired is: intent to PLAY from Y -> intent to PAUSE from X
+                // This order means that if player X is playing, and someone clicks play in player Y, it
+                // will ALWAYS show the wrong playback state and song data. To get around this, if the
+                // player is changing AND the intent wants to pause, then we assume this is an artifact
+                // of the case described above, and do nothing. This should be a valid assumption, as
+                // no other sequence of events should trigger a pause in a player that is not the active
+                // player, other than this case.
+                if (previousPlayer == player || intentSaysPlay) { // verifying we are not in edge case
+                    playbackState = intentSaysPlay
+                    setTrack(intent.getStringExtra("track"))
+                    setAlbum(intent.getStringExtra("album"))
+                    setArtist(intent.getStringExtra("artist"))
 
-                with(context as MainActivity) {
-                    displayCurrentSong(track, artist)
-                    updatePlaybackState(playbackState)
+                    if (intent.action!!.contains("metadatachanged"))
+                        displayAlbumArt()
 
-                }
+                    with(context as MainActivity) {
+                        displayCurrentSong(track, artist)
+                        updatePlaybackState(playbackState)
+
+                    }
+                } // if not same player and not trying to play, we don't want to do anything
             }
+
         }
 
         // if any of the arguments are null, sets the string to blank
@@ -120,8 +135,8 @@ open class MetadataHelper(context: Context) {
             artist = _artist ?: ""
         }
 
-        private fun setPlaybackState(intent: Intent) {
-            playbackState = when (player) {
+        private fun getIntentPlaybackState(intent: Intent): Boolean {
+            return when (player) {
                 PLAYER_INVALID -> playbackState
                 PLAYER_SPOTIFY -> intent.getBooleanExtra("playstate", playbackState)
                 PLAYER_GOOGLEPLAY -> intent.getBooleanExtra("playing", playbackState)
