@@ -7,6 +7,7 @@
     <color name="google_play_primary">#FF8C00</color>
     <color name="apple_music_primary">#b166cc</color>
     <color name="logo_pink">#860058</color>
+    <color name="redButton">#A13823</color>
     <color name="animate_dark_mode">#572017</color>
     <color name="whiteForStatusBar">#808080</color>
     <color name="darkForCard">#474747</color>

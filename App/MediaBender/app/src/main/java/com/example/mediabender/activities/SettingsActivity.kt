@@ -23,8 +23,8 @@ import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
 import com.example.mediabender.service.ServiceRequest
 import kotlinx.android.synthetic.main.activity_settings.*
-import nl.dionsegijn.steppertouch.OnStepCallback
-import nl.dionsegijn.steppertouch.StepperTouch
+//import nl.dionsegijn.steppertouch.OnStepCallback
+//import nl.dionsegijn.steppertouch.StepperTouch
 
 
 class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {

@@ -73,13 +73,13 @@ class GestureEventDecoderTest {
     @Test
     fun decodeDefaultNear(){
         val result = gestureEventDecoder.gestureToMediaEvent(Gesture.NEAR)
-        Assert.assertEquals(MediaEventType.PLAY,result)
+        Assert.assertEquals(MediaEventType.TOGGLE_PLAYSTATE,result)
     }
 
     @Test
     fun decodeDefaultFar(){
         val result = gestureEventDecoder.gestureToMediaEvent(Gesture.FAR)
-        Assert.assertEquals(MediaEventType.PAUSE,result)
+        Assert.assertEquals(MediaEventType.TOGGLE_PLAYSTATE,result)
     }
 
     @Test

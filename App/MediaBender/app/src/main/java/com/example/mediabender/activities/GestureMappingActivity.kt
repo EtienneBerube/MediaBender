@@ -88,8 +88,6 @@ class GestureMappingActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         loadAppropriateTheme()
-        finish()
-        startActivity(intent)
     }
 
     private fun setupUI() {

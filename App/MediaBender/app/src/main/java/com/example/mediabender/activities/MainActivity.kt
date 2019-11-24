@@ -111,8 +111,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if (musicPlaying) indicator.resume(true) else indicator.stop(false)
-
     }
 
     // cannot initialize the MediaControls object before the onCreate because it calls
@@ -190,12 +188,12 @@ class MainActivity : AppCompatActivity() {
 
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
             indicator.stop(true)
-            mediaControls.executeEvent(MediaEventType.PAUSE)
+            mediaControls.executeEvent(MediaEventType.TOGGLE_PLAYSTATE)
             musicPlaying = false
         } else {
             playButton.setImageResource(R.drawable.icons_pause_white)
 
-            mediaControls.executeEvent(MediaEventType.PLAY)
+            mediaControls.executeEvent(MediaEventType.TOGGLE_PLAYSTATE)
             musicPlaying = true
             vumeter.blockNumber = 15
             indicator.resume(true)
