@@ -239,13 +239,12 @@ class MainActivity : AppCompatActivity() {
     fun displayCurrentSong(track: String, artist: String) {
         songTitleTV.text = track
         songArtistNameTV.text = artist
-        albumArt.setImageDrawable(getDrawable(R.drawable.placeholder_song))
     }
 
     fun changeCoverArt(bitmap: Bitmap?){
         bitmap?.let {
             albumArt.setImageBitmap(it)
-        }
+        } ?: albumArt.setImageDrawable(getDrawable(R.drawable.placeholder_song))
     }
 
     // update the playback state (both the internal boolean and the views)

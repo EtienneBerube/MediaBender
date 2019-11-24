@@ -22,8 +22,8 @@ open class MetadataHelper(context: Context) {
     private var lastArtist: String? = null
     private var lastAlbum: String? = null
     private var lastTrack: String? = null
+    private var lastAlbumArt: Bitmap? = null
 
-    private val coverFetcher: AlbumCoverFetcher
     private val context = context
     private var track: String = ""
     private var album: String = ""
@@ -72,8 +72,6 @@ open class MetadataHelper(context: Context) {
 
         // setting the current player to INVALID_PLAYER so that it is never null
         setCurrentPlayer("")
-
-        coverFetcher = AlbumCoverFetcher(context)
     }
 
     // broadcast receiver to set variables to live data on song change
@@ -133,12 +131,13 @@ open class MetadataHelper(context: Context) {
 
         private fun displayAlbumArt() {
             try {
-                if ((lastAlbum == null && lastArtist == null && lastTrack == null) || lastAlbum != album || lastTrack != track || lastArtist != artist) {
+                if (isNotSameSong()) {
                     lastAlbum = album
                     lastArtist = artist
                     lastTrack = track
-                    AlbumCoverFetcher(context).execute(album, artist)
+                    AlbumCoverFetcher(context, lastAlbumArt).execute(album, artist)
                 } else {
+                    (context as MainActivity).changeCoverArt(lastAlbumArt)
                     Log.d("Cover Fetcher", "Debounced an HTTP call")
                 }
             } catch (e: IllegalStateException) {
@@ -191,5 +190,9 @@ open class MetadataHelper(context: Context) {
     // protected open so that the test can override it, since there is no activity to toast to
     protected open fun toast(str: String) {
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isNotSameSong(): Boolean{
+      return (lastAlbum == null && lastArtist == null && lastTrack == null) || lastAlbum != album || lastTrack != track || lastArtist != artist
     }
 }
