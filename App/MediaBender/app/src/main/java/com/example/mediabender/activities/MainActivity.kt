@@ -264,13 +264,12 @@ class MainActivity : AppCompatActivity() {
     fun displayCurrentSong(track: String, artist: String) {
         songTitleTV.text = track
         songArtistNameTV.text = artist
-        albumArt.setImageDrawable(getDrawable(R.drawable.placeholder_song))
     }
 
     fun changeCoverArt(bitmap: Bitmap?) {
         bitmap?.let {
             albumArt.setImageBitmap(it)
-        }
+        } ?: loadPlaceholderSong()
     }
 
     // update the playback state (both the internal boolean and the views)
@@ -302,6 +301,20 @@ class MainActivity : AppCompatActivity() {
             "Dark" -> darkThemeChosen = true
             null -> darkThemeChosen = false
         }
+    }
+
+    private fun loadPlaceholderSong(){
+        val currentNightMode =
+            mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) {
+            albumArt.setImageDrawable(getDrawable(R.drawable.album_default_dark))
+
+        } // Night mode is not active, we're using the light theme
+        else {
+            albumArt.setImageDrawable(getDrawable(R.drawable.album_default_light))
+
+        } // Night mode is active, we're using dark theme
     }
 
 
