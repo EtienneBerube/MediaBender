@@ -97,6 +97,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        updatePlaybackState(mediaControls.isMusicPlaying())
         SerialCommunicationService.instance.isAppInBackground = false
 
     }
@@ -184,6 +185,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun playPauseButtPressed() {
+
         if (musicPlaying) {
 
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
