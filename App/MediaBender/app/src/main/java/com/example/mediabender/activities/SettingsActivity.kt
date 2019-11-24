@@ -185,10 +185,10 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
         //define minimum value of sensitivity stepper to 0
         stepperTouch.minValue = 0
-        //allow side taps
         stepperTouch.sideTapEnabled = true
         //set maximum value of sensitivity stepper to 4
-        stepperTouch.maxValue = 4
+        stepperTouch.maxValue = 2
+        stepperTouch.setTag(1)
 
         //add callback for the sensitivity stepper
         stepperTouch.addStepCallback(
@@ -198,10 +198,9 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                         //switch statement to initiate action when the stepper changes the value
                         //add code to each case to tell arduino to switch sensitivity
                         when (value) {
-                            1 -> Toast.makeText(applicationContext, "Very Low sensitivity", Toast.LENGTH_SHORT).show()
-                            2 -> Toast.makeText(applicationContext, "Low sensitivity", Toast.LENGTH_SHORT).show()
-                            3 -> Toast.makeText(applicationContext, "Medium sensitivity", Toast.LENGTH_SHORT).show()
-                            4 -> Toast.makeText(applicationContext, "High sensitivity", Toast.LENGTH_SHORT).show()
+                            0 -> Toast.makeText(applicationContext, "Low sensitivity", Toast.LENGTH_SHORT).show()
+                            1 -> Toast.makeText(applicationContext, "Medium sensitivity", Toast.LENGTH_SHORT).show()
+                            2 -> Toast.makeText(applicationContext, "High sensitivity", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
