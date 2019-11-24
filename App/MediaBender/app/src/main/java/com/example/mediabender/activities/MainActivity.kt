@@ -185,6 +185,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun playPauseButtPressed() {
+
         if (musicPlaying) {
 
             playButton.setImageResource(R.drawable.icons_play_arrow_white)

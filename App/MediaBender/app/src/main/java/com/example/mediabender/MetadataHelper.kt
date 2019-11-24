@@ -77,7 +77,8 @@ open class MetadataHelper(context: Context) {
     // broadcast receiver to set variables to live data on song change
     // TODO: soundcloud behaving weirdly when music player opened but paused, the app doesnt seem to "connect" to it right away
     inner class MyReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
+
+        override fun onReceive(context: Context, intent: Intent){
             if (!wasLaunchedFromRecents(intent)) {
                 setCurrentPlayer(intent.action ?: "")
                 setPlaybackState(intent)
