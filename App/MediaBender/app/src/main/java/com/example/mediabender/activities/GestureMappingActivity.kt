@@ -1,47 +1,88 @@
 package com.example.mediabender.activities
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.core.view.ViewCompat
 import com.example.mediabender.R
 import com.example.mediabender.dialogs.YesNoDialog
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
+import com.example.mediabender.models.PhoneEventType
 import com.example.mediabender.service.Gesture
+import com.google.common.collect.EnumBiMap
 import kotlinx.android.synthetic.main.activity_gesture_mapping.*
 
 class GestureMappingActivity : AppCompatActivity() {
 
     private lateinit var gestureEventDecoder: GestureEventDecoder
-    private lateinit var titleLabel : TextView
-    private lateinit var spinner_up: Spinner
-    private lateinit var spinner_down: Spinner
-    private lateinit var spinner_left: Spinner
-    private lateinit var spinner_right: Spinner
-    private lateinit var spinner_far: Spinner
-    private lateinit var spinner_near: Spinner
-    private lateinit var b_save_gestures: Button
+    private lateinit var tempMediaMap: EnumBiMap<Gesture, MediaEventType>
+    private lateinit var tempPhoneMap: EnumBiMap<Gesture, PhoneEventType>
+
+    private lateinit var standardEventsTextView : TextView
+    private lateinit var phoneEventsTextView: TextView
+
+    private lateinit var spinner_togglePlaystate: Spinner
+    private lateinit var spinner_next: Spinner
+    private lateinit var spinner_previous: Spinner
+    private lateinit var spinner_volUp: Spinner
+    private lateinit var spinner_volDown: Spinner
+    private lateinit var spinner_answer: Spinner
+    private lateinit var spinner_decline: Spinner
+    private lateinit var spinner_phone_volUp: Spinner
+    private lateinit var spinner_phone_volDown: Spinner
+
+    private lateinit var b_save_events: Button
     private lateinit var b_default_gestures: Button
+
     private lateinit var gestureView: View
-    private lateinit var upTextView: TextView
-    private lateinit var downTextView: TextView
-    private lateinit var leftTextView: TextView
-    private lateinit var rightTextView: TextView
-    private lateinit var farTextView: TextView
-    private lateinit var nearTextView: TextView
+    private lateinit var togglePlaystateTextView: TextView
+    private lateinit var nextTextView: TextView
+    private lateinit var previousTextView: TextView
+    private lateinit var volUpTextView: TextView
+    private lateinit var volDownTextView: TextView
+    private lateinit var answerTextView: TextView
+    private lateinit var declineTextView: TextView
+    private lateinit var phoneVolUpTextView: TextView
+    private lateinit var phoneVolDownTextView: TextView
+
+    private var mappingChanged = false
     private var darkThemeChosen = false
-    private lateinit var controls_standard: Array<String>
+
+    private lateinit var gestures: Array<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gesture_mapping)
 
-        gestureEventDecoder = GestureEventDecoder(applicationContext)
+        gestureEventDecoder = GestureEventDecoder.getInstance(applicationContext)
+        tempMediaMap = EnumBiMap.create(mapOf(
+            Gesture.UP to gestureEventDecoder.gestureToMediaEvent(Gesture.UP)))
+        with (tempMediaMap) {
+            forcePut(Gesture.DOWN, gestureEventDecoder.gestureToMediaEvent(Gesture.DOWN))
+            forcePut(Gesture.RIGHT, gestureEventDecoder.gestureToMediaEvent(Gesture.RIGHT))
+            forcePut(Gesture.LEFT, gestureEventDecoder.gestureToMediaEvent(Gesture.LEFT))
+            forcePut(Gesture.FAR, gestureEventDecoder.gestureToMediaEvent(Gesture.FAR))
+            forcePut(Gesture.NEAR, gestureEventDecoder.gestureToMediaEvent(Gesture.NEAR))
+            forcePut(Gesture.NONE, gestureEventDecoder.gestureToMediaEvent(Gesture.NONE))
+        }
+        tempPhoneMap = EnumBiMap.create(mapOf(
+            Gesture.UP to gestureEventDecoder.gestureToPhoneEvent(Gesture.UP)))
+            with (tempPhoneMap) {
+                forcePut(Gesture.DOWN, gestureEventDecoder.gestureToPhoneEvent(Gesture.DOWN))
+                forcePut(Gesture.RIGHT, gestureEventDecoder.gestureToPhoneEvent(Gesture.RIGHT))
+                forcePut(Gesture.LEFT, gestureEventDecoder.gestureToPhoneEvent(Gesture.LEFT))
+                forcePut(Gesture.FAR, gestureEventDecoder.gestureToPhoneEvent(Gesture.FAR))
+                forcePut(Gesture.NEAR, gestureEventDecoder.gestureToPhoneEvent(Gesture.NEAR))
+                forcePut(Gesture.NONE, gestureEventDecoder.gestureToPhoneEvent(Gesture.NONE))
+            }
+
         setChosenTheme()
         setUpToolbar()
         setupUI()
@@ -60,99 +101,123 @@ class GestureMappingActivity : AppCompatActivity() {
 
     // need to make sure that when someone tries to go back, they are aware their map wasn't saved
     override fun onBackPressed() {
-        YesNoDialog(
-            "You are about to exit with unsaved changes. Are you sure?",
-            {finish()}, // on "yes" press, want to leave without doing anything
-            {}          // on "no" press, want to return to the activity
-        ).show(supportFragmentManager,"GestureMappingActivity: onBackPressed")
+        savePrompt()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         loadAppropriateTheme()
-        finish()
-        startActivity(intent)
     }
 
     private fun setupUI() {
 
-        upTextView = findViewById(R.id.tv_gesture_up)
-        downTextView = findViewById(R.id.tv_gesture_down)
-        leftTextView = findViewById(R.id.tv_gesture_left)
-        rightTextView = findViewById(R.id.tv_gesture_right)
-        farTextView = findViewById(R.id.tv_gesture_far)
-        nearTextView = findViewById(R.id.tv_gesture_near)
-        titleLabel = findViewById(R.id.gesturesTitleTV)
+        togglePlaystateTextView = findViewById(R.id.tv_event_togglePlaystate)
+        nextTextView = findViewById(R.id.tv_event_next)
+        previousTextView = findViewById(R.id.tv_event_previous)
+        volUpTextView = findViewById(R.id.tv_event_volUp)
+        volDownTextView = findViewById(R.id.tv_event_volDown)
+        standardEventsTextView = findViewById(R.id.standardEventsTitleTV)
 
-        b_save_gestures = findViewById(R.id.b_save_gestures)
-        b_default_gestures = findViewById(R.id.b_default_gestures)
+        phoneVolUpTextView = findViewById(R.id.tv_phone_event_volUp)
+        phoneVolDownTextView = findViewById(R.id.tv_phone_event_volDown)
+        answerTextView = findViewById(R.id.tv_event_answer)
+        declineTextView = findViewById(R.id.tv_event_decline)
+        phoneEventsTextView = findViewById(R.id.phoneEventsTitleTV)
 
-        b_save_gestures.setOnClickListener {
+        b_save_events = findViewById(R.id.b_save_events)
+        b_save_events.setOnClickListener {
 
-            // before saving, need to make sure that the mappings are unique
-            if (gestureEventDecoder.mapIsValid()) {
+            // before saving, need to make sure that user entered mapping is valid
+            if (gestureEventDecoder.mapsAreValid()) {
                 saveGestures()
-                Toast.makeText(applicationContext, "Saved.", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "Saved.", Toast.LENGTH_SHORT).show()
                 finish()
             } else {
                 Toast.makeText(
                     applicationContext,
-                    "Each control must have only one associated gesture.",
+                    "Each gesture must have only one associated control.",
                     Toast.LENGTH_LONG
                 ).show()
             }
         }
 
+        b_default_gestures = findViewById(R.id.b_default_gestures)
         b_default_gestures.setOnClickListener {
             with(gestureEventDecoder) {
-                editGestureMap(Gesture.UP,MediaEventType.RAISE_VOLUME)
-                editGestureMap(Gesture.DOWN,MediaEventType.LOWER_VOLUME)
-                editGestureMap(Gesture.RIGHT,MediaEventType.SKIP_SONG)
-                editGestureMap(Gesture.LEFT,MediaEventType.PREVIOUS_SONG)
-                editGestureMap(Gesture.FAR,MediaEventType.PAUSE)
-                editGestureMap(Gesture.NEAR,MediaEventType.PLAY)
+                editMap(Gesture.UP, MediaEventType.RAISE_VOLUME)
+                editMap(Gesture.DOWN, MediaEventType.LOWER_VOLUME)
+                editMap(Gesture.RIGHT, MediaEventType.SKIP_SONG)
+                editMap(Gesture.LEFT, MediaEventType.PREVIOUS_SONG)
+                editMap(Gesture.NEAR, MediaEventType.TOGGLE_PLAYSTATE)
+
+                editMap(Gesture.UP, PhoneEventType.RAISE_VOLUME)
+                editMap(Gesture.DOWN, PhoneEventType.LOWER_VOLUME)
+                editMap(Gesture.RIGHT, PhoneEventType.ACCEPT_CALL)
+                editMap(Gesture.LEFT, PhoneEventType.DECLINE_CALL)
             }
+            mappingChanged = true
             refreshSpinners()
         }
 
-        spinner_up = findViewById(R.id.spinner_up)
-        spinner_down = findViewById(R.id.spinner_down)
-        spinner_left = findViewById(R.id.spinner_left)
-        spinner_right = findViewById(R.id.spinner_right)
-        spinner_far = findViewById(R.id.spinner_far)
-        spinner_near = findViewById(R.id.spinner_near)
+        spinner_togglePlaystate = findViewById(R.id.spinner_togglePlaystate)
+        spinner_next = findViewById(R.id.spinner_next)
+        spinner_previous = findViewById(R.id.spinner_previous)
+        spinner_volUp = findViewById(R.id.spinner_volUp)
+        spinner_volDown = findViewById(R.id.spinner_volDown)
+
+        spinner_answer = findViewById(R.id.spinner_answer)
+        spinner_decline = findViewById(R.id.spinner_decline)
+        spinner_phone_volUp = findViewById(R.id.spinner_phone_volUp)
+        spinner_phone_volDown = findViewById(R.id.spinner_phone_volDown)
+
         gestureView = findViewById(R.id.scroll_gestures_constraint)
 
     }
 
     private fun setUpSpinners(){
-        // creating array of standard controls options for spinners
-        controls_standard = arrayOf(
-            getString(R.string.mapping_spinner_play),
-            getString(R.string.mapping_spinner_pause),
-            getString(R.string.mapping_spinner_next),
-            getString(R.string.mapping_spinner_previous),
-            getString(R.string.mapping_spinner_volumeUp),
-            getString(R.string.mapping_spinner_volumeDown)
+        // creating array of gesture options for spinners
+        gestures = arrayOf(
+            getString(R.string.mapping_spinner_up),
+            getString(R.string.mapping_spinner_down),
+            getString(R.string.mapping_spinner_right),
+            getString(R.string.mapping_spinner_left),
+            getString(R.string.mapping_spinner_far),
+            getString(R.string.mapping_spinner_near)
         )
 
         // creating an array adapter for the spinners
         ArrayAdapter<String>(
             this,
-            android.R.layout.simple_spinner_item,
-            controls_standard
+            R.layout.my_spinner_item_white,
+            gestures
         ).also { adapter ->
             // specifying the layout for the list when it appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            adapter.setDropDownViewResource(R.layout.my_spinner_drop_down_black)
 
             // applying the adapter to the spinners
-            spinner_up.adapter = adapter
-            spinner_down.adapter = adapter
-            spinner_left.adapter = adapter
-            spinner_right.adapter = adapter
-            spinner_far.adapter = adapter
-            spinner_near.adapter = adapter
+            spinner_togglePlaystate.adapter = adapter
+            spinner_next.adapter = adapter
+            spinner_previous.adapter = adapter
+            spinner_volUp.adapter = adapter
+            spinner_volDown.adapter = adapter
+
+            spinner_answer.adapter = adapter
+            spinner_decline.adapter = adapter
+            spinner_phone_volUp.adapter = adapter
+            spinner_phone_volDown.adapter = adapter
         }
+
+        // setting drop down triangle color
+        val color = getColor(R.color.colorPrimaryWhite)
+        ViewCompat.setBackgroundTintList(spinner_togglePlaystate, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_next, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_previous, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_volUp, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_volDown, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_answer, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_decline, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_phone_volUp, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_phone_volDown, ColorStateList.valueOf(color))
 
         // setting the starting value of the spinner based on user shared preferences
         refreshSpinners()
@@ -167,50 +232,93 @@ class GestureMappingActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                // based on the spinner, fetch the media control chosen
-                val event: MediaEventType = when (parent?.getItemAtPosition(position).toString()) {
-                    getString(R.string.mapping_spinner_play) -> MediaEventType.PLAY
-                    getString(R.string.mapping_spinner_pause) -> MediaEventType.PAUSE
-                    getString(R.string.mapping_spinner_next) -> MediaEventType.SKIP_SONG
-                    getString(R.string.mapping_spinner_previous) -> MediaEventType.PREVIOUS_SONG
-                    getString(R.string.mapping_spinner_volumeUp) -> MediaEventType.RAISE_VOLUME
-                    getString(R.string.mapping_spinner_volumeDown) -> MediaEventType.LOWER_VOLUME
-                    else -> MediaEventType.NONE // this case will never happen
+                // based on which spinner, fetch the media control chosen
+                val event: MediaEventType? = when (parent?.id) {
+                    R.id.spinner_togglePlaystate -> MediaEventType.TOGGLE_PLAYSTATE
+                    R.id.spinner_next -> MediaEventType.SKIP_SONG
+                    R.id.spinner_previous -> MediaEventType.PREVIOUS_SONG
+                    R.id.spinner_volUp -> MediaEventType.RAISE_VOLUME
+                    R.id.spinner_volDown -> MediaEventType.LOWER_VOLUME
+                    else -> null    // this case will only occur if phone gesture
                 }
 
-                // based on which spinner, fetch the gesture for the associated spinner
-                val gesture: Gesture = when (parent?.id) {
-                    R.id.spinner_up -> Gesture.UP
-                    R.id.spinner_down -> Gesture.DOWN
-                    R.id.spinner_left -> Gesture.LEFT
-                    R.id.spinner_right -> Gesture.RIGHT
-                    R.id.spinner_far -> Gesture.FAR
-                    R.id.spinner_near -> Gesture.NEAR
-                    else -> Gesture.NONE    // this case will never happen
+                // based on the spinner, fetch the gesture for the associated spinner
+                val gesture: Gesture = when (parent?.getItemAtPosition(position).toString()) {
+                    getString(R.string.mapping_spinner_up) -> Gesture.UP
+                    getString(R.string.mapping_spinner_down) -> Gesture.DOWN
+                    getString(R.string.mapping_spinner_right) -> Gesture.RIGHT
+                    getString(R.string.mapping_spinner_left) -> Gesture.LEFT
+                    getString(R.string.mapping_spinner_far) -> Gesture.FAR
+                    getString(R.string.mapping_spinner_near) -> Gesture.NEAR
+                    else -> Gesture.NONE // this case will never happen
                 }
-                gestureEventDecoder.editGestureMap(gesture, event)
-                // TODO might be interesting to add feedback to the user saying "hey, this gesture is for more than one control"
+
+                if (event != null) { // media gesture
+                    if (gestureEventDecoder.mediaEventToGesture(event) != gesture) { // if no change, don't need to map
+                        gestureEventDecoder.editMap(gesture, event)
+                        mappingChanged = true
+                    }
+                } else { // phone gesture
+                    // based on which spinner, fetch the phone control chosen
+                    val event2: PhoneEventType = when (parent?.id) {
+                        R.id.spinner_phone_volDown -> PhoneEventType.LOWER_VOLUME
+                        R.id.spinner_phone_volUp -> PhoneEventType.RAISE_VOLUME
+                        R.id.spinner_answer -> PhoneEventType.ACCEPT_CALL
+                        R.id.spinner_decline -> PhoneEventType.DECLINE_CALL
+                        else -> PhoneEventType.NONE    // this case will never happen
+                    }
+                    if (gestureEventDecoder.phoneEventToGesture(event2) != gesture) { // if no change, don't need to map
+                        gestureEventDecoder.editMap(gesture, event2)
+                        mappingChanged = true
+                    }
+                }
+
             }
         }
-        spinner_up.onItemSelectedListener = myOnItemSelectedListener
-        spinner_down.onItemSelectedListener = myOnItemSelectedListener
-        spinner_far.onItemSelectedListener = myOnItemSelectedListener
-        spinner_left.onItemSelectedListener = myOnItemSelectedListener
-        spinner_right.onItemSelectedListener = myOnItemSelectedListener
-        spinner_near.onItemSelectedListener = myOnItemSelectedListener
+        spinner_togglePlaystate.onItemSelectedListener = myOnItemSelectedListener
+        spinner_volUp.onItemSelectedListener = myOnItemSelectedListener
+        spinner_next.onItemSelectedListener = myOnItemSelectedListener
+        spinner_previous.onItemSelectedListener = myOnItemSelectedListener
+        spinner_volDown.onItemSelectedListener = myOnItemSelectedListener
+
+        spinner_answer.onItemSelectedListener = myOnItemSelectedListener
+        spinner_decline.onItemSelectedListener = myOnItemSelectedListener
+        spinner_phone_volUp.onItemSelectedListener = myOnItemSelectedListener
+        spinner_phone_volDown.onItemSelectedListener = myOnItemSelectedListener
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                YesNoDialog(
-                    "You are about to exit with unsaved changes. Are you sure?",
-                    {finish()}, // on "yes" press, want to leave without doing anything
-                    {}          // on "no" press, want to return to the activity
-                ).show(supportFragmentManager,"GestureMappingActivity: onBackPressed")
+                savePrompt()
             }
         }
         return true
+    }
+
+    // reset the gesture event decoder to the original state (before any changes)
+    private fun discardChanges() {
+        for((k,v) in tempMediaMap) { // resetting media map
+            gestureEventDecoder.editMap(k,v)
+        }
+        for ((k,v) in tempPhoneMap) { // resetting phone map
+            gestureEventDecoder.editMap(k,v)
+        }
+    }
+
+    private fun savePrompt() {
+        if (mappingChanged) {
+            YesNoDialog(
+                "You are about to exit with unsaved changes. Are you sure?",
+                {
+                    discardChanges()
+                    finish()
+                }, // on "yes" press, want to discard changes then
+                {}          // on "no" press, want to return to the activity
+            ).show(supportFragmentManager, "GestureMappingActivity: onBackPressed")
+        } else {
+            finish()
+        }
     }
 
     private fun loadAppropriateTheme(){
@@ -221,65 +329,112 @@ class GestureMappingActivity : AppCompatActivity() {
     }
 
     private fun loadDarkTheme(){
-        upTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        titleLabel.setTextColor(getColor(R.color.colorPrimaryWhite))
-        downTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        leftTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        rightTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        farTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        card_gestures_standard_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
-        nearTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        standardEventsTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+
+        card_events_standard_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
         gestures_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         gestureView.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         gestures_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_white)
+
+        phoneEventsTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
+        card_events_phone_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
+
+        themeSpinners(true)
 
         window.statusBarColor = getColor(R.color.colorPrimaryDark)
     }
 
     private fun loadWhiteTheme(){
-        titleLabel.setTextColor(getColor(R.color.colorPrimaryDark))
-        upTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        downTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        leftTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        standardEventsTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         gestureView.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
-        rightTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        card_gestures_standard_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
-        farTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        nearTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+
+        card_events_standard_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
         gestures_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         gestures_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_black)
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
+
+        themeSpinners(false)
+
+        phoneEventsTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+        card_events_phone_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
     }
+
+    // for theming spinners
+    private fun themeSpinners(darkTheme: Boolean) {
+        ArrayAdapter<String>(
+            this,
+            R.layout.my_spinner_item_white,
+            gestures
+        ).also { adapter ->
+            // specifying the layout for the list when it appears
+            adapter.setDropDownViewResource(when(darkTheme) {
+                true -> R.layout.my_spinner_drop_down_white
+                false -> R.layout.my_spinner_drop_down_black
+            })
+
+            // applying the adapter to the spinners
+            spinner_togglePlaystate.adapter = adapter
+            spinner_next.adapter = adapter
+            spinner_previous.adapter = adapter
+            spinner_volUp.adapter = adapter
+            spinner_volDown.adapter = adapter
+
+            spinner_answer.adapter = adapter
+            spinner_decline.adapter = adapter
+            spinner_phone_volUp.adapter = adapter
+            spinner_phone_volDown.adapter = adapter
+        }
+
+        refreshSpinners()
+    }
+
     // save the gesture map to shared preferences
     private fun saveGestures() {
         gestureEventDecoder.saveToSharedPreferences()
     }
 
-    // get the position in the spinner values array (in strings resource) of event
-    private fun getSpinnerStartingPosition(gesture: Gesture): Int {
-        val e: MediaEventType = gestureEventDecoder.gestureToEvent(gesture)
-        val temp = controls_standard.indexOf(
-            when (e) {
-                MediaEventType.PLAY -> getString(R.string.mapping_spinner_play)
-                MediaEventType.PAUSE -> getString(R.string.mapping_spinner_pause)
-                MediaEventType.SKIP_SONG -> getString(R.string.mapping_spinner_next)
-                MediaEventType.PREVIOUS_SONG -> getString(R.string.mapping_spinner_previous)
-                MediaEventType.RAISE_VOLUME -> getString(R.string.mapping_spinner_volumeUp)
-                MediaEventType.LOWER_VOLUME -> getString(R.string.mapping_spinner_volumeDown)
+    // get the position in the spinner values array for the passed event
+    private fun getSpinnerStartingPosition(event: MediaEventType): Int {
+        val g: Gesture = gestureEventDecoder.mediaEventToGesture(event)
+        return gestures.indexOf(
+            when (g) {
+                Gesture.UP -> getString(R.string.mapping_spinner_up)
+                Gesture.DOWN -> getString(R.string.mapping_spinner_down)
+                Gesture.RIGHT -> getString(R.string.mapping_spinner_right)
+                Gesture.LEFT -> getString(R.string.mapping_spinner_left)
+                Gesture.FAR -> getString(R.string.mapping_spinner_far)
+                Gesture.NEAR -> getString(R.string.mapping_spinner_near)
                 else -> "NONE"  // this will never occur
             }
         )
-        return temp
+    }
+    private fun getSpinnerStartingPosition(event: PhoneEventType): Int {
+        val g: Gesture = gestureEventDecoder.phoneEventToGesture(event)
+        return gestures.indexOf(
+            when (g) {
+                Gesture.UP -> getString(R.string.mapping_spinner_up)
+                Gesture.DOWN -> getString(R.string.mapping_spinner_down)
+                Gesture.RIGHT -> getString(R.string.mapping_spinner_right)
+                Gesture.LEFT -> getString(R.string.mapping_spinner_left)
+                Gesture.FAR -> getString(R.string.mapping_spinner_far)
+                Gesture.NEAR -> getString(R.string.mapping_spinner_near)
+                else -> "NONE"  // this will never occur
+            }
+        )
     }
 
     // refresh the spinner views with the current gesture map
     private fun refreshSpinners() {
-        spinner_up.setSelection(getSpinnerStartingPosition(Gesture.UP))
-        spinner_down.setSelection(getSpinnerStartingPosition(Gesture.DOWN))
-        spinner_left.setSelection(getSpinnerStartingPosition(Gesture.LEFT))
-        spinner_right.setSelection(getSpinnerStartingPosition(Gesture.RIGHT))
-        spinner_far.setSelection(getSpinnerStartingPosition(Gesture.FAR))
-        spinner_near.setSelection(getSpinnerStartingPosition(Gesture.NEAR))
+        spinner_togglePlaystate.setSelection(getSpinnerStartingPosition(MediaEventType.TOGGLE_PLAYSTATE))
+        spinner_next.setSelection(getSpinnerStartingPosition(MediaEventType.SKIP_SONG))
+        spinner_previous.setSelection(getSpinnerStartingPosition(MediaEventType.PREVIOUS_SONG))
+        spinner_volUp.setSelection(getSpinnerStartingPosition(MediaEventType.RAISE_VOLUME))
+        spinner_volDown.setSelection(getSpinnerStartingPosition(MediaEventType.LOWER_VOLUME))
+
+        spinner_answer.setSelection(getSpinnerStartingPosition(PhoneEventType.ACCEPT_CALL))
+        spinner_decline.setSelection(getSpinnerStartingPosition(PhoneEventType.DECLINE_CALL))
+        spinner_phone_volUp.setSelection(getSpinnerStartingPosition(PhoneEventType.RAISE_VOLUME))
+        spinner_phone_volDown.setSelection(getSpinnerStartingPosition(PhoneEventType.LOWER_VOLUME))
     }
 
     private fun setUpToolbar(){
@@ -290,14 +445,12 @@ class GestureMappingActivity : AppCompatActivity() {
         actionbar?.setDisplayHomeAsUpEnabled(true)
     }
 
-
     private fun setChosenTheme(){
         val themeHelper = ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
-        val  chosenTheme = themeHelper.getTheme()
 
-        when (chosenTheme){
-            "Dark" -> darkThemeChosen = true
-            else -> darkThemeChosen = false
+        darkThemeChosen = when (themeHelper.getTheme()){
+            "Dark" -> true
+            else -> false
         }
     }
 }

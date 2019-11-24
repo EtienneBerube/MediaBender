@@ -11,9 +11,11 @@ import android.media.session.MediaSession
 import android.media.session.MediaSessionManager
 import android.view.KeyEvent
 import androidx.core.app.ComponentActivity
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.example.mediabender.dialogs.MediaEventFeedbackDialog
 import com.example.mediabender.models.MediaEventType
+import java.lang.Exception
 
 class MediaControls(context: Context) {
 
@@ -30,18 +32,22 @@ class MediaControls(context: Context) {
         executeEvent(event)
 
         //Shows command
-        val mediaFeedbackDialog = MediaEventFeedbackDialog(event)
-        (activity as? FragmentActivity)?.let {
-            val fragmentManager = it.supportFragmentManager
-            val fragmentTransition = fragmentManager.beginTransaction()
+        try {
+            val mediaFeedbackDialog = MediaEventFeedbackDialog(event, isMusicPlaying())
+            (activity as? FragmentActivity)?.let {
+                val fragmentManager = it.supportFragmentManager
+                val fragmentTransition = fragmentManager.beginTransaction()
 
-            //Removes if exists
-            val prev = fragmentManager.findFragmentByTag("media_feedback")
-            if (prev != null) {
-                fragmentTransition.remove(prev)
+                //Removes if exists
+                val prev = fragmentManager.findFragmentByTag("media_feedback")
+                if (prev != null) {
+                    fragmentTransition.remove(prev)
+                }
+                fragmentTransition.addToBackStack(null)
+                mediaFeedbackDialog.show(fragmentTransition, "media_feedback")
             }
-            fragmentTransition.addToBackStack(null)
-            mediaFeedbackDialog.show(fragmentTransition, "media_feedback")
+        }catch(e:Exception){
+            //TODO: implement a crash algo.
         }
     }
 
@@ -51,44 +57,43 @@ class MediaControls(context: Context) {
             MediaEventType.LOWER_VOLUME -> volumeDown()
             MediaEventType.SKIP_SONG -> next()
             MediaEventType.PREVIOUS_SONG -> previous()
-            MediaEventType.PLAY -> play()
-            MediaEventType.PAUSE -> pause()
+            MediaEventType.TOGGLE_PLAYSTATE -> togglePlaystate()
+            MediaEventType.NONE -> {} // do nothing
         }
 
     }
 
-    fun play() {
+    private fun play() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY)
         )
     }
-
-    fun pause() {
+    private fun pause() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
         )
     }
-
-    fun next() {
+    private fun togglePlaystate() {
+        if (audioManager.isMusicActive) pause()
+        else play()
+    }
+    private fun next() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
         )
     }
-
-    fun previous() {
+    private fun previous() {
         audioManager.dispatchMediaKeyEvent(
             KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
         )
     }
-
-    fun volumeUp() {
+    private fun volumeUp() {
         val source = if (isInCall) AudioManager.STREAM_VOICE_CALL else AudioManager.STREAM_MUSIC
 
         // flag 0 to do nothing
         audioManager.adjustStreamVolume(source, AudioManager.ADJUST_RAISE, 0)
     }
-
-    fun volumeDown() {
+    private fun volumeDown() {
 
         val source = if (isInCall) AudioManager.STREAM_VOICE_CALL else AudioManager.STREAM_MUSIC
 

@@ -1,12 +1,12 @@
 package com.example.mediabender.activities
 
-import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
-import android.provider.Settings
+import android.os.Handler
+import android.content.pm.ApplicationInfo
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -17,8 +17,14 @@ import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaPlayer
 import com.example.mediabender.models.PlayerAccount
+import com.shrikanthravi.library.NightModeButton
+import com.example.mediabender.service.Request
+import com.example.mediabender.service.Sensibility
+import com.example.mediabender.service.SerialCommunicationService
+import com.example.mediabender.service.ServiceRequest
 import kotlinx.android.synthetic.main.activity_settings.*
-import kotlinx.android.synthetic.main.activity_settings.view.*
+import nl.dionsegijn.steppertouch.OnStepCallback
+import nl.dionsegijn.steppertouch.StepperTouch
 
 
 class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionDialogListener {
@@ -28,10 +34,12 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private var googlePlayViewHolder = PlayerSettingsCardViewHolder()
     private lateinit var settingsLabel: TextView
     private lateinit var accountsLabel: TextView
-    private lateinit var themeSpinner: Spinner
     private lateinit var settingsActivity: View
+    private lateinit var nightModeButton: NightModeButton
     private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
-    private var darkThemeChosen = false
+    private lateinit var stepperTouch: StepperTouch
+    private var darkThemeChosen = true
+    private lateinit var installedPlayers: List<ApplicationInfo>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,11 +56,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 Context.MODE_PRIVATE
             )
         )
-
+        getThemeSaved()
         setupSettings()
-        setupApplePlayMusic()
-        setupSpotify()
-        setupGooglePlayMusic()
         setUpToolBar()
         loadAppropriateTheme()
     }
@@ -69,20 +74,14 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     override fun onResume() {
         super.onResume()
 
-        val running = getRunningPlayers()
-
-        MediaPlayer.values().forEach {
-            if (running.contains(it.packageName)) {
-                setRunningIndicator(it, true)
-            } else {
-                setRunningIndicator(it, false)
-            }
-        }
+        getAllAppsOnPhone()
+        setupApplePlayMusic()
+        setupSpotify()
+        setupGooglePlayMusic()
     }
 
     override fun onRestart() {
         super.onRestart()
-
         loadAppropriateTheme()
     }
 
@@ -104,8 +103,8 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private fun setupSpotify() {
         spotifyViewHolder.cardView = findViewById(R.id.spotify_card)
         spotifyViewHolder.cardView.setOnClickListener {
-            val dialog = PlayerConnectionDialog(MediaPlayer.SPOTIFY)
-            dialog.show(supportFragmentManager, "Spotify Connection")
+            packageManager.getLaunchIntentForPackage(MediaPlayer.SPOTIFY.packageName)
+                ?.let { startActivity(it) }
         }
 
         spotifyViewHolder.activeCircle = findViewById(R.id.spotify_active_circle)
@@ -116,13 +115,17 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 MediaPlayer.SPOTIFY
             )
         )
+
+        if (MediaPlayer.SPOTIFY.packageName !in installedPlayers.map { player -> player.packageName }) {
+            spotifyViewHolder.cardView.visibility = View.GONE
+        }
     }
 
     private fun setupGooglePlayMusic() {
         googlePlayViewHolder.cardView = findViewById(R.id.google_play_card)
         googlePlayViewHolder.cardView.setOnClickListener {
-            val dialog = PlayerConnectionDialog(MediaPlayer.GOOGLE_PLAY)
-            dialog.show(supportFragmentManager, "Google Play Connection")
+            packageManager.getLaunchIntentForPackage(MediaPlayer.GOOGLE_PLAY.packageName)
+                ?.let { startActivity(it) }
         }
 
         googlePlayViewHolder.activeCircle = findViewById(R.id.google_play_active_circle)
@@ -133,13 +136,17 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 MediaPlayer.GOOGLE_PLAY
             )
         )
+
+        if (MediaPlayer.GOOGLE_PLAY.packageName !in installedPlayers.map { player -> player.packageName }) {
+            googlePlayViewHolder.cardView.visibility = View.GONE
+        }
     }
 
     private fun setupApplePlayMusic() {
         appleMusicViewHolder.cardView = findViewById(R.id.apple_music_card)
         appleMusicViewHolder.cardView.setOnClickListener {
-            val dialog = PlayerConnectionDialog(MediaPlayer.APPLE_MUSIC)
-            dialog.show(supportFragmentManager, "Apple Music Connection")
+            packageManager.getLaunchIntentForPackage(MediaPlayer.APPLE_MUSIC.packageName)
+                ?.let { startActivity(it) }
         }
 
         appleMusicViewHolder.activeCircle = findViewById(R.id.apple_music_active_circle)
@@ -150,37 +157,25 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 MediaPlayer.APPLE_MUSIC
             )
         )
+
+        if (MediaPlayer.APPLE_MUSIC.packageName !in installedPlayers.map { player -> player.packageName }) {
+            appleMusicViewHolder.cardView.visibility = View.GONE
+        }
     }
 
     private fun setupSettings() {
         settingsLabel = findViewById(R.id.settingsTitle)
         settingsActivity = findViewById(R.id.settings_parent_scroll)
         accountsLabel = findViewById(R.id.accountsTitle)
+        stepperTouch = findViewById(R.id.StepperTouch)
+        nightModeButton = findViewById(R.id.nightModeButton)
+        nightModeButton.setModeFirstTime(darkThemeChosen)
+
         findViewById<Button>(R.id.settings_test_connection_button).setOnClickListener { testSensorConnection() }
         findViewById<Button>(R.id.settings_gesture_button).setOnClickListener { remapGesture() }
 
-        //For the theme drop down menu
-        themeSpinner = findViewById(R.id.settings_theme_spinner)
-
-        themeSpinner.adapter = createArrayAdapterForSpinner()
-
-        themeSpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                }
-
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    changeTheme(parent?.getItemAtPosition(position).toString())
-                }
-            }
-
+        nightMode()
+        setUpStepper()
 
     }
 
@@ -194,24 +189,9 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         toast.show()
     }
 
-    private fun changeTheme(theme: String) {
 
-        val themeHelper =
-            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
-        themeHelper.saveTheme(theme)
-
-        darkThemeChosen = (theme == "Dark")
-        loadAppropriateTheme()
-
-        Toast.makeText(
-            applicationContext,
-            "$theme saved",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    private fun remapGesture(){
-        val intent = Intent(this,GestureMappingActivity::class.java)
+    private fun remapGesture() {
+        val intent = Intent(this, GestureMappingActivity::class.java)
         startActivity(intent)
     }
 
@@ -231,11 +211,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
             }
         }
 
-    }
-
-    fun getRunningPlayers(): Set<String> {
-        //TODO implement with apis
-        return HashSet()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -258,6 +233,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         settings_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_black)
         settingsLabel.setTextColor(getColor(R.color.colorPrimaryDark))
         accountsLabel.setTextColor(getColor(R.color.colorPrimaryDark))
+        settings_card.setCardBackgroundColor(getColor(R.color.whiteForStatusBar))
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
         settingsActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
 
@@ -268,6 +244,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         settings_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_white)
         settingsLabel.setTextColor(getColor(R.color.colorPrimaryWhite))
         accountsLabel.setTextColor(getColor(R.color.colorPrimaryWhite))
+        settings_card.setCardBackgroundColor(getColor(R.color.darkForCard))
         window.statusBarColor = getColor(R.color.colorPrimaryDark)
         settingsActivity.setBackgroundColor(getColor(R.color.colorPrimaryDark))
     }
@@ -282,7 +259,7 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     }
 
     // To make the drop down menu for Themes to show the right saved theme
-    private fun createArrayAdapterForSpinner(): ArrayAdapter<CharSequence> {
+    private fun getThemeSaved() {
         val themeHelper =
             ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
         val savedTheme = themeHelper.getTheme()
@@ -290,25 +267,143 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         when (savedTheme) {
             "Dark" -> {
                 darkThemeChosen = true
-                return ArrayAdapter.createFromResource(
-                    this,
-                    R.array.themesDarkSaved,
-                    R.layout.support_simple_spinner_dropdown_item
-                )
+
             }
             else -> {
                 darkThemeChosen = false
-                return ArrayAdapter.createFromResource(
-                    this,
-                    R.array.themesLightSaved,
-                    R.layout.support_simple_spinner_dropdown_item
-                )
+
             }
-
         }
-
     }
 
+    fun getAllAppsOnPhone() {
+        this.installedPlayers = packageManager.getInstalledApplications(0)
+            .filter { it.packageName in MediaPlayer.values().map { player -> player.packageName } }
+        Log.d("Installed apps", "Got installed apps")
+    }
 
+    fun nightMode() {
+
+
+        nightModeButton.setOnSwitchListener {
+
+            if (darkThemeChosen) {
+
+                darkThemeChosen = false
+
+                if (settingsActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+
+                    Toast.makeText(
+                        getApplicationContext(),
+                        "Dark Theme will remain because Low Power Mode is Enabled to save energy",
+                        Toast.LENGTH_LONG
+                    ).show();
+
+                }
+                saveTheme(darkThemeChosen)
+
+            } else {
+
+                darkThemeChosen = true
+                saveTheme(darkThemeChosen)
+            }
+            loadAppropriateTheme()
+
+        }
+    }
+
+    private fun saveTheme(darkModeSaved: Boolean) {
+        val themeSharedPreferenceHelper =
+            ThemeSharedPreferenceHelper(getSharedPreferences("Theme", Context.MODE_PRIVATE))
+        when (darkModeSaved) {
+            true -> {
+                themeSharedPreferenceHelper.saveTheme("Dark")
+            }
+            false -> {
+                themeSharedPreferenceHelper.saveTheme("Light")
+            }
+        }
+    }
+
+    private fun setUpStepper() {
+        //define minimum value of sensitivity stepper to 0
+        stepperTouch.minValue = 1
+        //allow side taps
+        stepperTouch.sideTapEnabled = true
+        //set maximum value of sensitivity stepper to 4
+        stepperTouch.maxValue = 3
+
+        //add callback for the sensitivity stepper
+        stepperTouch.addStepCallback(
+            object : OnStepCallback {
+                override fun onStep(value: Int, positive: Boolean) {
+                    //switch statement to initiate action when the stepper changes the value
+                    //add code to each case to tell arduino to switch sensitivity
+                    when (value) {
+                        1 -> {
+                            if (SerialCommunicationService.instance.isConnected) {
+                                SerialCommunicationService.instance.sendRequest(
+                                    ServiceRequest(Request.SENSIBILITY, Sensibility.LOW)
+                                )
+                            } else {
+                                Toast.makeText(applicationContext, "Connect the sensor first", Toast.LENGTH_SHORT).show()
+                            }
+                            Toast.makeText(
+                                applicationContext,
+                                "Low sensitivity",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        2 -> {
+                            if (SerialCommunicationService.instance.isConnected) {
+                                SerialCommunicationService.instance.sendRequest(
+                                    ServiceRequest(
+                                        Request.SENSIBILITY,
+                                        Sensibility.MEDIUM
+                                    )
+                                )
+                            } else {
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Connect the sensor first",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            Toast.makeText(
+                                applicationContext,
+                                "Medium sensitivity",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        3 -> {
+                            if (SerialCommunicationService.instance.isConnected) {
+                                SerialCommunicationService.instance.sendRequest(
+                                    ServiceRequest(
+                                        Request.SENSIBILITY,
+                                        Sensibility.HIGH
+                                    )
+                                )
+                            } else {
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Connect the sensor first",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            Toast.makeText(
+                                applicationContext,
+                                "High sensitivity",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        else -> {
+                            // Do nothing
+                        }
+                    }
+                }
+            }
+        )
+
+    }
 }
 

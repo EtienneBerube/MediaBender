@@ -2,12 +2,15 @@
 <resources>
     <color name="colorPrimaryWhite">#FFFFFF</color>
     <color name="colorPrimaryDark">#121212</color>
-    <color name="colorAccent">#ED4949</color>
+    <color name="colorAccent">#D7D9CA</color>
     <color name="spotify_primary">#1DB954</color>
     <color name="google_play_primary">#FF8C00</color>
     <color name="apple_music_primary">#b166cc</color>
     <color name="logo_pink">#860058</color>
+    <color name="redButton">#A13823</color>
+    <color name="animate_dark_mode">#572017</color>
     <color name="whiteForStatusBar">#808080</color>
+    <color name="darkForCard">#474747</color>
     <color name="darkForToolbar">#242424</color>
     <color name="darkForMainActivity">#242424</color>
 </resources>
