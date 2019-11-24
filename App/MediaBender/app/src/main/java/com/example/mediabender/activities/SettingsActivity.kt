@@ -178,13 +178,21 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     }
 
     private fun testSensorConnection() {
-        //TODO implement later
-        val toast = Toast.makeText(
+        if(SerialCommunicationService.instance.testUSBConnection()){
+            val toast = Toast.makeText(
                 applicationContext,
-                "Testing connection not implemented yet",
+                "The sensor is connected",
                 Toast.LENGTH_SHORT
-        )
-        toast.show()
+            )
+            toast.show()
+        }else{
+            val toast = Toast.makeText(
+                applicationContext,
+                "The sensor is not connected",
+                Toast.LENGTH_SHORT
+            )
+            toast.show()
+        }
     }
 
 
