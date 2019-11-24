@@ -145,7 +145,7 @@ open class MetadataHelper(context: Context) {
             }
         }
 
-        private fun displayAlbumArt() {
+        fun displayAlbumArt() {
             try {
                 if (isNotSameSong()) {
                     lastAlbum = album

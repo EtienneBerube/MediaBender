@@ -61,12 +61,18 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    override fun onRestart() {
-        super.onRestart()
+    override fun onStart() {
+        super.onStart()
         setChosenTheme()
-        if ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) loadResourcesForDarkTheme()
-        else loadResourcesForWhiteTheme()
-        if (musicPlaying) indicator.resume(true) else indicator.stop(false)
+        if ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen)
+            loadResourcesForDarkTheme()
+        else
+            loadResourcesForWhiteTheme()
+
+        if (musicPlaying)
+            indicator.resume(true)
+        else
+            indicator.stop(false)
 
     }
 
@@ -96,6 +102,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        metadataHelper.MyReceiver().displayAlbumArt()
         updatePlaybackState(mediaControls.isMusicPlaying())
         SerialCommunicationService.instance.isAppInBackground = false
 
