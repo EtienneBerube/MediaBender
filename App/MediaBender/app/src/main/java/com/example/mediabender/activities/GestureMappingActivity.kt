@@ -105,7 +105,6 @@ class GestureMappingActivity : AppCompatActivity() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        Toast.makeText(this,"CONFIG CHANGE",Toast.LENGTH_SHORT).show()
         super.onConfigurationChanged(newConfig)
         loadAppropriateTheme()
     }
