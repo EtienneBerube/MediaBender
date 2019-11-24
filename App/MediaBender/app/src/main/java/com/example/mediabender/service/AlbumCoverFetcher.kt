@@ -21,6 +21,7 @@ import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 import android.R.attr.password
+import com.example.mediabender.helpers.NetworkConnectionHelper
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
@@ -55,10 +56,18 @@ class AlbumCoverFetcher(private val context: Context, private var lastAlbumArt: 
         val album = params[0]
         val artist = params[1]
 
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
-        val isConnected: Boolean = activeNetwork?.isConnected ?: false
+        var isConnected: Boolean
+
+        if (android.os.Build.VERSION.SDK_INT >= 29){
+            isConnected = NetworkConnectionHelper.getInstance(context).isNetworkConnected
+        } else{
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+            isConnected = activeNetwork?.isConnected ?: false
+        }
+
+
 
         if (isConnected) {
 
