@@ -49,7 +49,7 @@ class SettingsActivity : AppCompatActivity() {
         // Note that the Toolbar defined in the layout has the id "my_toolbar"
         setSupportActionBar(findViewById(R.id.settings_toolbar))
         supportActionBar?.elevation = 0f
-        
+
         getThemeSaved()
         setupSettings()
         setUpToolBar()
