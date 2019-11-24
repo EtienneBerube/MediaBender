@@ -31,21 +31,23 @@
 
         <Button
             android:id="@+id/b_default_gestures"
-            android:layout_width="wrap_content"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
-            android:text="DEFAULT SETTINGS"
+            android:text="DEFAULT GESTURES"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_events_phone" />
 
         <Button
             android:id="@+id/b_save_gestures"
-            android:layout_width="wrap_content"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
-            android:text="Save"
+            android:text="SAVE"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_events_phone" />
 
@@ -75,7 +77,7 @@
 
         <Button
             android:id="@+id/b_save_events"
-            android:layout_width="wrap_content"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
