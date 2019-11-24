@@ -12,7 +12,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mediabender.R
 import com.example.mediabender.dialogs.PlayerConnectionDialog
-//import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
+import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
 import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaPlayer
@@ -36,12 +36,10 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     private lateinit var accountsLabel: TextView
     private lateinit var settingsActivity: View
     private lateinit var nightModeButton: NightModeButton
-    //private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
+    private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
     private lateinit var stepperTouch: StepperTouch
     private var darkThemeChosen = true
-    private var ledState = true
     private lateinit var installedPlayers: List<ApplicationInfo>
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,16 +50,13 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         setSupportActionBar(findViewById(R.id.settings_toolbar))
         supportActionBar?.elevation = 0f
 
-
+        playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(
+            getSharedPreferences(
+                "Player Accounts",
+                Context.MODE_PRIVATE
+            )
+        )
         getThemeSaved()
-
-//        playerSharedPreferenceHelper = PlayerAccountSharedPreferenceHelper(
-//            getSharedPreferences(
-//                "Player Accounts",
-//                Context.MODE_PRIVATE
-//            )
-//        )
-
         setupSettings()
         setUpToolBar()
         loadAppropriateTheme()
@@ -91,18 +86,18 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
     }
 
     override fun acceptConnectionOnDismiss(name: MediaPlayer, playerAccount: PlayerAccount) {
-//        playerSharedPreferenceHelper.savePlayerAccount(playerAccount, name)
-//        when (name) {
-//            MediaPlayer.SPOTIFY -> {
-//                setupSpotify()
-//            }
-//            MediaPlayer.APPLE_MUSIC -> {
-//                setupApplePlayMusic()
-//            }
-//            MediaPlayer.GOOGLE_PLAY -> {
-//                setupGooglePlayMusic()
-//            }
-//        }
+        playerSharedPreferenceHelper.savePlayerAccount(playerAccount, name)
+        when (name) {
+            MediaPlayer.SPOTIFY -> {
+                setupSpotify()
+            }
+            MediaPlayer.APPLE_MUSIC -> {
+                setupApplePlayMusic()
+            }
+            MediaPlayer.GOOGLE_PLAY -> {
+                setupGooglePlayMusic()
+            }
+        }
     }
 
     private fun setupSpotify() {
@@ -112,15 +107,14 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 ?.let { startActivity(it) }
         }
 
-        //refactored for sw20
-//        spotifyViewHolder.activeCircle = findViewById(R.id.spotify_active_circle)
+        spotifyViewHolder.activeCircle = findViewById(R.id.spotify_active_circle)
 
         spotifyViewHolder.connectedTextView = findViewById(R.id.spotify_connection_textview)
-//        spotifyViewHolder.setConnectedTextWithEmail(
-//            playerSharedPreferenceHelper.getPlayerAccount(
-//                MediaPlayer.SPOTIFY
-//            )
-//        )
+        spotifyViewHolder.setConnectedTextWithEmail(
+            playerSharedPreferenceHelper.getPlayerAccount(
+                MediaPlayer.SPOTIFY
+            )
+        )
 
         if (MediaPlayer.SPOTIFY.packageName !in installedPlayers.map { player -> player.packageName }) {
             spotifyViewHolder.cardView.visibility = View.GONE
@@ -134,15 +128,14 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 ?.let { startActivity(it) }
         }
 
-        //refactored for sw20
-//        googlePlayViewHolder.activeCircle = findViewById(R.id.google_play_active_circle)
+        googlePlayViewHolder.activeCircle = findViewById(R.id.google_play_active_circle)
 
         googlePlayViewHolder.connectedTextView = findViewById(R.id.google_play_connection_textview)
-//        googlePlayViewHolder.setConnectedTextWithEmail(
-//            playerSharedPreferenceHelper.getPlayerAccount(
-//                MediaPlayer.GOOGLE_PLAY
-//            )
-//        )
+        googlePlayViewHolder.setConnectedTextWithEmail(
+            playerSharedPreferenceHelper.getPlayerAccount(
+                MediaPlayer.GOOGLE_PLAY
+            )
+        )
 
         if (MediaPlayer.GOOGLE_PLAY.packageName !in installedPlayers.map { player -> player.packageName }) {
             googlePlayViewHolder.cardView.visibility = View.GONE
@@ -156,15 +149,14 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
                 ?.let { startActivity(it) }
         }
 
-        //refactored for sw20
-//        appleMusicViewHolder.activeCircle = findViewById(R.id.apple_music_active_circle)
+        appleMusicViewHolder.activeCircle = findViewById(R.id.apple_music_active_circle)
 
         appleMusicViewHolder.connectedTextView = findViewById(R.id.apple_music_connection_textview)
-//        appleMusicViewHolder.setConnectedTextWithEmail(
-//            playerSharedPreferenceHelper.getPlayerAccount(
-//                MediaPlayer.APPLE_MUSIC
-//            )
-//        )
+        appleMusicViewHolder.setConnectedTextWithEmail(
+            playerSharedPreferenceHelper.getPlayerAccount(
+                MediaPlayer.APPLE_MUSIC
+            )
+        )
 
         if (MediaPlayer.APPLE_MUSIC.packageName !in installedPlayers.map { player -> player.packageName }) {
             appleMusicViewHolder.cardView.visibility = View.GONE
@@ -181,7 +173,6 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
 
         findViewById<Button>(R.id.settings_test_connection_button).setOnClickListener { testSensorConnection() }
         findViewById<Button>(R.id.settings_gesture_button).setOnClickListener { remapGesture() }
-        findViewById<Switch>(R.id.settings_led_switch).setOnClickListener { ledSwitch() }
 
         nightMode()
         setUpStepper()
@@ -212,46 +203,22 @@ class SettingsActivity : AppCompatActivity(), PlayerConnectionDialog.ConnectionD
         startActivity(intent)
     }
 
-
-    private fun ledSwitch(){
-
-        ledState = !(ledState)
-
-        if (ledState == true){
-            val toast = Toast.makeText(applicationContext,"Feedback Light On",
-                    Toast.LENGTH_SHORT
-            )
-            toast.show()
-        }
-        else {
-            val toast = Toast.makeText(applicationContext,"Feedback Light Off",
-                    Toast.LENGTH_SHORT
-            )
-            toast.show()
-        }
-
-
-
-    }
-
-
     fun setRunningIndicator(playerPackage: MediaPlayer, active: Boolean) {
-        //function definition refactored for SW20
-//        val resource =
-//            if (active) R.drawable.active_circle_account else R.drawable.inactive_circle_account
-//
-//        when (playerPackage) {
-//            MediaPlayer.SPOTIFY -> {
-//                spotifyViewHolder.activeCircle.setImageResource(resource)
-//            }
-//            MediaPlayer.APPLE_MUSIC -> {
-//                appleMusicViewHolder.activeCircle.setImageResource(resource)
-//            }
-//            MediaPlayer.GOOGLE_PLAY -> {
-//                googlePlayViewHolder.activeCircle.setImageResource(resource)
-//            }
-//        }
-//
+        val resource =
+            if (active) R.drawable.active_circle_account else R.drawable.inactive_circle_account
+
+        when (playerPackage) {
+            MediaPlayer.SPOTIFY -> {
+                spotifyViewHolder.activeCircle.setImageResource(resource)
+            }
+            MediaPlayer.APPLE_MUSIC -> {
+                appleMusicViewHolder.activeCircle.setImageResource(resource)
+            }
+            MediaPlayer.GOOGLE_PLAY -> {
+                googlePlayViewHolder.activeCircle.setImageResource(resource)
+            }
+        }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

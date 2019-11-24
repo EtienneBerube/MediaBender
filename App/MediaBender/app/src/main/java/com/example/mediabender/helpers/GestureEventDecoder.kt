@@ -151,7 +151,6 @@ class GestureEventDecoder constructor(private var context: Context) {
     // NOTE: it is important to note that this function edits the member mediaGestureMap, but DOES NOT
     //       SAVE IT TO SHARED PREFERENCES. We want to save the map only once, once all user changes
     //       have been made
-<<<<<<< HEAD
     fun editMap(gesture: Gesture, event: MediaEventType) {
         if (lastModifiedMediaEvent == event) { // if we are changing the same event twice in a row
             mediaGestureMap.forcePut( // re-map the last booted event with it's previous gesture
@@ -178,11 +177,6 @@ class GestureEventDecoder constructor(private var context: Context) {
                 lastBootedPhoneEvent
             )
         }
-=======
-    fun editGestureMap(gesture: Gesture, event: MediaEventType) {
-        (gestureMap as HashMap<Gesture, MediaEventType>)[gesture] = event
-    }
->>>>>>> origin/sw20-xuebin
 
         // if the event at the given gesture doesnt exist, its because we are not booting anything
         if (phoneGestureMap[gesture] == null) {
