@@ -1,5 +1,6 @@
 package com.example.mediabender
 
+import android.app.KeyguardManager
 import android.content.Context
 import android.telecom.Call
 import android.content.Intent
@@ -8,12 +9,20 @@ import android.telecom.TelecomManager
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.widget.Toast
+import android.app.NotificationManager
+import android.media.AudioManager
+import android.view.KeyEvent
+import androidx.core.content.ContextCompat.getSystemService
+
+
 
 class PhoneControls(val context: Context) {
 
     var telephony: TelephonyManager
-    lateinit var telecomManager : TelecomManager
-    lateinit var call : Call
+   // var telecomManager : TelecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+
+   // var keyguardManager : KeyguardManager
+    //var audioManager : AudioManager
 
     init {
 
@@ -21,29 +30,33 @@ class PhoneControls(val context: Context) {
         telephony = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE)
 
-        telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
 
+        //keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+       // audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-    }
-
-   fun answerCall() {
-
+        //telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
 
     }
 
 
-    fun declineCall() {
-
-        this.call.reject(true, "Cannot Talk. Currently Driving")
-
+   /* fun answerCall(context: Context) {
+        val buttonUp = Intent(Intent.ACTION_MEDIA_BUTTON)
+        buttonUp.putExtra(
+            Intent.EXTRA_KEY_EVENT,
+            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_HEADSETHOOK)
+        )
+        context.sendOrderedBroadcast(buttonUp, "android.permission.CALL_PRIVILEGED")
     }
+*/
+    /*private fun declineCall(context: Context) {
 
-
-    fun disconnectCall() {
-
-        this.call.disconnect()
-
-    }
+        val buttonDown = Intent(Intent.ACTION_MEDIA_BUTTON)
+        buttonDown.putExtra(
+            Intent.EXTRA_KEY_EVENT,
+            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_HEADSETHOOK)
+        )
+        context.sendOrderedBroadcast(buttonDown, "android.permission.CALL_PRIVILEGED")
+    }*/
 
 
     inner class MyPhoneListener(val context: Context) : PhoneStateListener() {
@@ -62,7 +75,7 @@ class PhoneControls(val context: Context) {
                 TelephonyManager.CALL_STATE_RINGING -> {
                     phoneRinging = true
                     Toast.makeText(context, "Call Listener", Toast.LENGTH_SHORT).show()
-                    answerCall()
+                    //answerCall(context)
 
                 }
             }
