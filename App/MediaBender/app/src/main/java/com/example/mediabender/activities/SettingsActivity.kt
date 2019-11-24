@@ -12,7 +12,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mediabender.R
 import com.example.mediabender.dialogs.PlayerConnectionDialog
-import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
+//import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
 import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaPlayer
@@ -36,10 +36,11 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var accountsLabel: TextView
     private lateinit var settingsActivity: View
     private lateinit var nightModeButton: NightModeButton
-    private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
+//    private lateinit var playerSharedPreferenceHelper: PlayerAccountSharedPreferenceHelper
     private lateinit var stepperTouch: StepperTouch
     private var darkThemeChosen = true
     private lateinit var installedPlayers: List<ApplicationInfo>
+    private var ledState = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
