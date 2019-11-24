@@ -17,10 +17,11 @@ import com.example.mediabender.activities.SettingsActivity
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
+import com.example.mediabender.service.Request
+import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
 import io.gresse.hugo.vumeterlibrary.VuMeterView
-
-
+import com.example.mediabender.service.ServiceRequest
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -91,32 +92,27 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-
-        SerialCommunicationService.instance.removeDataOnReceiveListener()
+        SerialCommunicationService.instance.isAppInBackground = true
     }
 
     override fun onResume() {
         super.onResume()
-
-        SerialCommunicationService.instance.setDataOnReceiveListener {
-            runOnUiThread {
-                val event = gestureDecoder.gestureToMediaEvent(it.gesture)
-                Toast.makeText(
-                    applicationContext,
-                    "Got gesture: ${it.gesture.toString} -> ${event.name}",
-                    Toast.LENGTH_SHORT
-                ).show()
-                mediaControls.executeEvent(event, this)
-            }
-        }
-
-        if (musicPlaying) indicator.resume(true) else indicator.stop(false)
+        SerialCommunicationService.instance.isAppInBackground = false
 
     }
 
     private fun initSerialCommunication() {
         SerialCommunicationService.instance.setService(this)
         SerialCommunicationService.instance.requestUSBpermission(applicationContext)
+        SerialCommunicationService.instance.setDataOnReceiveListener {
+            runOnUiThread {
+                val event = gestureDecoder.gestureToMediaEvent(it.gesture)
+                mediaControls.executeEvent(event, this)
+            }
+        }
+
+        if (musicPlaying) indicator.resume(true) else indicator.stop(false)
+
     }
 
     // cannot initialize the MediaControls object before the onCreate because it calls
@@ -260,7 +256,7 @@ class MainActivity : AppCompatActivity() {
         artistNameMainTextView?.setTextColor(getColor(R.color.colorPrimaryDark))
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         supportActionBar?.setBackgroundDrawable(getDrawable(R.color.colorPrimaryWhite))
-        menu_main?.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
+        menu_main.getItem(0).setIcon(getDrawable(R.drawable.icons_settings_black))
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
     }
 

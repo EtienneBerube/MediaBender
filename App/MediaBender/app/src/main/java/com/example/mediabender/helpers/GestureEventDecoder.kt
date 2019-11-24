@@ -2,7 +2,6 @@ package com.example.mediabender.helpers
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.provider.ContactsContract
 import com.example.mediabender.R
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.models.PhoneEventType
@@ -16,9 +15,6 @@ class GestureEventDecoder constructor(private var context: Context) {
     private val SHARED_PREFERENCE_NAME = "gesture_event_map"
     private val sharedPreferences: SharedPreferences
 
-    // map types for gettting from shared preferences
-    private val MAP_MEDIA: Int = 0
-    private val MAP_PHONE: Int = 1
     private var lastModifiedMediaEvent: MediaEventType = MediaEventType.NONE
     private var lastBootedMediaEvent: MediaEventType = MediaEventType.NONE
     private var lastModifiedPhoneEvent: PhoneEventType = PhoneEventType.NONE
@@ -29,9 +25,6 @@ class GestureEventDecoder constructor(private var context: Context) {
     init{
         sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
 
-        // TODO: there is an important weird edge case: if the user manually sets all of their gestures
-        // to none, then the app will reinitialize their gestures to the default gestures
-
         val mediaMap: EnumBiMap<Gesture, MediaEventType>? = getMediaMapFromSharedPreferences()
         val phoneMap: EnumBiMap<Gesture, PhoneEventType>? = getPhoneMapFromSharedPreferences()
 
@@ -39,8 +32,7 @@ class GestureEventDecoder constructor(private var context: Context) {
             mediaGestureMap = EnumBiMap.create( mapOf(
                 Gesture.LEFT to MediaEventType.PREVIOUS_SONG,
                 Gesture.RIGHT to MediaEventType.SKIP_SONG,
-                Gesture.NEAR to MediaEventType.PLAY,
-                Gesture.FAR to MediaEventType.PAUSE,
+                Gesture.NEAR to MediaEventType.TOGGLE_PLAYSTATE,
                 Gesture.UP to MediaEventType.RAISE_VOLUME,
                 Gesture.DOWN to MediaEventType.LOWER_VOLUME,
                 Gesture.NONE to MediaEventType.NONE
@@ -208,15 +200,14 @@ class GestureEventDecoder constructor(private var context: Context) {
     // one of the mapping, then the mediaGestureMap will have a length of less than 7, and the
     // phoneGestureMap will have a length of less than 3
     fun mapsAreValid(): Boolean {
-        // 7 from media controls map: 6 for the gestures, 1 for none
+        // 6 from media controls map: 5 for the gestures, 1 for none
         // 3 from phone map         : 2 for the gestures, 1 for none
-        return mediaGestureMap.keys.count() == 7 && phoneGestureMap.keys.count() == 5
+        return mediaGestureMap.keys.count() == 6 && phoneGestureMap.keys.count() == 5
     }
 
     private fun stringToMediaEvent(str: String?): MediaEventType {
         return when(str) {
-            "PLAY" -> MediaEventType.PLAY
-            "PAUSE" -> MediaEventType.PAUSE
+            "TOGGLE_PLAYSTATE" -> MediaEventType.TOGGLE_PLAYSTATE
             "SKIP_SONG" -> MediaEventType.SKIP_SONG
             "PREVIOUS_SONG" -> MediaEventType.PREVIOUS_SONG
             "RAISE_VOLUME" -> MediaEventType.RAISE_VOLUME

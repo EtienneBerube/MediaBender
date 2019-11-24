@@ -56,7 +56,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/settings_card"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="232dp"
             android:layout_margin="15dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
@@ -103,10 +103,10 @@
 
                     android:layout_width="0dp"
                     android:layout_height="50dp"
-                    android:layout_marginStart="12dp"
-
-                    android:layout_marginTop="12dp"
                     android:layout_marginEnd="12dp"
+
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/themed_button"
                     android:text="Gestures"
                     android:textColor="#FFFFFF"
@@ -116,13 +116,15 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/nightModeButton" />
 
+                <!--Need To Change Colour-->
                 <Button
                     android:id="@+id/settings_test_connection_button"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
+                    android:layout_marginEnd="12dp"
+
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
-                    android:layout_marginEnd="12dp"
                     android:background="@drawable/themed_button"
                     android:text="Test connection"
                     android:textColor="#FFFFFF"
@@ -130,6 +132,61 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/settings_gesture_button" />
+
+                <Spinner
+                    android:id="@+id/settings_theme_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="14dp"
+                    android:entries="@array/themesDarkSaved"
+                    android:minWidth="50dp"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toEndOf="@+id/theme"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/theme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="14dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Theme"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/sensi_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="18dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Gesture Sensitivity"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/settings_test_connection_button" />
+
+                <nl.dionsegijn.steppertouch.StepperTouch
+                    android:id="@+id/StepperTouch"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/settings_test_connection_button"
+                    app:stepperBackgroundColor="@color/logo_pink"
+                    />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>

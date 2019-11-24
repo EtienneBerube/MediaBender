@@ -5,8 +5,6 @@ enum class MediaEventType {
     LOWER_VOLUME,
     SKIP_SONG,
     PREVIOUS_SONG,
-    PLAY,
-    PAUSE,
-    NONE,
-    TOGGLE
+    TOGGLE_PLAYSTATE,
+    NONE
 }
