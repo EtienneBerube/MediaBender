@@ -46,7 +46,7 @@
         <!--Gesture Map Activity-->
         <activity
             android:name=".activities.GestureMappingActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:configChanges="uiMode"
             android:parentActivityName=".activities.SettingsActivity"
             android:screenOrientation="portrait"></activity>
 

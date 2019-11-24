@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="150dp"
         android:layout_marginBottom="402dp"
+        app:cardCornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +44,9 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="15dp"
+                android:background="@drawable/themed_button"
                 android:text="NO"
+                android:textColor="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/tv_prompt"
                 app:layout_constraintTop_toBottomOf="@+id/tv_prompt" />
@@ -55,7 +58,9 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:background="@drawable/themed_button"
                 android:text="YES"
+                android:textColor="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_prompt"
                 app:layout_constraintTop_toBottomOf="@+id/tv_prompt" />
