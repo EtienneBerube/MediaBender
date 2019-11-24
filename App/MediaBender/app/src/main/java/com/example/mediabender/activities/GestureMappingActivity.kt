@@ -1,12 +1,14 @@
 package com.example.mediabender.activities
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.core.view.ViewCompat
 import com.example.mediabender.R
 import com.example.mediabender.dialogs.YesNoDialog
 import com.example.mediabender.helpers.GestureEventDecoder
@@ -305,6 +307,16 @@ class GestureMappingActivity : AppCompatActivity() {
         phoneEventsTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         card_events_phone_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
 
+        ViewCompat.setBackgroundTintList(spinner_togglePlaystate, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
+        ViewCompat.setBackgroundTintList(spinner_next, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
+        ViewCompat.setBackgroundTintList(spinner_previous, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
+        ViewCompat.setBackgroundTintList(spinner_volUp, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
+        ViewCompat.setBackgroundTintList(spinner_volDown, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
+        ViewCompat.setBackgroundTintList(spinner_answer, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
+        ViewCompat.setBackgroundTintList(spinner_decline, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
+        ViewCompat.setBackgroundTintList(spinner_phone_volUp, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
+        ViewCompat.setBackgroundTintList(spinner_phone_volDown, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
+
         window.statusBarColor = getColor(R.color.colorPrimaryDark)
     }
 
@@ -326,6 +338,16 @@ class GestureMappingActivity : AppCompatActivity() {
         declineTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         phoneVolUpTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         phoneVolDownTextView.setTextColor(getColor(R.color.colorPrimaryDark))
+
+        ViewCompat.setBackgroundTintList(spinner_togglePlaystate, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
+        ViewCompat.setBackgroundTintList(spinner_next, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
+        ViewCompat.setBackgroundTintList(spinner_previous, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
+        ViewCompat.setBackgroundTintList(spinner_volUp, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
+        ViewCompat.setBackgroundTintList(spinner_volDown, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
+        ViewCompat.setBackgroundTintList(spinner_answer, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
+        ViewCompat.setBackgroundTintList(spinner_decline, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
+        ViewCompat.setBackgroundTintList(spinner_phone_volUp, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
+        ViewCompat.setBackgroundTintList(spinner_phone_volDown, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
 
         phoneEventsTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         card_events_phone_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
