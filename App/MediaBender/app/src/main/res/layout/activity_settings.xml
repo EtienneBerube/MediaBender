@@ -13,34 +13,6 @@
         tools:context=".activities.SettingsActivity">
 
         <!--Need To Change Colour-->
-
-        <!--Need to Change Colour-->
-        <TextView
-            android:id="@+id/accountsTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="Accounts"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/settings_card" />
-        <!--Need To Change Colour-->
-        <TextView
-            android:id="@+id/settingsTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="75dp"
-            android:fontFamily="sans-serif-medium"
-            android:text="Settings"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/settings_toolbar"
             android:layout_width="0dp"
@@ -53,6 +25,143 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/relativeLayout"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <!--Need to Change Colour-->
+        <TextView
+            android:id="@+id/settingsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="75dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Settings"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <!--Need To Change Colour-->
+        <TextView
+            android:id="@+id/accountsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Accounts"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/settings_card" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/settings_card"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_margin="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            app:cardBackgroundColor="#474747"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="5dp"
+            app:cardMaxElevation="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/settingsTitle">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/settings_inner_constraint"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toTopOf="@+id/settings_gesture_button"
+                app:layout_constraintTop_toTopOf="@+id/settings_gesture_button">
+
+                <TextView
+                    android:id="@+id/theme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="22dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Theme"
+                    android:textColor="#FFFFFF"
+                    android:textSize="19sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Night Mode Button -->
+
+                <com.shrikanthravi.library.NightModeButton
+                    android:id="@+id/nightModeButton"
+                    android:layout_width="75dp"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/settings_gesture_button"
+                    android:layout_width="0dp"
+                    android:layout_height="43dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/themed_button"
+                    android:text="Gestures"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/StepperTouch" />
+
+                <!--Need To Change Colour-->
+                <Button
+                    android:id="@+id/settings_test_connection_button"
+                    android:layout_width="0dp"
+                    android:layout_height="43dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/themed_button"
+                    android:text="Test connection"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/settings_gesture_button" />
+
+
+                <!--Gesture Sensitivity-->
+                <TextView
+                    android:id="@+id/sensi_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="28dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Gesture Sensitivity"
+                    android:textColor="#FFFFFF"
+                    android:textSize="19sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/theme" />
+
+                <!-- Slider -->
+                <nl.dionsegijn.steppertouch.StepperTouch
+                    android:id="@+id/StepperTouch"
+                    android:layout_width="150dp"
+                    android:layout_height="43dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nightModeButton"
+                    app:stepperBackgroundColor="@color/redButton" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/spotify_card"
@@ -99,17 +208,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/spotify_title" />
 
-                <!--                refactored in SW20-->
-                <!--                <ImageView-->
-                <!--                    android:id="@+id/spotify_active_circle"-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginEnd="16dp"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                    app:layout_constraintTop_toTopOf="parent"-->
-                <!--                    app:layout_constraintVertical_bias="0.509"-->
-                <!--                    app:srcCompat="@drawable/active_circle_account" />-->
+                <ImageView
+                    android:id="@+id/spotify_active_circle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.509"
+                    app:srcCompat="@drawable/active_circle_account" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -121,8 +229,8 @@
             android:layout_height="75dp"
             android:layout_margin="15dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
             android:layout_marginTop="24dp"
+            android:layout_marginRight="15dp"
             app:cardBackgroundColor="#FF8C00"
             app:cardCornerRadius="10dp"
             app:cardElevation="5dp"
@@ -137,17 +245,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <!--                refactored in SW20-->
-                <!--                <ImageView-->
-                <!--                    android:id="@+id/google_play_active_circle"-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginEnd="16dp"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                    app:layout_constraintTop_toTopOf="parent"-->
-                <!--                    app:layout_constraintVertical_bias="0.509"-->
-                <!--                    app:srcCompat="@drawable/active_circle_account" />-->
+                <ImageView
+                    android:id="@+id/google_play_active_circle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.509"
+                    app:srcCompat="@drawable/active_circle_account" />
 
                 <TextView
                     android:id="@+id/google_play_connection_textview"
@@ -180,10 +287,10 @@
             android:layout_width="0dp"
             android:layout_height="75dp"
             android:layout_margin="15dp"
-            android:layout_marginBottom="4dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
             android:layout_marginTop="24dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="4dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="5dp"
             app:cardMaxElevation="5dp"
@@ -199,17 +306,16 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/apple_music_gradient">
 
-                <!--                refactored in SW20-->
-                <!--                <ImageView-->
-                <!--                    android:id="@+id/apple_music_active_circle"-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginEnd="16dp"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                    app:layout_constraintTop_toTopOf="parent"-->
-                <!--                    app:layout_constraintVertical_bias="0.509"-->
-                <!--                    app:srcCompat="@drawable/active_circle_account" />-->
+                <ImageView
+                    android:id="@+id/apple_music_active_circle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.509"
+                    app:srcCompat="@drawable/active_circle_account" />
 
                 <TextView
                     android:id="@+id/apple_music_connection_textview"
@@ -236,107 +342,6 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/settings_card"
-            android:layout_width="0dp"
-            android:layout_height="240dp"
-            android:layout_margin="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            app:cardBackgroundColor="#474747"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="5dp"
-            app:cardMaxElevation="5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/settingsTitle">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/settings_inner_constraint"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <Switch
-                    android:id="@+id/settings_led_switch"
-                    android:layout_width="330dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:layout_marginTop="12dp"
-                    android:text="Feedback Lights"
-                    android:textColor="#FFFFFF"
-                    android:checked="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/settings_test_connection_button" />
-
-                <Button
-                    android:id="@+id/settings_gesture_button"
-
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="12dp"
-
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/themed_button"
-                    android:text="Gestures"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/settings_theme_spinner" />
-
-                <!--Need To Change Colour-->
-                <Button
-                    android:id="@+id/settings_test_connection_button"
-
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginEnd="12dp"
-
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/themed_button"
-                    android:text="Test connection"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/settings_gesture_button" />
-
-                <Spinner
-                    android:id="@+id/settings_theme_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginTop="14dp"
-                    android:entries="@array/themesDarkSaved"
-                    android:minWidth="50dp"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@+id/theme"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/theme"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="14dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Theme"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
