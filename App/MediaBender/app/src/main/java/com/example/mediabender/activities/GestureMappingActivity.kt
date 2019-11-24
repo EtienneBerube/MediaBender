@@ -16,11 +16,15 @@ import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
 import com.example.mediabender.models.PhoneEventType
 import com.example.mediabender.service.Gesture
+import com.google.common.collect.EnumBiMap
 import kotlinx.android.synthetic.main.activity_gesture_mapping.*
 
 class GestureMappingActivity : AppCompatActivity() {
 
     private lateinit var gestureEventDecoder: GestureEventDecoder
+    private lateinit var tempMediaMap: EnumBiMap<Gesture, MediaEventType>
+    private lateinit var tempPhoneMap: EnumBiMap<Gesture, PhoneEventType>
+
     private lateinit var standardEventsTextView : TextView
     private lateinit var phoneEventsTextView: TextView
 
@@ -58,6 +62,27 @@ class GestureMappingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_gesture_mapping)
 
         gestureEventDecoder = GestureEventDecoder.getInstance(applicationContext)
+        tempMediaMap = EnumBiMap.create(mapOf(
+            Gesture.UP to gestureEventDecoder.gestureToMediaEvent(Gesture.UP)))
+        with (tempMediaMap) {
+            forcePut(Gesture.DOWN, gestureEventDecoder.gestureToMediaEvent(Gesture.DOWN))
+            forcePut(Gesture.RIGHT, gestureEventDecoder.gestureToMediaEvent(Gesture.RIGHT))
+            forcePut(Gesture.LEFT, gestureEventDecoder.gestureToMediaEvent(Gesture.LEFT))
+            forcePut(Gesture.FAR, gestureEventDecoder.gestureToMediaEvent(Gesture.FAR))
+            forcePut(Gesture.NEAR, gestureEventDecoder.gestureToMediaEvent(Gesture.NEAR))
+            forcePut(Gesture.NONE, gestureEventDecoder.gestureToMediaEvent(Gesture.NONE))
+        }
+        tempPhoneMap = EnumBiMap.create(mapOf(
+            Gesture.UP to gestureEventDecoder.gestureToPhoneEvent(Gesture.UP)))
+            with (tempPhoneMap) {
+                forcePut(Gesture.DOWN, gestureEventDecoder.gestureToPhoneEvent(Gesture.DOWN))
+                forcePut(Gesture.RIGHT, gestureEventDecoder.gestureToPhoneEvent(Gesture.RIGHT))
+                forcePut(Gesture.LEFT, gestureEventDecoder.gestureToPhoneEvent(Gesture.LEFT))
+                forcePut(Gesture.FAR, gestureEventDecoder.gestureToPhoneEvent(Gesture.FAR))
+                forcePut(Gesture.NEAR, gestureEventDecoder.gestureToPhoneEvent(Gesture.NEAR))
+                forcePut(Gesture.NONE, gestureEventDecoder.gestureToPhoneEvent(Gesture.NONE))
+            }
+
         setChosenTheme()
         setUpToolbar()
         setupUI()
@@ -76,18 +101,11 @@ class GestureMappingActivity : AppCompatActivity() {
 
     // need to make sure that when someone tries to go back, they are aware their map wasn't saved
     override fun onBackPressed() {
-        if (mappingChanged) {
-            YesNoDialog(
-                "You are about to exit with unsaved changes. Are you sure?",
-                { finish() }, // on "yes" press, want to leave without doing anything
-                {}          // on "no" press, want to return to the activity
-            ).show(supportFragmentManager, "GestureMappingActivity: onBackPressed")
-        } else {
-            finish()
-        }
+        savePrompt()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        Toast.makeText(this,"CONFIG CHANGE",Toast.LENGTH_SHORT).show()
         super.onConfigurationChanged(newConfig)
         loadAppropriateTheme()
     }
@@ -171,11 +189,11 @@ class GestureMappingActivity : AppCompatActivity() {
         // creating an array adapter for the spinners
         ArrayAdapter<String>(
             this,
-            R.layout.my_spinner_item,
+            R.layout.my_spinner_item_white,
             gestures
         ).also { adapter ->
             // specifying the layout for the list when it appears
-            adapter.setDropDownViewResource(R.layout.my_spinner_drop_down)
+            adapter.setDropDownViewResource(R.layout.my_spinner_drop_down_black)
 
             // applying the adapter to the spinners
             spinner_togglePlaystate.adapter = adapter
@@ -190,6 +208,18 @@ class GestureMappingActivity : AppCompatActivity() {
             spinner_phone_volDown.adapter = adapter
         }
 
+        // setting drop down triangle color
+        val color = getColor(R.color.colorPrimaryWhite)
+        ViewCompat.setBackgroundTintList(spinner_togglePlaystate, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_next, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_previous, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_volUp, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_volDown, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_answer, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_decline, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_phone_volUp, ColorStateList.valueOf(color))
+        ViewCompat.setBackgroundTintList(spinner_phone_volDown, ColorStateList.valueOf(color))
+
         // setting the starting value of the spinner based on user shared preferences
         refreshSpinners()
 
@@ -203,11 +233,6 @@ class GestureMappingActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                (parent?.getChildAt(0) as TextView).setTextColor( when(darkThemeChosen) {
-                    true -> getColor(R.color.colorPrimaryWhite)
-                    false -> getColor(R.color.colorPrimaryDark)
-                })
-
                 // based on which spinner, fetch the media control chosen
                 val event: MediaEventType? = when (parent?.id) {
                     R.id.spinner_togglePlaystate -> MediaEventType.TOGGLE_PLAYSTATE
@@ -266,18 +291,35 @@ class GestureMappingActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                if (mappingChanged) {
-                    YesNoDialog(
-                        "You are about to exit with unsaved changes. Are you sure?",
-                        { finish() }, // on "yes" press, want to leave without doing anything
-                        {}          // on "no" press, want to return to the activity
-                    ).show(supportFragmentManager, "GestureMappingActivity: onBackPressed")
-                } else {
-                    finish()
-                }
+                savePrompt()
             }
         }
         return true
+    }
+
+    // reset the gesture event decoder to the original state (before any changes)
+    private fun discardChanges() {
+        for((k,v) in tempMediaMap) { // resetting media map
+            gestureEventDecoder.editMap(k,v)
+        }
+        for ((k,v) in tempPhoneMap) { // resetting phone map
+            gestureEventDecoder.editMap(k,v)
+        }
+    }
+
+    private fun savePrompt() {
+        if (mappingChanged) {
+            YesNoDialog(
+                "You are about to exit with unsaved changes. Are you sure?",
+                {
+                    discardChanges()
+                    finish()
+                }, // on "yes" press, want to discard changes then
+                {}          // on "no" press, want to return to the activity
+            ).show(supportFragmentManager, "GestureMappingActivity: onBackPressed")
+        } else {
+            finish()
+        }
     }
 
     private fun loadAppropriateTheme(){
@@ -288,69 +330,63 @@ class GestureMappingActivity : AppCompatActivity() {
     }
 
     private fun loadDarkTheme(){
-        togglePlaystateTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         standardEventsTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        nextTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        previousTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        volUpTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        volDownTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
 
         card_events_standard_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
         gestures_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         gestureView.setBackgroundColor(getColor(R.color.colorPrimaryDark))
         gestures_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_white)
 
-        answerTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        declineTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        phoneVolUpTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
-        phoneVolDownTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         phoneEventsTextView.setTextColor(getColor(R.color.colorPrimaryWhite))
         card_events_phone_constraint.setBackgroundColor(getColor(R.color.darkForToolbar))
 
-        ViewCompat.setBackgroundTintList(spinner_togglePlaystate, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
-        ViewCompat.setBackgroundTintList(spinner_next, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
-        ViewCompat.setBackgroundTintList(spinner_previous, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
-        ViewCompat.setBackgroundTintList(spinner_volUp, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
-        ViewCompat.setBackgroundTintList(spinner_volDown, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
-        ViewCompat.setBackgroundTintList(spinner_answer, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
-        ViewCompat.setBackgroundTintList(spinner_decline, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
-        ViewCompat.setBackgroundTintList(spinner_phone_volUp, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
-        ViewCompat.setBackgroundTintList(spinner_phone_volDown, ColorStateList.valueOf(getColor(R.color.colorPrimaryWhite)))
+        themeSpinners(true)
 
         window.statusBarColor = getColor(R.color.colorPrimaryDark)
     }
 
     private fun loadWhiteTheme(){
         standardEventsTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        togglePlaystateTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        nextTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         gestureView.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
-        previousTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        volUpTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        volDownTextView.setTextColor(getColor(R.color.colorPrimaryDark))
 
         card_events_standard_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
         gestures_toolbar.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         gestures_toolbar.navigationIcon = getDrawable(R.drawable.arrow_back_black)
         window.statusBarColor = getColor(R.color.whiteForStatusBar)
 
-        answerTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        declineTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        phoneVolUpTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-        phoneVolDownTextView.setTextColor(getColor(R.color.colorPrimaryDark))
-
-        ViewCompat.setBackgroundTintList(spinner_togglePlaystate, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
-        ViewCompat.setBackgroundTintList(spinner_next, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
-        ViewCompat.setBackgroundTintList(spinner_previous, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
-        ViewCompat.setBackgroundTintList(spinner_volUp, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
-        ViewCompat.setBackgroundTintList(spinner_volDown, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
-        ViewCompat.setBackgroundTintList(spinner_answer, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
-        ViewCompat.setBackgroundTintList(spinner_decline, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
-        ViewCompat.setBackgroundTintList(spinner_phone_volUp, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
-        ViewCompat.setBackgroundTintList(spinner_phone_volDown, ColorStateList.valueOf(getColor(R.color.colorPrimaryDark)))
+        themeSpinners(false)
 
         phoneEventsTextView.setTextColor(getColor(R.color.colorPrimaryDark))
         card_events_phone_constraint.setBackgroundColor(getColor(R.color.whiteForStatusBar))
+    }
+
+    // for theming spinners
+    private fun themeSpinners(darkTheme: Boolean) {
+        ArrayAdapter<String>(
+            this,
+            R.layout.my_spinner_item_white,
+            gestures
+        ).also { adapter ->
+            // specifying the layout for the list when it appears
+            adapter.setDropDownViewResource(when(darkTheme) {
+                true -> R.layout.my_spinner_drop_down_white
+                false -> R.layout.my_spinner_drop_down_black
+            })
+
+            // applying the adapter to the spinners
+            spinner_togglePlaystate.adapter = adapter
+            spinner_next.adapter = adapter
+            spinner_previous.adapter = adapter
+            spinner_volUp.adapter = adapter
+            spinner_volDown.adapter = adapter
+
+            spinner_answer.adapter = adapter
+            spinner_decline.adapter = adapter
+            spinner_phone_volUp.adapter = adapter
+            spinner_phone_volDown.adapter = adapter
+        }
+
+        refreshSpinners()
     }
 
     // save the gesture map to shared preferences
