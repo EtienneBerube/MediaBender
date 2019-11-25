@@ -104,4 +104,6 @@ class MediaControls(context: Context) {
     fun isMusicPlaying(): Boolean {
         return audioManager.isMusicActive
     }
+
+    fun getCurrentPlayer() {}
 }

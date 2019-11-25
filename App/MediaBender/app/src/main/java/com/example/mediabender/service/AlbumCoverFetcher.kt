@@ -17,7 +17,7 @@ import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
 
-class AlbumCoverFetcher(private val context: Context, private var lastAlbumArt: Bitmap?) : AsyncTask<String, Void, Bitmap?>() {
+class AlbumCoverFetcher(private val context: Context) : AsyncTask<String, Void, Bitmap?>() {
 
     private val MUSIC_BRAINZ_API_URL = "https://musicbrainz.org/ws/2/release-group/"
     private val COVER_ART_ORG_API_URL = "https://coverartarchive.org/release-group/"
@@ -112,8 +112,6 @@ class AlbumCoverFetcher(private val context: Context, private var lastAlbumArt: 
     //update album arts
     override fun onPostExecute(result: Bitmap?) {
         (context as? MainActivity)?.let {
-            //setting past album art
-            lastAlbumArt = result
             it.changeCoverArt(result)
         }
     }
