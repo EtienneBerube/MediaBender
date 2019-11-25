@@ -39,7 +39,7 @@ class SerialCommunicationService {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
         filter.addAction(ACTION_USB_PERMISSION)
         activity.applicationContext.registerReceiver(broadcastReceiver, filter)
-        gestureDecoder = GestureEventDecoder(activity.applicationContext)
+        gestureDecoder = GestureEventDecoder.getInstance(activity.applicationContext)
         mediaControls = MediaControls(activity.applicationContext)
     }
 
@@ -100,16 +100,12 @@ class SerialCommunicationService {
                         if(testUSBConnection()){
                             openPort(context)
                         }
-                    } else {
-                        appendLog(context, "PERMISSION NOT GRANTED\n")
                     }
                 }
                 UsbManager.ACTION_USB_DEVICE_ATTACHED -> {
-                    appendLog(context, "USB ATTACHED\n")
                     requestUSBpermission(context)
                 }
                 else -> {
-                    appendLog(context, "USB DETACHED\n")
                     if(isConnected){
                         closeConnection()
                     }
@@ -138,13 +134,8 @@ class SerialCommunicationService {
                 serialPort.syncRead(ByteArray(1), 0)
                 serialPort.read(dataReceivedCallBack)
                 sendRequest(ServiceRequest(Request.SENSIBILITY,Sensibility.LOW))//TODO: send the saved sensibility
-                appendLog(context, "Serial Connection Opened!\n")
 
-            } else {
-                appendLog(context, "PORT NOT OPEN\n")
             }
-        } else {
-            appendLog(context, "PORT IS NULL\n")
         }
     }
 
@@ -198,15 +189,6 @@ class SerialCommunicationService {
 
     fun removeDataOnReceiveListener(){
         dataReceiveListener = null
-    }
-
-    /**
-     * Creates toast and log of a text
-     */
-    private fun appendLog(context: Context, text: CharSequence) {
-        Log.d("SERIAL", "$text")
-        val toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
-        toast.show()
     }
 
     /**
