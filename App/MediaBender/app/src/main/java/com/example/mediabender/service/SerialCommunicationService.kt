@@ -39,7 +39,7 @@ class SerialCommunicationService {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
         filter.addAction(ACTION_USB_PERMISSION)
         activity.applicationContext.registerReceiver(broadcastReceiver, filter)
-        gestureDecoder = GestureEventDecoder(activity.applicationContext)
+        gestureDecoder = GestureEventDecoder.getInstance(activity.applicationContext)
         mediaControls = MediaControls(activity.applicationContext)
     }
 
@@ -100,7 +100,6 @@ class SerialCommunicationService {
                         if(testUSBConnection()){
                             openPort(context)
                         }
-                    } else {
                     }
                 }
                 UsbManager.ACTION_USB_DEVICE_ATTACHED -> {
@@ -136,9 +135,7 @@ class SerialCommunicationService {
                 serialPort.read(dataReceivedCallBack)
                 sendRequest(ServiceRequest(Request.SENSIBILITY,Sensibility.LOW))//TODO: send the saved sensibility
 
-            } else {
             }
-        } else {
         }
     }
 
