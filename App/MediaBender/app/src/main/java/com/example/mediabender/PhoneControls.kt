@@ -18,18 +18,21 @@ import android.media.AudioManager
 import android.os.Build
 import android.view.KeyEvent
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.content.ContextCompat.getSystemService
 
 
 
-class PhoneControls(context: Context) {
+class PhoneControls(context : Context) {
 
 
     private val context = context
     var telephony: TelephonyManager
-    lateinit var telecomManager : TelecomManager
+    var telecomManager : TelecomManager
+
+    val REQUESTCODE = 69
 
 
 
@@ -38,6 +41,8 @@ class PhoneControls(context: Context) {
         var phoneListener = MyPhoneListener(context)
         telephony = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE)
+
+        telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
 
     }
 
@@ -58,6 +63,8 @@ class PhoneControls(context: Context) {
                     phoneRinging = true
                     Toast.makeText(context, "Call Ringing", Toast.LENGTH_SHORT).show()
 
+                    answerCall()
+
                 }
             }
 
@@ -66,30 +73,40 @@ class PhoneControls(context: Context) {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    fun answerCall(context: Context) {
+    fun answerCall() {
 
-        telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
 
-        if (checkSelfPermission(context, Manifest.permission.ANSWER_PHONE_CALLS) == PackageManager.PERMISSION_GRANTED
-            || checkSelfPermission(context, Manifest.permission.MODIFY_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(context, Manifest.permission.ANSWER_PHONE_CALLS) != PackageManager.PERMISSION_GRANTED
+            || checkSelfPermission(context, Manifest.permission.MODIFY_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
 
-            telecomManager.acceptRingingCall()
+            askPermission()
+
         }
+        telecomManager.acceptRingingCall()
 
     }
 
     @TargetApi(Build.VERSION_CODES.P)
     private fun declineCall() {
 
-        telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
 
-        if (checkSelfPermission(context, Manifest.permission.ANSWER_PHONE_CALLS) == PackageManager.PERMISSION_GRANTED
-            || checkSelfPermission(context, Manifest.permission.MODIFY_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(context, Manifest.permission.ANSWER_PHONE_CALLS) != PackageManager.PERMISSION_GRANTED
+            || checkSelfPermission(context, Manifest.permission.MODIFY_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
 
-            telecomManager.endCall()
+            askPermission()
+
         }
+        telecomManager.endCall()
 
 
+
+    }
+
+    private fun askPermission() {
+
+        ActivityCompat.requestPermissions(context as MainActivity,
+            arrayOf(Manifest.permission.ANSWER_PHONE_CALLS, Manifest.permission.MODIFY_PHONE_STATE),
+            69)
     }
 
 
