@@ -22,7 +22,7 @@ open class MetadataHelper(context: Context) {
     private var lastArtist: String? = null
     private var lastAlbum: String? = null
     private var lastTrack: String? = null
-    private var lastAlbumArt: Bitmap? = null
+
 
     private val context = context
     private var track: String = ""
@@ -80,7 +80,7 @@ open class MetadataHelper(context: Context) {
 
         override fun onReceive(context: Context, intent: Intent){
             if (!wasLaunchedFromRecents(intent)) {
-                val previousPlayer = player ?: PLAYER_INVALID
+                val previousPlayer = player
                 setCurrentPlayer(intent.action ?: "")
                 val intentSaysPlay = getIntentPlaybackState(intent)
 
@@ -93,7 +93,8 @@ open class MetadataHelper(context: Context) {
                 // of the case described above, and do nothing. This should be a valid assumption, as
                 // no other sequence of events should trigger a pause in a player that is not the active
                 // player, other than this case.
-                if (previousPlayer == player || intentSaysPlay) { // verifying we are not in edge case
+                // NOTE: we want to go in to if branch if player_invalid since itll only be invalid on first try
+                if (previousPlayer == PLAYER_INVALID || (previousPlayer == player || intentSaysPlay)) { // verifying we are not in edge case
                     playbackState = intentSaysPlay
                     setTrack(intent.getStringExtra("track"))
                     setAlbum(intent.getStringExtra("album"))
@@ -151,9 +152,9 @@ open class MetadataHelper(context: Context) {
                     lastAlbum = album
                     lastArtist = artist
                     lastTrack = track
-                    AlbumCoverFetcher(context, lastAlbumArt).execute(album, artist)
+                    AlbumCoverFetcher(context).execute(album, artist)
                 } else {
-                    (context as MainActivity).changeCoverArt(lastAlbumArt)
+                    (context as MainActivity).setLastAlbumArt()
                     Log.d("Cover Fetcher", "Debounced an HTTP call")
                 }
             } catch (e: IllegalStateException) {

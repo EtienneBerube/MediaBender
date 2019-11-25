@@ -17,6 +17,7 @@ import com.example.mediabender.helpers.NetworkConnectionHelper
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
+import com.example.mediabender.service.Gesture
 import com.example.mediabender.service.SerialCommunicationService
 import io.gresse.hugo.vumeterlibrary.VuMeterView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -39,10 +40,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var indicator: VuMeterView
     private var darkThemeChosen = false
     private var musicPlaying = false
+    private var lastAlbumArt: Bitmap? = null
+
+    public var firstTimeRunning:Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        firstTimeRunning = true
 
         gestureDecoder = GestureEventDecoder.getInstance(applicationContext)
         networkConnectionHelper = NetworkConnectionHelper.getInstance(applicationContext)
@@ -61,8 +67,8 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onRestart() {
+        super.onRestart()
         setChosenTheme()
         if ((mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen)
             loadResourcesForDarkTheme()
@@ -192,8 +198,8 @@ class MainActivity : AppCompatActivity() {
         // stay in app when back button pressed, so we do nothing
     }
 
+    // TODO MATTY THIS IS FOR TESTING, HARDCODING A LEFT
     private fun playPauseButtPressed() {
-
         if (musicPlaying) {
 
             playButton.setImageResource(R.drawable.icons_play_arrow_white)
@@ -278,6 +284,13 @@ class MainActivity : AppCompatActivity() {
 
     fun changeCoverArt(bitmap: Bitmap?) {
         bitmap?.let {
+            lastAlbumArt = it
+            albumArt.setImageBitmap(it)
+        } ?: loadPlaceholderSong()
+    }
+
+    fun setLastAlbumArt(){
+        lastAlbumArt?.let{
             albumArt.setImageBitmap(it)
         } ?: loadPlaceholderSong()
     }
