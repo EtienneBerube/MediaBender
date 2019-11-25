@@ -1,5 +1,8 @@
 package com.example.mediabender
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.app.KeyguardManager
 import android.content.Context
 import android.telecom.Call
@@ -10,19 +13,25 @@ import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.widget.Toast
 import android.app.NotificationManager
+import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.os.Build
 import android.view.KeyEvent
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.content.ContextCompat.getSystemService
 
 
 
-class PhoneControls(val context: Context) {
+class PhoneControls(context: Context) {
 
+
+    private val context = context
     var telephony: TelephonyManager
-   // var telecomManager : TelecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+    lateinit var telecomManager : TelecomManager
 
-   // var keyguardManager : KeyguardManager
-    //var audioManager : AudioManager
+
 
     init {
 
@@ -30,38 +39,11 @@ class PhoneControls(val context: Context) {
         telephony = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE)
 
-
-        //keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-       // audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-        //telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
-
     }
-
-
-   /* fun answerCall(context: Context) {
-        val buttonUp = Intent(Intent.ACTION_MEDIA_BUTTON)
-        buttonUp.putExtra(
-            Intent.EXTRA_KEY_EVENT,
-            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_HEADSETHOOK)
-        )
-        context.sendOrderedBroadcast(buttonUp, "android.permission.CALL_PRIVILEGED")
-    }
-*/
-    /*private fun declineCall(context: Context) {
-
-        val buttonDown = Intent(Intent.ACTION_MEDIA_BUTTON)
-        buttonDown.putExtra(
-            Intent.EXTRA_KEY_EVENT,
-            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_HEADSETHOOK)
-        )
-        context.sendOrderedBroadcast(buttonDown, "android.permission.CALL_PRIVILEGED")
-    }*/
 
 
     inner class MyPhoneListener(val context: Context) : PhoneStateListener() {
         private var phoneRinging = false
-
 
         override fun onCallStateChanged(state: Int, incomingNumber : String){
 
@@ -74,14 +56,39 @@ class PhoneControls(val context: Context) {
                 }
                 TelephonyManager.CALL_STATE_RINGING -> {
                     phoneRinging = true
-                    Toast.makeText(context, "Call Listener", Toast.LENGTH_SHORT).show()
-                    //answerCall(context)
+                    Toast.makeText(context, "Call Ringing", Toast.LENGTH_SHORT).show()
 
                 }
             }
 
-
         }
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    fun answerCall(context: Context) {
+
+        telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+
+        if (checkSelfPermission(context, Manifest.permission.ANSWER_PHONE_CALLS) == PackageManager.PERMISSION_GRANTED
+            || checkSelfPermission(context, Manifest.permission.MODIFY_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+
+            telecomManager.acceptRingingCall()
+        }
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.P)
+    private fun declineCall() {
+
+        telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
+
+        if (checkSelfPermission(context, Manifest.permission.ANSWER_PHONE_CALLS) == PackageManager.PERMISSION_GRANTED
+            || checkSelfPermission(context, Manifest.permission.MODIFY_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+
+            telecomManager.endCall()
+        }
+
 
     }
 

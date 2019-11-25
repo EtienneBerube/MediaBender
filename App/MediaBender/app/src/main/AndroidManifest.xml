@@ -13,7 +13,7 @@
         android:name="android.permission.MODIFY_PHONE_STATE"
         tools:ignore="ProtectedPermissions" />
     <uses-permission
-        android:name="android.permission.SEND_SMS"
+        android:name="android.permission.ANSWER_PHONE_CALLS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
