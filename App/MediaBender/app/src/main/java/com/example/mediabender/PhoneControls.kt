@@ -3,6 +3,7 @@ package com.example.mediabender
 import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.telecom.Call
@@ -22,7 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.content.ContextCompat.getSystemService
-
+import com.example.mediabender.models.PhoneEventType
 
 
 class PhoneControls(context : Context) {
@@ -31,10 +32,8 @@ class PhoneControls(context : Context) {
     private val context = context
     var telephony: TelephonyManager
     var telecomManager : TelecomManager
-
-    val REQUESTCODE = 69
-
-
+    var inCall: Boolean = false
+    private var callState = TelephonyManager.CALL_STATE_IDLE
 
     init {
 
@@ -48,26 +47,41 @@ class PhoneControls(context : Context) {
 
 
     inner class MyPhoneListener(val context: Context) : PhoneStateListener() {
-        private var phoneRinging = false
+
 
         override fun onCallStateChanged(state: Int, incomingNumber : String){
 
             when(state) {
-                TelephonyManager.CALL_STATE_IDLE -> phoneRinging = false
+                TelephonyManager.CALL_STATE_IDLE -> {
+                    callState = TelephonyManager.CALL_STATE_IDLE
+                    inCall = false
+                    //(context as MainActivity).mediaControls.isInCall = false
+                }
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
-                    phoneRinging = false
-                    Toast.makeText(context, "Call Active", Toast.LENGTH_SHORT).show()
+                    callState = TelephonyManager.CALL_STATE_OFFHOOK
+                    inCall = true
+                    //(context as MainActivity).mediaControls.isInCall = true
 
                 }
                 TelephonyManager.CALL_STATE_RINGING -> {
-                    phoneRinging = true
-                    Toast.makeText(context, "Call Ringing", Toast.LENGTH_SHORT).show()
-
-                    answerCall()
+                    callState = TelephonyManager.CALL_STATE_RINGING
+                    inCall = true
+                    //(context as MainActivity).mediaControls.isInCall = true
 
                 }
             }
 
+        }
+
+    }
+
+    fun executeEvent(event: PhoneEventType, activity: Activity) {
+        when (event) {
+            PhoneEventType.RAISE_VOLUME -> (activity as MainActivity).mediaControls.volumeUp()
+            PhoneEventType.LOWER_VOLUME -> (activity as MainActivity).mediaControls.volumeDown()
+            PhoneEventType.ACCEPT_CALL -> {if (callState != TelephonyManager.CALL_STATE_OFFHOOK) answerCall()}
+            PhoneEventType.DECLINE_CALL -> declineCall()
+            PhoneEventType.NONE -> {} // do nothing
         }
 
     }

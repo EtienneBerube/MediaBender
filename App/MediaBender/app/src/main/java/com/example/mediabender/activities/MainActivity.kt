@@ -17,6 +17,7 @@ import com.example.mediabender.helpers.NetworkConnectionHelper
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
+import com.example.mediabender.service.Gesture
 import com.example.mediabender.service.SerialCommunicationService
 import io.gresse.hugo.vumeterlibrary.VuMeterView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -24,7 +25,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var mediaControls: MediaControls
+    lateinit var mediaControls: MediaControls
     private lateinit var phoneControls: PhoneControls
     private lateinit var metadataHelper: MetadataHelper
     private lateinit var mainActivity: View
@@ -108,8 +109,13 @@ class MainActivity : AppCompatActivity() {
         SerialCommunicationService.instance.requestUSBpermission(applicationContext)
         SerialCommunicationService.instance.setDataOnReceiveListener {
             runOnUiThread {
-                val event = gestureDecoder.gestureToMediaEvent(it.gesture)
-                mediaControls.executeEvent(event, this)
+                if (phoneControls.inCall) {
+                    val event = gestureDecoder.gestureToPhoneEvent(it.gesture)
+                    phoneControls.executeEvent(event, this)
+                } else {
+                    val event = gestureDecoder.gestureToMediaEvent(it.gesture)
+                    mediaControls.executeEvent(event, this)
+                }
             }
         }
 
@@ -168,6 +174,10 @@ class MainActivity : AppCompatActivity() {
 
         playButton.setOnClickListener {
             playPauseButtPressed()
+//            playButton.setImageResource(when(musicPlaying) {
+//                true -> R.drawable.icons_play_arrow_white
+//                false -> R.drawable.icons_pause_white
+//            })
         }
 
         skipPlayingButton.setOnClickListener {
@@ -195,12 +205,12 @@ class MainActivity : AppCompatActivity() {
 
         if (musicPlaying) {
 
-            playButton.setImageResource(R.drawable.icons_play_arrow_white)
+            //playButton.setImageResource(R.drawable.icons_play_arrow_white)
             indicator.stop(true)
             mediaControls.executeEvent(MediaEventType.TOGGLE_PLAYSTATE)
             musicPlaying = false
         } else {
-            playButton.setImageResource(R.drawable.icons_pause_white)
+            //playButton.setImageResource(R.drawable.icons_pause_white)
 
             mediaControls.executeEvent(MediaEventType.TOGGLE_PLAYSTATE)
             musicPlaying = true
@@ -254,6 +264,7 @@ class MainActivity : AppCompatActivity() {
         playButton.background = getDrawable(R.drawable.black_round_button_black)
         if (musicPlaying) playButton.setImageResource(R.drawable.icons_pause_white)
         else playButton.setImageResource(R.drawable.icons_play_arrow_white)
+
         mainActivity.setBackgroundColor(getColor(R.color.colorPrimaryWhite))
         albumArt.setImageDrawable(getDrawable(R.drawable.album_default_dark))
         skipPlayingButton.setImageResource(R.drawable.icons_fast_forward_black)

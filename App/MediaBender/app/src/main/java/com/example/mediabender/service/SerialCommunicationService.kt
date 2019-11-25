@@ -159,8 +159,9 @@ class SerialCommunicationService {
         try {
             if (it.isNotEmpty()) {
                 if(isAppInBackground){
-                    val event = gestureDecoder.gestureToMediaEvent(ServiceMessage(it[0]).gesture)
-                    mediaControls.executeEvent(event)
+                    dataReceiveListener?.invoke(ServiceMessage(it[0]))
+                    //val event = gestureDecoder.gestureToMediaEvent(ServiceMessage(it[0]).gesture)
+                    //mediaControls.executeEvent(event)
                 }else{
                     dataReceived(it)
                 }
