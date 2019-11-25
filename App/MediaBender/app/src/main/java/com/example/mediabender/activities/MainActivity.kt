@@ -12,16 +12,13 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.example.mediabender.activities.SettingsActivity
+import com.example.mediabender.helpers.NetworkConnectionHelper
 import com.example.mediabender.helpers.GestureEventDecoder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaEventType
-import com.example.mediabender.service.Request
-import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
 import io.gresse.hugo.vumeterlibrary.VuMeterView
-import com.example.mediabender.service.ServiceRequest
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -38,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var skipPlayingButton: ImageButton
     private lateinit var backPlayingButton: ImageButton
     private lateinit var gestureDecoder: GestureEventDecoder
+    private lateinit var networkConnectionHelper: NetworkConnectionHelper
     private lateinit var menu_main: Menu
     private lateinit var indicator: VuMeterView
     private var darkThemeChosen = false
@@ -48,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         gestureDecoder = GestureEventDecoder.getInstance(applicationContext)
+        networkConnectionHelper = NetworkConnectionHelper.getInstance(applicationContext)
 
         setChosenTheme()
         setUpToolbar()
@@ -173,6 +172,8 @@ class MainActivity : AppCompatActivity() {
 
         skipPlayingButton.setOnClickListener {
             mediaControls.executeEvent(MediaEventType.SKIP_SONG)
+            vumeter.blockNumber = 15    // because we know always playing after skip
+            indicator.resume(true)
         }
 
         backPlayingButton.setOnClickListener {
@@ -316,11 +317,11 @@ class MainActivity : AppCompatActivity() {
             mainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
         if (currentNightMode == Configuration.UI_MODE_NIGHT_YES || darkThemeChosen) {
-            albumArt.setImageDrawable(getDrawable(R.drawable.album_default_dark))
+            albumArt.setImageDrawable(getDrawable(R.drawable.album_default_light))
 
         } // Night mode is not active, we're using the light theme
         else {
-            albumArt.setImageDrawable(getDrawable(R.drawable.album_default_light))
+            albumArt.setImageDrawable(getDrawable(R.drawable.album_default_dark))
 
         } // Night mode is active, we're using dark theme
     }
