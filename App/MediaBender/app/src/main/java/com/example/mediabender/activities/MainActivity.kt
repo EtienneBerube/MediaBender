@@ -42,13 +42,11 @@ class MainActivity : AppCompatActivity() {
     private var musicPlaying = false
     private var lastAlbumArt: Bitmap? = null
 
-    public var firstTimeRunning:Boolean? = null
+    public var firstTimeRunning:Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        firstTimeRunning = true
 
         gestureDecoder = GestureEventDecoder.getInstance(applicationContext)
         networkConnectionHelper = NetworkConnectionHelper.getInstance(applicationContext)

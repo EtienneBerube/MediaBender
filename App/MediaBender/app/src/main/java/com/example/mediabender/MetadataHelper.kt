@@ -100,7 +100,7 @@ open class MetadataHelper(context: Context) {
                     setAlbum(intent.getStringExtra("album"))
                     setArtist(intent.getStringExtra("artist"))
 
-                    if (intent.action!!.contains("meta") )
+                    if (intent.action!!.contains("meta"))
                         displayAlbumArt()
 
                     with(context as MainActivity) {
