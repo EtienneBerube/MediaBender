@@ -4,10 +4,9 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import com.example.mediabender.MainActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.example.mediabender.R
 import com.example.mediabender.helpers.EncryptionHelper
 import com.example.mediabender.helpers.GestureEventDecoder
@@ -15,6 +14,9 @@ import com.example.mediabender.helpers.NetworkConnectionHelper
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 
+/**
+ * This activity is the splash screen of the applciation. This means that when the app first open, this screen is shown and all the heavy work is done at this time (loading shared preferences)
+ */
 class SplashScreen : AppCompatActivity() {
 
     private val Splash_Timeout: Long = 1000

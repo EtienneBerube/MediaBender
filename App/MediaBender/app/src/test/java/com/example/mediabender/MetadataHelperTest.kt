@@ -1,12 +1,8 @@
 package com.example.mediabender
 
-import android.app.Instrumentation
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import com.example.mediabender.helpers.MetadataHelper
 import org.junit.Test
-import org.junit.Assert.*
-import org.junit.Before
 import org.mockito.Mock
 import org.mockito.Mockito.*
 

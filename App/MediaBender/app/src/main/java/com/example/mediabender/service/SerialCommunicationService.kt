@@ -2,22 +2,23 @@ package com.example.mediabender.service
 
 import android.app.Activity
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
-import android.content.BroadcastReceiver
-import android.util.Log
+import com.example.mediabender.helpers.GestureEventDecoder
+import com.example.mediabender.helpers.MediaControls
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
 import java.io.UnsupportedEncodingException
-import android.content.IntentFilter
-import android.widget.Toast
-import com.example.mediabender.MediaControls
-import com.example.mediabender.helpers.GestureEventDecoder
 
 
+/**
+ * This class is used to read and write to the sensor. It listens to the serial port of the android device
+ */
 class SerialCommunicationService {
     private val ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION"
     private var device: UsbDevice? = null
@@ -31,7 +32,7 @@ class SerialCommunicationService {
     var isGestureAvailable = false
     var isAppInBackground = false
     private lateinit var gestureDecoder:GestureEventDecoder
-    private lateinit var mediaControls:MediaControls
+    private lateinit var mediaControls: MediaControls
 
     fun setService(activity: Activity) {
         usbManager = activity.getSystemService(Context.USB_SERVICE) as UsbManager

@@ -3,11 +3,11 @@ package com.example.mediabender.activities
 import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import com.example.mediabender.R
 import com.example.mediabender.dialogs.YesNoDialog
@@ -19,6 +19,9 @@ import com.example.mediabender.service.Gesture
 import com.google.common.collect.EnumBiMap
 import kotlinx.android.synthetic.main.activity_gesture_mapping.*
 
+/**
+    Activity in charge for the management of the gestures
+ */
 class GestureMappingActivity : AppCompatActivity() {
 
     private lateinit var gestureEventDecoder: GestureEventDecoder

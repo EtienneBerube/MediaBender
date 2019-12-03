@@ -7,7 +7,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.AsyncTask
 import android.util.Log
-import com.example.mediabender.MainActivity
+import com.example.mediabender.activities.MainActivity
 import com.example.mediabender.helpers.EncryptionHelper
 import com.example.mediabender.helpers.NetworkConnectionHelper
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -16,7 +16,9 @@ import okhttp3.Request
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
-
+/**
+ * This class is used to fetch the album art for a given album name and artist
+ */
 class AlbumCoverFetcher(private val context: Context) : AsyncTask<String, Void, Bitmap?>() {
 
     private val MUSIC_BRAINZ_API_URL = "https://musicbrainz.org/ws/2/release-group/"

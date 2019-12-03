@@ -1,30 +1,23 @@
-package com.example.mediabender
+package com.example.mediabender.helpers
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
-import android.app.KeyguardManager
 import android.content.Context
-import android.telecom.Call
-import android.content.Intent
-import android.telecom.InCallService
+import android.content.pm.PackageManager
+import android.os.Build
 import android.telecom.TelecomManager
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
-import android.widget.Toast
-import android.app.NotificationManager
-import android.content.pm.PackageManager
-import android.media.AudioManager
-import android.os.Build
-import android.view.KeyEvent
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
-import androidx.core.content.ContextCompat.getSystemService
+import com.example.mediabender.activities.MainActivity
 import com.example.mediabender.models.PhoneEventType
 
+
+/**
+ * This class is used to control the current phone state of the application and handle any related events.
+ */
 
 class PhoneControls(context : Context) {
 

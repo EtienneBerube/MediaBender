@@ -1,22 +1,16 @@
-package com.example.mediabender
+package com.example.mediabender.helpers
 
 import android.app.Activity
-import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.media.AudioManager
-import android.media.MediaPlayer
-import android.media.session.MediaController
-import android.media.session.MediaSession
-import android.media.session.MediaSessionManager
 import android.view.KeyEvent
-import androidx.core.app.ComponentActivity
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import com.example.mediabender.dialogs.MediaEventFeedbackDialog
 import com.example.mediabender.models.MediaEventType
-import java.lang.Exception
 
+/**
+ * This class is used to control the media players on the phone by broadcasting generic events.
+ */
 class MediaControls(context: Context) {
 
 

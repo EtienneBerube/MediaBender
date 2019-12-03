@@ -8,6 +8,9 @@ import com.example.mediabender.models.PhoneEventType
 import com.example.mediabender.service.Gesture
 import com.google.common.collect.EnumBiMap
 
+/**
+ * This class define which gesture maps to which media event.
+ */
 class GestureEventDecoder constructor(private var context: Context) {
 
     companion object : SingletonHolder<GestureEventDecoder, Context>(::GestureEventDecoder)

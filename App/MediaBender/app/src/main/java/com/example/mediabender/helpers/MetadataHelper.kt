@@ -1,13 +1,16 @@
-package com.example.mediabender
+package com.example.mediabender.helpers
 
 import android.content.*
-import android.graphics.Bitmap
 import android.util.Log
 import android.widget.Toast
 import com.example.mediabender.service.AlbumCoverFetcher
 import android.content.Intent
+import com.example.mediabender.activities.MainActivity
 
 
+/**
+ * This class is used to get the information on the song currently playing. This will also be the entrypoint to get the album art.
+ */
 open class MetadataHelper(context: Context) {
 
     // todo make this an inner enum

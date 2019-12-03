@@ -1,32 +1,33 @@
 package com.example.mediabender.activities
 
+//import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.Handler
-import android.content.pm.ApplicationInfo
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mediabender.R
-import com.example.mediabender.dialogs.PlayerConnectionDialog
-//import com.example.mediabender.helpers.PlayerAccountSharedPreferenceHelper
 import com.example.mediabender.helpers.PlayerSettingsCardViewHolder
 import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
 import com.example.mediabender.models.MediaPlayer
-import com.example.mediabender.models.PlayerAccount
-import com.shrikanthravi.library.NightModeButton
 import com.example.mediabender.service.Request
 import com.example.mediabender.service.Sensibility
 import com.example.mediabender.service.SerialCommunicationService
 import com.example.mediabender.service.ServiceRequest
+import com.shrikanthravi.library.NightModeButton
 import kotlinx.android.synthetic.main.activity_settings.*
 import nl.dionsegijn.steppertouch.OnStepCallback
 import nl.dionsegijn.steppertouch.StepperTouch
 
-
+/**
+ * Activity that holds all the customization and settings for the app.
+ */
 class SettingsActivity : AppCompatActivity() {
 
     private var spotifyViewHolder = PlayerSettingsCardViewHolder()

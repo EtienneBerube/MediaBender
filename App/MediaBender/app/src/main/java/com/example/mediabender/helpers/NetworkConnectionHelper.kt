@@ -5,7 +5,9 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 
-
+/**
+ * This class is used as a handler to get what is the current state of the internet connection of the device.
+ */
 class NetworkConnectionHelper constructor(private var context: Context){
 
     companion object : SingletonHolder<NetworkConnectionHelper, Context>(::NetworkConnectionHelper)

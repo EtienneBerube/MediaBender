@@ -8,6 +8,9 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
+/**
+ * This class is a wrapper for the java encryption package. The key must be defined in the config file first.
+ */
 class EncryptionHelper constructor(private var context: Context) {
 
     companion object : SingletonHolder<EncryptionHelper, Context>(::EncryptionHelper)

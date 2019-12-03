@@ -18,6 +18,9 @@ import androidx.fragment.app.DialogFragment
 import com.example.mediabender.R
 import com.example.mediabender.models.MediaEventType
 
+/**
+ * This dialog is used to show a feedback image to the user when a gesture is detected.
+ */
 
 class MediaEventFeedbackDialog(private val event: MediaEventType, private val playing: Boolean = false) : DialogFragment() {
 

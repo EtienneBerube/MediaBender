@@ -1,10 +1,9 @@
-package com.example.mediabender
+package com.example.mediabender.activities
 
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,16 +11,17 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.mediabender.activities.SettingsActivity
-import com.example.mediabender.helpers.NetworkConnectionHelper
-import com.example.mediabender.helpers.GestureEventDecoder
-import com.example.mediabender.helpers.ThemeSharedPreferenceHelper
+import androidx.appcompat.app.AppCompatActivity
+import com.example.mediabender.R
+import com.example.mediabender.helpers.*
 import com.example.mediabender.models.MediaEventType
-import com.example.mediabender.service.Gesture
 import com.example.mediabender.service.SerialCommunicationService
 import io.gresse.hugo.vumeterlibrary.VuMeterView
 import kotlinx.android.synthetic.main.activity_main.*
 
+/**
+ * Main activity for the Application. This activity shows which song is playing and has button to interact with the currently used media player
+ */
 
 class MainActivity : AppCompatActivity() {
 
