@@ -10,9 +10,9 @@ sw1.1-etienne
 
 Every commit should be meaningful (even when you really want to die). For example, these are not acceptable:
 
-FUCK ME THIS DOESN'T WORK  
-FUCK ME THIS WORK   
-FUCK ME THIS WORKS BUT I DON'T KNOW WHY   
+THIS DOESN'T WORK  
+THIS WORK   
+THIS WORKS BUT I DON'T KNOW WHY   
 kjflkjhsdhfajshdflakfsjdh   
 
 Even if a dummy file was added, the commit message should be:  
