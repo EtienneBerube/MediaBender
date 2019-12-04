@@ -58,7 +58,7 @@
 
         <!--Main activity-->
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:configChanges="uiMode"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
