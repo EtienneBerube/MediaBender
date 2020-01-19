@@ -2,8 +2,6 @@ package com.example.mediabender.dialogs
 
 import android.content.Context.AUDIO_SERVICE
 import android.content.DialogInterface
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
@@ -20,6 +18,9 @@ import androidx.fragment.app.DialogFragment
 import com.example.mediabender.R
 import com.example.mediabender.models.MediaEventType
 
+/**
+ * This dialog is used to show a feedback image to the user when a gesture is detected.
+ */
 
 class MediaEventFeedbackDialog(private val event: MediaEventType, private val playing: Boolean = false) : DialogFragment() {
 
@@ -44,13 +45,9 @@ class MediaEventFeedbackDialog(private val event: MediaEventType, private val pl
         volumeIndicator = view.findViewById(R.id.dialog_media_feedback_volume_indicator)
 
         val image = getImageForEvent()
-        image?.let{
-            if (android.os.Build.VERSION.SDK_INT >= 29){
-                it.setColorFilter(BlendModeColorFilter(Color.WHITE, BlendMode.SRC_ATOP))
-            } else{
-                //Used in version < 29
-                it.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
-            }
+        image?.let {
+            it.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+
             imageView.setImageDrawable(it)
         } ?: dismiss()
 

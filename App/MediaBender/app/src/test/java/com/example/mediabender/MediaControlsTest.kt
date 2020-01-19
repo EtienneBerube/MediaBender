@@ -1,13 +1,9 @@
 package com.example.mediabender
 
 import android.content.Context
-import org.junit.Assert.*
-import org.junit.Test
-import org.mockito.Matchers.any
+import com.example.mediabender.helpers.MediaControls
 import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.Mockito.atLeastOnce
-import org.mockito.Mockito.verify
 
 class MediaControlsTest {
 

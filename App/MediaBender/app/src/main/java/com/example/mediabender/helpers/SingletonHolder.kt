@@ -1,5 +1,9 @@
 package com.example.mediabender.helpers
 
+
+/**
+ * This class is a generic singleton holder to manage such instances in Kotlin
+ */
 open class SingletonHolder<out T: Any, in A>(creator: (A) -> T) {
     private var creator: ((A) -> T)? = creator
     @Volatile private var instance: T? = null

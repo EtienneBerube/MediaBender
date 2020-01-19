@@ -9,10 +9,11 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.mediabender.R
 
-// dialog with three elements: a text view, a "yes" button and a "no" button
-// promptText -> text to set the prompt to
-// onYes      -> what happens when "yes" button clicked
-// onNo       -> what happens when "no" button clicked
+/** dialog with three elements: a text view, a "yes" button and a "no" button
+* promptText -> text to set the prompt to
+* onYes      -> what happens when "yes" button clicked
+* onNo       -> what happens when "no" button clicked
+ */
 class YesNoDialog(
     private val prompt: String,
     private val onYes: () -> Unit,

@@ -2,6 +2,9 @@ package com.example.mediabender.helpers
 
 import android.content.SharedPreferences
 
+/**
+ * This class is used as a shard preference wrapper to get the current theme and modify it
+ */
 class ThemeSharedPreferenceHelper(var sharedPreferences: SharedPreferences) {
 
     fun saveTheme (themeChosen: String){
